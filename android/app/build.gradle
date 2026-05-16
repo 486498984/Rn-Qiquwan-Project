@@ -77,13 +77,13 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "com.qiquwanproject"
+    namespace "com.qiquwan.games"
     defaultConfig {
-        applicationId "com.qiquwanproject"
+        applicationId "com.qiquwan.games"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
     }
     signingConfigs {
         debug {
@@ -92,22 +92,40 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+            release {
+            storeFile file('release.keystore')
+            storePassword 'qiqu2834wan39'
+            keyAlias 'qiquwan'
+            keyPassword 'qiqu2834wan39'
+        }
     }
     buildTypes {
         debug {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
+            manifestPlaceholders = [
+            UMENG_APP_KEY: '69c9d6736f259537c7886632',
+            UMENG_PUSH_SECRET: '111',
+            UMENG_CHANNEL: 'default',
+        ]
         }
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            manifestPlaceholders = [
+            UMENG_APP_KEY: '69c9d6736f259537c7886632',
+            UMENG_PUSH_SECRET: '111',
+            UMENG_CHANNEL: 'default',
+        ]
         }
     }
 }
 
 dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.aar'])
+    implementation 'androidx.appcompat:appcompat:1.3.1'
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 

@@ -10,6 +10,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        flatDir { dirs 'libs' } // 识别本地 aar
     }
     dependencies {
         classpath("com.android.tools.build:gradle")
@@ -19,3 +20,15 @@ buildscript {
 }
 
 apply plugin: "com.facebook.react.rootproject"
+
+allprojects {
+    repositories {
+        maven { url 'https://repo1.maven.org/maven2/' }
+        google()
+        mavenCentral()
+        maven {
+        url = uri(project(":react-native-async-storage_async-storage").file("local_repo"))
+        }
+        flatDir { dirs 'libs' }
+    }
+}

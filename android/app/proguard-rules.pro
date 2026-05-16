@@ -8,3 +8,6 @@
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
 # Add any project specific keep options here:
+# 保护AppCompatActivity及其相关类
+-keep class androidx.appcompat.app.AppCompatActivity
+-keep class androidx.core.content.ContextCompat { *; }

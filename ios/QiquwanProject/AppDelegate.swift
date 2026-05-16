@@ -2,6 +2,8 @@ import UIKit
 import React
 import React_RCTAppDelegate
 import ReactAppDependencyProvider
+import RNBootSplash
+
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -28,9 +30,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       in: window,
       launchOptions: launchOptions
     )
-
+RNTUmengAnalytics.`init`("69c9da229a7f376488a93922", channel: "App Store", debug: false)
     return true
   }
+
+func application(
+  _ app: UIApplication,
+  open url: URL,
+  options: [UIApplication.OpenURLOptionsKey : Any] = [:]
+) -> Bool {
+
+  // 转成 OC dictionary
+  let optionsDict = options.reduce(into: [String: Any]()) { result, item in
+    result[item.key.rawValue] = item.value
+  }
+
+  if RNTAlipay.handleOpenURL(app, open: url, options: optionsDict) {
+    return true
+  }
+
+  return true
+}
 }
 
 class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
@@ -44,5 +64,9 @@ class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
 #else
     Bundle.main.url(forResource: "main", withExtension: "jsbundle")
 #endif
+  }
+      override func customize(_ rootView: RCTRootView) {
+    super.customize(rootView)
+    RNBootSplash.initWithStoryboard("BootSplash", rootView: rootView)
   }
 }

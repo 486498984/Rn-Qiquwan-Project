@@ -1,0 +1,29 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/MiSans-Medium.ttf",
+      "sha1": "73c0d0a785967d007cca4f6360499376243d3a0d"
+    },
+    {
+      "path": "assets/fonts/MiSans-Regular.ttf",
+      "sha1": "27b06dd7a75f402206f68abf302f8f7fb0f2d25c"
+    },
+    {
+      "path": "assets/fonts/DingTalk JinBuTi-Regular.ttf",
+      "sha1": "40aa625cea51a985319bb35a9307d247a09f709a"
+    },
+    {
+      "path": "assets/fonts/MiSans-Bold.ttf",
+      "sha1": "9870bc15ee5f5ca03755332cf16703de40c786ce"
+    },
+    {
+      "path": "node_modules/@ant-design/icons-react-native/fonts/antfill.ttf",
+      "sha1": "56960e7721fc92b62e0f7c4d131ffe34ed042c49"
+    },
+    {
+      "path": "node_modules/@ant-design/icons-react-native/fonts/antoutline.ttf",
+      "sha1": "66720607b7496a48f145425386b2082b73662fd1"
+    }
+  ]
+}

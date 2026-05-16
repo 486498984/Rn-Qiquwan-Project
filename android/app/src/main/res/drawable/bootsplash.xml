@@ -1,0 +1,10 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 背景色 -->
+    <item android:drawable="@color/bootsplash_background"/>
+    <!-- 全屏铺满 logo -->
+    <item>
+        <bitmap
+            android:gravity="fill"
+            android:src="@mipmap/bootsplash_logo" />
+    </item>
+</layer-list>

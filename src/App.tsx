@@ -1,0 +1,642 @@
+import { NewAppScreen } from '@react-native/new-app-screen';
+import { StatusBar, StyleSheet, useColorScheme, View,
+  TouchableOpacity,Image,Text,Platform,Vibration,ScrollView,Alert,
+  BackHandler
+ } from 'react-native';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+import {Provider} from '@ant-design/react-native';
+import { px } from './utils/scaleUtils';
+ import  chat  from './utils/im';
+ import TencentCloudChat from '@tencentcloud/chat';
+ import { NavigationContainer } from '@react-navigation/native';
+ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+//import { createStackNavigator } from '@react-navigation/stack';
+ import Home from './screens/Home/Home';
+import Allcomments from './screens/Home/Allcomments';
+ import Shopinfo from './screens/Home/Shopinfo';
+import Club from './screens/Club/Club';
+import ClubInfo from './screens/Club/ClubInfo';
+import ClubHome from './screens/Club/ClubHome';
+import News from './screens/News/News';
+import My from './screens/My/My';
+import Lottery from './screens/Lottery/Lottery';
+import Preze from './screens/Lottery/Preze';
+import Login from './screens/My/Login';
+import Code from './screens/My/Code';
+import Profile from './screens/My/Profile';
+import Setting from './screens/My/Setting';
+import Confirm from './screens/My/Confirm';
+import Avtar from './screens/My/Avtar';
+import Name from './screens/My/Name';
+import Notice from './screens/My/Notice';
+import Collect from './screens/My/Collect';
+import Follow from './screens/My/Follow';
+import Order from './screens/My/Order';
+import Coupon from './screens/My/Coupon';
+import Asset from './screens/My/Asset';
+import Register from './screens/My/Register';
+import InviteOrder from './screens/My/InviteOrder';
+import Withdraw from './screens/My/Withdraw';
+import Details from './screens/My/Details';
+import Guarantee from './screens/My/Guarantee';
+import Join from './screens/My/Join';
+import Cashout from './screens/My/Cashout';
+import OrderInfo from './screens/My/OrderInfo';
+import Comment from './screens/My/Comment';
+import Invite from './screens/My/Invite';
+import OneChat from './screens/News/OneChat';
+import ShopIndex from './screens/Shop/ShopIndex';
+import ShopOrder from './screens/Shop/ShopOrder';
+import ShopCashout from './screens/Shop/ShopCashout';
+import ShopCashItem from './screens/Shop/ShopCashItem';
+import ShopPending from './screens/Shop/ShopPending';
+import ShopHomeOrder from './screens/Shop/ShopHomeOrder';
+import ShopOrderInfo from './screens/Shop/ShopOrderInfo';
+import ShopScreenshot from './screens/Shop/ShopScreenshot';
+import ShopEnter from './screens/Shop/ShopEnter';
+import ShopSetting from './screens/Shop/ShopSetting';
+import ShopManage from './screens/Shop/ShopManage';
+import ShopEmployee from './screens/Shop/ShopEmployee';
+import ShopAddEmployee from './screens/Shop/ShopAddEmployee';
+import ShopEditEmployee from './screens/Shop/ShopEditEmployee';
+import ShopNotice from './screens/Shop/ShopNotice';
+import ShopPreview from './screens/Shop/ShopPreview';
+import ShopEdit from './screens/Shop/ShopEdit';
+import UserAgree from './screens/Policy/UserAgree';
+import PrivacyAgree from './screens/Policy/PrivacyAgree';
+
+
+
+import RNBootSplash from "react-native-bootsplash";
+import CustomModal from './components/My/CustomModal';
+import React,{useEffect,useRef,useState} from 'react'
+import useAuthStore from './utils/zustand';
+import Storage from './utils/storage';
+import LinearGradient from 'react-native-linear-gradient';
+import PrivacyModal from './components/Home/PrivacyModal'; // 引入组件
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import {
+  init,
+  getDeviceInfo,
+  exitApp,
+} from '@react-native-hero/umeng-analytics'
+import { useIMStore } from './store/imStore';
+import { TUILogin } from '@tencentcloud/tui-core';
+
+
+
+  const loginInfo =
+  Platform.OS === 'ios'
+    ? {
+        userID: 'user1',
+        userSig: 'eJyrVgrxCdYrSy1SslIy0jNQ0gHzM1NS80oy0zLBwqXFqUWGUInilOzEgoLMFCUrQzMDA0NjE0tLC4hMakVBZlEqUNzU1NTIwMAAIlqSmQsSMzc3NbQwN7WAqi3OTAeaG5rjmF7sGhWclWoc6JkYEuQfYlBRURCa7GHqGhoY6e1oUFKUYZqk7eVvZGCrVAsAI*Iw7w__',
+      }
+    : {
+        userID: 'user2',
+        userSig: 'eJyrVgrxCdYrSy1SslIy0jNQ0gHzM1NS80oy0zLBwqXFqUVGUInilOzEgoLMFCUrQzMDA0NjE0tLC4hMakVBZlEqUNzU1NTIwMAAIlqSmQsSMzc3NbQwtzAxg5qSmQ4018fQ18*vMNvCzTzYPNcjzNsyKNGiPLnUOSzQOTJG3zerKjc10q3ALCgxz8fAVqkWAEDnMUk_',
+      };
+  const appKey = "1109260309225797#demo";
+  const Stack = createNativeStackNavigator();
+  const Tab = createBottomTabNavigator();
+  //const Stack = createStackNavigator();
+  // 底部导航
+function TabNavigator({ totalcount }) {
+  return (
+    <Tab.Navigator
+      //tabBar={props => <MyTabBar {...props} />}
+      screenOptions={{
+        headerShown: false, // 不显示顶部header
+        tabBarButton: (props) => <TouchableOpacity {...props}  onPressIn={(ev) => {
+          if (Platform.OS === 'ios') {
+            //Vibration.vibrate(5);
+            // Add a soft haptic feedback when pressing down on the tabs.
+            //Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }else{
+            Vibration.vibrate(5);
+          }
+          props.onPressIn?.(ev);
+        }}/>,
+
+        tabBarStyle: {
+          height: Platform.select({ ios: px(88), android: px(66) }), // 设置不同平台高度
+          backgroundColor: '#FFFFFF', // 背景颜色
+          paddingTop: px(4),
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 0 },  // 阴影在上方，所以 height 取负
+          shadowOpacity: 0.1,
+          shadowRadius: px(20),
+          elevation: 10,
+          ...Platform.select({
+            ios: {
+              // position: 'absolute', // iOS浮动效果
+              // borderTopLeftRadius: 20, // iOS圆角
+              // borderTopRightRadius: 20
+            },
+            android: {
+              
+              pressColor: 'transparent',
+              rippleColor: 'transparent', // 关键属性
+              
+            }
+          })
+          
+        },
+        
+      tabBarBackground: () =>
+      null,
+      }}
+    >
+      <Tab.Screen
+        name="Home"
+        component={Home}
+        options={{
+          tabBarLabel: ({ focused, color }) => (
+            <Text style={{
+              fontSize: px(11),
+              color: focused ? '#1A1A1A' : '#AAAAAA',
+              marginTop: px(4),
+              fontWeight: focused ? 'normal' : 'normal',
+              fontFamily:focused ?'MiSans-Medium':'MiSans-Regular',
+              lineHeight:px(15)
+            }}>
+              首页
+            </Text>
+          ),
+          tabBarIcon: ({ focused }) => (
+            <Image
+            source={focused 
+              ? require('../assets/icons/sehome.png')
+              :require('../assets/icons/home.png')
+              }
+              //source={require('../assets/icons/index.png')} // 替换成你的图片
+              style={{
+                width: px(34),
+                height: px(34),
+                //tintColor: focused ? '#007AFF' : '#222',
+              }}
+            />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Club"
+        component={Club}
+        options={{
+          tabBarLabel: ({ focused, color }) => (
+            <Text style={{
+              fontSize: px(11),
+              color: focused ? '#1A1A1A' : '#AAAAAA',
+              marginTop: px(4),
+              fontWeight: focused ? 'normal' : 'normal',
+              fontFamily:focused ?'MiSans-Medium':'MiSans-Regular',
+              lineHeight:px(15)
+            }}>
+              俱乐部
+            </Text>
+          ),
+          tabBarIcon: ({ focused }) => (
+            <Image
+            source={focused 
+              ? require('../assets/icons/seclub.png')
+              :require('../assets/icons/club.png')
+              }
+              style={{
+                width: px(34),
+                height: px(34),
+                //tintColor: focused ? '#007AFF' : '#222',
+              }}
+            />
+          ),
+        }}
+      />
+      {/* <Tab.Screen
+  name="WeatherButton"
+  component={View} 
+  options={({ navigation }) => ({
+    tabBarLabel: () => null,
+    tabBarIcon: () => null,
+    tabBarButton: (props) => (
+      <TouchableOpacity
+        {...props} 
+        activeOpacity={0.8}
+        onPress={() => {
+          handlegoai(navigation)
+        }}
+        style={{
+          top: Platform.OS === 'ios' ? -px(7) : -px(7),
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Image
+          source={require('../assets/icons/ai.png')}
+          style={{
+            width: px(89),
+            height: px(78),
+          }}
+        />
+      </TouchableOpacity>
+    ),
+  })}
+/>  */}
+        <Tab.Screen
+        name="Lottery"
+        component={Lottery}
+        options={{
+          tabBarLabel: ({ focused, color }) => (
+           <Text style={{
+              fontSize: px(11),
+              color: focused ? '#1A1A1A' : '#AAAAAA',
+              marginTop: px(4),
+              fontWeight: focused ? 'normal' : 'normal',
+              fontFamily:focused ?'MiSans-Medium':'MiSans-Regular',
+              lineHeight:px(15)
+            }}>
+              活动
+            </Text>
+          ),
+          tabBarIcon: ({ focused }) => (
+          <View style={{position: 'relative',width: px(34),
+        height: px(34),}}>
+          {totalcount!==0&&
+             <View style={{height: px(16),borderRadius: px(8),zIndex: 1,
+              backgroundColor: '#DE5452',position: 'absolute',right: -px(8),top:0,
+              flexDirection: 'row',alignItems: 'center',justifyContent: 'center',
+              paddingHorizontal:px(4),minWidth: px(16),}}>
+          <Text style={styles.message}>{totalcount}</Text>
+            </View>
+          }
+          <Image
+            source={focused 
+              ?require('../assets/icons/slottery.png')
+              :require('../assets/icons/lottery.png')
+              }
+              style={{
+                width: px(34),
+                height: px(34),
+                //tintColor: focused ? '#007AFF' : '#222',
+              }}
+            />
+          </View>
+          
+          ),
+        }}
+      />
+
+        <Tab.Screen
+        name="News"
+        component={News}
+        options={{
+          tabBarLabel: ({ focused, color }) => (
+           <Text style={{
+              fontSize: px(11),
+              color: focused ? '#1A1A1A' : '#AAAAAA',
+              marginTop: px(4),
+              fontWeight: focused ? 'normal' : 'normal',
+              fontFamily:focused ?'MiSans-Medium':'MiSans-Regular',
+              lineHeight:px(15)
+            }}>
+              消息
+            </Text>
+          ),
+          tabBarIcon: ({ focused }) => (
+          <View style={{position: 'relative',width: px(34),
+        height: px(34),}}>
+          {totalcount!==0&&
+             <View style={{height: px(16),borderRadius: px(8),zIndex: 1,
+              backgroundColor: '#DE5452',position: 'absolute',right: -px(8),top:0,
+              flexDirection: 'row',alignItems: 'center',justifyContent: 'center',
+              paddingHorizontal:px(4),minWidth: px(16),}}>
+          <Text style={styles.message}>{totalcount}</Text>
+            </View>
+          }
+          <Image
+            source={focused 
+              ?require('../assets/icons/senews.png')
+              :require('../assets/icons/news.png')
+              }
+              style={{
+                width: px(34),
+                height: px(34),
+                //tintColor: focused ? '#007AFF' : '#222',
+              }}
+            />
+          </View>
+          
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="My"
+        component={My}
+        options={{
+          tabBarLabel: ({ focused, color }) => (
+            <Text style={{
+              fontSize: px(11),
+              color: focused ? '#1A1A1A' : '#AAAAAA',
+              marginTop: px(4),
+              fontWeight: focused ? 'normal' : 'normal',
+              fontFamily:focused ?'MiSans-Medium':'MiSans-Regular',
+              lineHeight:px(15)
+            }}>
+              我的
+            </Text>
+          ),
+          tabBarIcon: ({ focused }) => (
+            <Image
+            source={focused 
+              ? require('../assets/icons/semy.png')
+              :require('../assets/icons/my.png')
+              }
+              style={{
+                width: px(34),
+                height: px(34),
+                //tintColor: focused ? '#007AFF' : '#222',
+              }}
+            />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+};
+function App() {
+  const [showPrivacy, setShowPrivacy] = useState(false);
+  const setPrivacyAgreed = useAuthStore(state => state.setPrivacyAgreed);
+  const messageChanged = useAuthStore(state => state.loginChanged);
+  const isDarkMode = useColorScheme() === 'dark';
+  const { setConversationList } = useIMStore.getState();
+  const [totalcount, setTotalcount] = useState(0);
+useEffect(() => {
+  const onReady = () => {
+    console.log('✅ IM ready');
+  };
+
+  const onMessageReceived = (event) => {
+    Vibration.vibrate();
+    console.log('新消息:', event.data);
+  };
+  const onConversationListUpdated = function(event) {
+    messageChanged();
+    console.log('会话',event.data); // 包含 Conversation 实例的数组
+    setConversationList(event.data);
+    //   const conversationList = event.data;
+    //   let totalUnreadCount = 0;
+    //   conversationList.forEach(item => { 
+    //     totalUnreadCount += item.unreadCount;
+    //   });
+    // setTotalcount(totalUnreadCount)
+    // console.log('🔥 总未读数:', totalUnreadCount);
+    };
+
+
+    let onTotalUnreadMessageCountUpdated = function(event) {
+  console.log('未读总数',event.data); // 当前单聊和群聊会话的未读总数
+  setTotalcount(event.data)
+  };
+chat.on(TencentCloudChat.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED, onTotalUnreadMessageCountUpdated);
+  // ✅ 先监听
+  chat.on(TencentCloudChat.EVENT.SDK_READY, onReady);
+  chat.on(TencentCloudChat.EVENT.MESSAGE_RECEIVED, onMessageReceived);
+  chat.on(TencentCloudChat.EVENT.CONVERSATION_LIST_UPDATED, onConversationListUpdated);
+// chat.logout()
+//   .then(() => {
+//     console.log('✅ 退出登录成功');
+//   })
+//   .catch(err => {
+//     console.log('❌ 退出登录失败', err);
+//   });
+
+  // ✅ 再 login（关键）
+  chat.login(loginInfo)
+  .then(res => {
+    console.log('✅ 登录成功', res);
+  })
+  .catch(err => {
+    console.log('❌ 登录失败', err);
+  });
+
+  return () => {
+    chat.off(TencentCloudChat.EVENT.SDK_READY, onReady);
+    chat.off(TencentCloudChat.EVENT.MESSAGE_RECEIVED, onMessageReceived);
+  };
+}, []);
+
+  useEffect(() => {
+    const checkPrivacy = async () => {
+      //await Storage.clear();
+      const agreed = await Storage.get('privacyAgreed');
+      console.log(agreed);
+      if (agreed == true) {
+        // 已同意，直接进入 App
+        console.log("已经同意协议");
+        goinit(); 
+        setPrivacyAgreed(true);
+        setShowPrivacy(false);
+        RNBootSplash.hide({ fade: true });
+      } else {
+        console.log("未同意协议");
+        // 未同意，显示弹窗
+        setShowPrivacy(true);
+      }
+    };
+    checkPrivacy();
+  }, []);
+  const goinit = async() => {  //初始化sdk
+  init().then(() => {
+  // 初始化完成
+  //console.log("友盟初始化完成");
+  //exitApp() //退出app的方法
+  getDeviceInfo().then(data => {
+  console.log(data);
+  data.deviceId
+  data.deviceType
+  data.brand
+  data.bundleId
+})
+})
+  };
+  const handlagree = () => {  //同意协议
+    RNBootSplash.hide({ fade: true });
+    setShowPrivacy(false);
+  };
+    const handldisagree = () => { //拒绝协议
+      // 二次确认弹窗
+    Alert.alert(
+      "提示",
+      "您未同意授权，将无法继续使用 App。是否确认拒绝？",
+      [
+        {
+          text: "再看看",
+          style: "cancel",
+        },
+        {
+          text: "确认拒绝",
+          style: "destructive",
+          onPress: () => {
+           exitApp();// 直接退出
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+   }; 
+  return (
+    <GestureHandlerRootView>
+    <SafeAreaProvider>
+       <Provider
+       theme={{
+
+    brand_primary: '#FF9500',     // 按钮背景颜色 <Button type="primary">
+
+}}>
+       <NavigationContainer>
+     <StatusBar
+        hidden={false}               // 显示状态栏
+        translucent={true}           // 让状态栏背景透明
+        backgroundColor="transparent" // 透明背景
+        barStyle="dark-content"      // 字体颜色（dark-content / light-content）
+      />
+      <Stack.Navigator screenOptions={{ headerShown: false,
+     animation: 'simple_push',
+    }}>
+         {/* Tab 导航 */}
+     <Tab.Screen name="MainTab">
+  {() => <TabNavigator totalcount={totalcount} />}
+</Tab.Screen>
+      {/* 登录页 */}
+      <Stack.Screen name="Login" component={Login}/>
+      <Stack.Screen name="Code" component={Code}/>
+       <Stack.Screen name="Confirm" component={Confirm}/>
+      <Stack.Screen name="ClubHome" component={ClubHome}/>
+      <Stack.Screen name="ClubInfo" component={ClubInfo}/>
+<Stack.Screen name="Setting" component={Setting}/>
+<Stack.Screen name="Profile" component={Profile}/>
+<Stack.Screen name="Avtar" component={Avtar}/>
+<Stack.Screen name="Name" component={Name}/>
+<Stack.Screen name="Notice" component={Notice}/>
+<Stack.Screen name="Shopinfo" component={Shopinfo}/>
+<Stack.Screen name="Collect" component={Collect}/>
+<Stack.Screen name="Follow" component={Follow}/>
+<Stack.Screen name="Order" component={Order}/>
+<Stack.Screen name="Coupon" component={Coupon}/>
+<Stack.Screen name="Asset" component={Asset}/>
+<Stack.Screen name="Register" component={Register}/>
+<Stack.Screen name="InviteOrder" component={InviteOrder}/>
+<Stack.Screen name="Withdraw" component={Withdraw}/>
+<Stack.Screen name="Details" component={Details}/>
+<Stack.Screen name="Guarantee" component={Guarantee}/>
+<Stack.Screen name="Join" component={Join}/>
+<Stack.Screen name="Cashout" component={Cashout}/>
+<Stack.Screen name="OrderInfo" component={OrderInfo}/>
+<Stack.Screen name="Comment" component={Comment}/>
+<Stack.Screen name="OneChat" component={OneChat}/>
+<Stack.Screen name="ShopIndex" component={ShopIndex}/>
+<Stack.Screen name="ShopOrder" component={ShopOrder}/>
+<Stack.Screen name="ShopCashout" component={ShopCashout}/>
+<Stack.Screen name="ShopCashItem" component={ShopCashItem}/>
+<Stack.Screen name="ShopPending" component={ShopPending}/>
+<Stack.Screen name="ShopHomeOrder" component={ShopHomeOrder}/>
+<Stack.Screen name="ShopOrderInfo" component={ShopOrderInfo}/>
+<Stack.Screen name="ShopScreenshot" component={ShopScreenshot}/>
+<Stack.Screen name="ShopEnter" component={ShopEnter}/>
+<Stack.Screen name="ShopSetting" component={ShopSetting}/>
+<Stack.Screen name="ShopManage" component={ShopManage}/>
+<Stack.Screen name="ShopEmployee" component={ShopEmployee}/>
+<Stack.Screen name="ShopAddEmployee" component={ShopAddEmployee}/>
+<Stack.Screen name="ShopEditEmployee" component={ShopEditEmployee}/>
+<Stack.Screen name="ShopNotice" component={ShopNotice}/>
+<Stack.Screen name="Allcomments" component={Allcomments}/>
+<Stack.Screen name="UserAgree" component={UserAgree}/>
+<Stack.Screen name="PrivacyAgree" component={PrivacyAgree}/>
+<Stack.Screen name="ShopPreview" component={ShopPreview}/>
+<Stack.Screen name="ShopEdit" component={ShopEdit}/>
+<Stack.Screen name="Preze" component={Preze}/>
+<Stack.Screen name="Invite" component={Invite}/>
+
+
+
+
+
+      </Stack.Navigator>
+       </NavigationContainer>
+       <PrivacyModal
+        privacyUrl="https://s.tourok.com.cn/privacy.html"
+        termsUrl="https://s.tourok.com.cn/user.html"
+        sanfangUrl="https://jieqirili.com/sanfang.html"
+        onAgree={() => handlagree()}
+        showPrivacyModal={showPrivacy}
+        ondisAgree={() => handldisagree()}
+      />
+    </Provider>
+    </SafeAreaProvider>
+    </GestureHandlerRootView>
+  );
+}
+
+const styles = StyleSheet.create({
+    link: { 
+    color: '#C85541', textDecorationLine: 'underline' 
+},
+    noargee:{
+      marginTop: px(18),
+  fontFamily: 'MiSans-Regular',
+        fontSize:px(18),
+        color:'#767676',
+        fontWeight:400,
+        lineHeight:px(24),
+},
+          logintext:{
+        fontFamily: 'MiSans-Medium',
+        fontSize:px(18),
+        color:'#FFFFFF',
+        //fontWeight:500,
+        lineHeight:px(24),
+    },
+          gradientBox: {
+    width:px(221),
+    height: px(48),
+    borderRadius: px(24),
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+    descontent:{
+ fontFamily: 'MiSans-Regular',
+    fontSize: px(15),
+    color: '#767676',
+    fontWeight: 400,
+    lineHeight: px(26),
+    //marginTop: px(12),
+    },
+    dessmall:{
+    fontFamily: 'MiSans-Regular',
+    fontSize: px(14),
+    color: '#AAAAAA',
+    fontWeight: 400,
+    lineHeight: px(19),
+    marginTop: px(8),
+    },
+    destitle:{
+  fontFamily: 'MiSans-Medium',
+    fontSize: px(19),
+    color: '#1A1A1A',
+    lineHeight: px(25),
+    },
+  message:{
+  fontFamily: 'MiSans-Regular',
+        fontSize:px(12),
+        color:'#FFFFFF',
+        fontWeight:400,
+        lineHeight:px(16),
+},
+  container: {
+    flex: 1,
+  },
+});
+
+export default App;

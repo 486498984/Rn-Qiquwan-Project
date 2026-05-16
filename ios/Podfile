@@ -1,12 +1,27 @@
-# Resolve react_native_pods.rb with node to allow for hoisting
-require Pod::Executable.execute_command('node', ['-p',
-  'require.resolve(
-    "react-native/scripts/react_native_pods.rb",
-    {paths: [process.argv[1]]},
-  )', __dir__]).strip
+# --- ✅ 1. 定义 node_require 函数 ---
+def node_require(script)
+  # Resolve script with node to allow for hoisting
+  require Pod::Executable.execute_command('node', ['-p',
+    "require.resolve(
+      '#{script}',
+      {paths: [process.argv[1]]},
+    )", __dir__]).strip
+end
+
+
+# --- ✅ 正确引入 react-native 与 permissions 的脚本 ---
+node_require('react-native/scripts/react_native_pods.rb')
+node_require('react-native-permissions/scripts/setup.rb')
 
 platform :ios, min_ios_version_supported
 prepare_react_native_project!
+
+# 👇 只启用你需要的权限（这里只启用定位）
+setup_permissions([
+  'LocationWhenInUse',
+  'Camera',
+  'Notifications',
+])
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil

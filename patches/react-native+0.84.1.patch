@@ -1,0 +1,22 @@
+diff --git a/node_modules/react-native/Libraries/Text/Text.js b/node_modules/react-native/Libraries/Text/Text.js
+index a9e4036..2668860 100644
+--- a/node_modules/react-native/Libraries/Text/Text.js
++++ b/node_modules/react-native/Libraries/Text/Text.js
+@@ -577,7 +577,7 @@ if (ReactNativeFeatureFlags.reduceDefaultPropsInText()) {
+             accessibilityRole: _accessibilityRole,
+             accessibilityState: _accessibilityState,
+             accessible: _accessible,
+-            allowFontScaling: allowFontScaling !== false,
++            allowFontScaling: false,
+             disabled: _disabled,
+             ellipsizeMode: ellipsizeMode ?? 'tail',
+             importantForAccessibility: _importantForAccessibility,
+@@ -614,7 +614,7 @@ if (ReactNativeFeatureFlags.reduceDefaultPropsInText()) {
+           accessibilityRole={_accessibilityRole}
+           accessibilityState={_accessibilityState}
+           accessible={_accessible}
+-          allowFontScaling={allowFontScaling !== false}
++          allowFontScaling={false}
+           disabled={_disabled}
+           ellipsizeMode={ellipsizeMode ?? 'tail'}
+           importantForAccessibility={_importantForAccessibility}

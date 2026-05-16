@@ -7,22 +7,59 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		043061A22F63E9F8006C5BD8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 043061A12F63E9F8006C5BD8 /* Assets.xcassets */; };
+		047FA9032F6296D50059A9B8 /* Network.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047FA9022F6296D50059A9B8 /* Network.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		047FA9072F62983E0059A9B8 /* ATAuthSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047FA9062F62983E0059A9B8 /* ATAuthSDK.framework */; };
+		047FA9092F6298490059A9B8 /* YTXMonitor.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047FA9082F6298490059A9B8 /* YTXMonitor.framework */; };
+		047FA90B2F6298540059A9B8 /* YTXOperators.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 047FA90A2F6298540059A9B8 /* YTXOperators.framework */; };
+		047FA90E2F6298B60059A9B8 /* ATAuthSDK.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 047FA90D2F6298B60059A9B8 /* ATAuthSDK.bundle */; };
+		047FA9122F629AC30059A9B8 /* AliOnePassModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 047FA9102F629AC30059A9B8 /* AliOnePassModule.m */; };
+		047FA9142F62B36D0059A9B8 /* applogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 047FA9132F62B36D0059A9B8 /* applogo.png */; };
 		0C80B921A6F3F58F76C31292 /* libPods-QiquwanProject.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-QiquwanProject.a */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		17651F47326B4F4FAC579136 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C817E7E98C1544C9BF580279 /* Colors.xcassets */; };
+		19912962B7294C59BD321EFA /* MiSans-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4CEAACAB66D14E5AAC940B2A /* MiSans-Medium.ttf */; };
+		3A00B873B664462A802D6AA2 /* MiSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 170A9DAA2B06498CB74C03F6 /* MiSans-Regular.ttf */; };
+		6EB237873FF94A3EACB7A749 /* MiSans-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A0B0541BB22240EC9EF85DB5 /* MiSans-Bold.ttf */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		909FB052CBE242E1822CEF9F /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3E648EDA3A5A4D0EB51B0307 /* BootSplash.storyboard */; };
+		9C2F20B830C6486FBAD6D6C1 /* DingTalk JinBuTi-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 597ED10C59804DF8957CA1EC /* DingTalk JinBuTi-Regular.ttf */; };
+		B0B93E3FB0C24DF485D7C28A /* antfill.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C536A41AAFAD43DFAF521610 /* antfill.ttf */; };
+		C814E7DEF44F4153AE39C7AD /* antoutline.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CB19F7893FE7429089F54225 /* antoutline.ttf */; };
+		E844F53BFA90B388A227D215 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		043061A12F63E9F8006C5BD8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		047FA8FB2F6296AD0059A9B8 /* ATAuthSDK.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = ATAuthSDK.xcframework; sourceTree = "<group>"; };
+		047FA8FC2F6296AD0059A9B8 /* YTXMonitor.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = YTXMonitor.xcframework; sourceTree = "<group>"; };
+		047FA8FD2F6296AD0059A9B8 /* YTXOperators.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; path = YTXOperators.xcframework; sourceTree = "<group>"; };
+		047FA9022F6296D50059A9B8 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = System/Library/Frameworks/Network.framework; sourceTree = SDKROOT; };
+		047FA9062F62983E0059A9B8 /* ATAuthSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ATAuthSDK.framework; path = "Frameworks/ATAuthSDK.xcframework/ios-arm64/ATAuthSDK.framework"; sourceTree = "<group>"; };
+		047FA9082F6298490059A9B8 /* YTXMonitor.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = YTXMonitor.framework; path = "Frameworks/YTXMonitor.xcframework/ios-arm64/YTXMonitor.framework"; sourceTree = "<group>"; };
+		047FA90A2F6298540059A9B8 /* YTXOperators.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = YTXOperators.framework; path = "Frameworks/YTXOperators.xcframework/ios-arm64/YTXOperators.framework"; sourceTree = "<group>"; };
+		047FA90D2F6298B60059A9B8 /* ATAuthSDK.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = ATAuthSDK.bundle; path = "Frameworks/ATAuthSDK.xcframework/ios-arm64/ATAuthSDK.framework/ATAuthSDK.bundle"; sourceTree = "<group>"; };
+		047FA90F2F629AC30059A9B8 /* AliOnePassModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AliOnePassModule.h; sourceTree = "<group>"; };
+		047FA9102F629AC30059A9B8 /* AliOnePassModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AliOnePassModule.m; sourceTree = "<group>"; };
+		047FA9132F62B36D0059A9B8 /* applogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = applogo.png; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* QiquwanProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QiquwanProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = QiquwanProject/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = QiquwanProject/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = QiquwanProject/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		170A9DAA2B06498CB74C03F6 /* MiSans-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "MiSans-Regular.ttf"; path = "../assets/fonts/MiSans-Regular.ttf"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-QiquwanProject.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QiquwanProject.debug.xcconfig"; path = "Target Support Files/Pods-QiquwanProject/Pods-QiquwanProject.debug.xcconfig"; sourceTree = "<group>"; };
+		3E648EDA3A5A4D0EB51B0307 /* BootSplash.storyboard */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = BootSplash.storyboard; path = QiquwanProject/BootSplash.storyboard; sourceTree = "<group>"; };
+		4CEAACAB66D14E5AAC940B2A /* MiSans-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "MiSans-Medium.ttf"; path = "../assets/fonts/MiSans-Medium.ttf"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-QiquwanProject.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QiquwanProject.release.xcconfig"; path = "Target Support Files/Pods-QiquwanProject/Pods-QiquwanProject.release.xcconfig"; sourceTree = "<group>"; };
+		597ED10C59804DF8957CA1EC /* DingTalk JinBuTi-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "DingTalk JinBuTi-Regular.ttf"; path = "../assets/fonts/DingTalk JinBuTi-Regular.ttf"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-QiquwanProject.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-QiquwanProject.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = QiquwanProject/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = QiquwanProject/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		A0B0541BB22240EC9EF85DB5 /* MiSans-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "MiSans-Bold.ttf"; path = "../assets/fonts/MiSans-Bold.ttf"; sourceTree = "<group>"; };
+		C536A41AAFAD43DFAF521610 /* antfill.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = antfill.ttf; path = "../node_modules/@ant-design/icons-react-native/fonts/antfill.ttf"; sourceTree = "<group>"; };
+		C817E7E98C1544C9BF580279 /* Colors.xcassets */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = folder.assetcatalog; name = Colors.xcassets; path = QiquwanProject/Colors.xcassets; sourceTree = "<group>"; };
+		CB19F7893FE7429089F54225 /* antoutline.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = antoutline.ttf; path = "../node_modules/@ant-design/icons-react-native/fonts/antoutline.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -31,6 +68,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				047FA90B2F6298540059A9B8 /* YTXOperators.framework in Frameworks */,
+				047FA9092F6298490059A9B8 /* YTXMonitor.framework in Frameworks */,
+				047FA9072F62983E0059A9B8 /* ATAuthSDK.framework in Frameworks */,
+				047FA9032F6296D50059A9B8 /* Network.framework in Frameworks */,
 				0C80B921A6F3F58F76C31292 /* libPods-QiquwanProject.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -38,6 +79,39 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		047FA8FE2F6296AD0059A9B8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				047FA8FB2F6296AD0059A9B8 /* ATAuthSDK.xcframework */,
+				047FA8FC2F6296AD0059A9B8 /* YTXMonitor.xcframework */,
+				047FA8FD2F6296AD0059A9B8 /* YTXOperators.xcframework */,
+			);
+			path = Frameworks;
+			sourceTree = "<group>";
+		};
+		047FA9112F629AC30059A9B8 /* AliOnePassModule */ = {
+			isa = PBXGroup;
+			children = (
+				047FA90F2F629AC30059A9B8 /* AliOnePassModule.h */,
+				047FA9102F629AC30059A9B8 /* AliOnePassModule.m */,
+			);
+			path = AliOnePassModule;
+			sourceTree = "<group>";
+		};
+		1255A4F312284A5D9D663C84 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4CEAACAB66D14E5AAC940B2A /* MiSans-Medium.ttf */,
+				170A9DAA2B06498CB74C03F6 /* MiSans-Regular.ttf */,
+				597ED10C59804DF8957CA1EC /* DingTalk JinBuTi-Regular.ttf */,
+				A0B0541BB22240EC9EF85DB5 /* MiSans-Bold.ttf */,
+				C536A41AAFAD43DFAF521610 /* antfill.ttf */,
+				CB19F7893FE7429089F54225 /* antoutline.ttf */,
+				047FA9132F62B36D0059A9B8 /* applogo.png */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		13B07FAE1A68108700A75B9A /* QiquwanProject */ = {
 			isa = PBXGroup;
 			children = (
@@ -46,6 +120,9 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
+				043061A12F63E9F8006C5BD8 /* Assets.xcassets */,
+				3E648EDA3A5A4D0EB51B0307 /* BootSplash.storyboard */,
+				C817E7E98C1544C9BF580279 /* Colors.xcassets */,
 			);
 			name = QiquwanProject;
 			sourceTree = "<group>";
@@ -53,6 +130,11 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				047FA90A2F6298540059A9B8 /* YTXOperators.framework */,
+				047FA9082F6298490059A9B8 /* YTXMonitor.framework */,
+				047FA9062F62983E0059A9B8 /* ATAuthSDK.framework */,
+				047FA9022F6296D50059A9B8 /* Network.framework */,
+				047FA8FE2F6296AD0059A9B8 /* Frameworks */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				5DCACB8F33CDC322A6C60F78 /* libPods-QiquwanProject.a */,
 			);
@@ -69,11 +151,14 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				047FA9112F629AC30059A9B8 /* AliOnePassModule */,
+				047FA90D2F6298B60059A9B8 /* ATAuthSDK.bundle */,
 				13B07FAE1A68108700A75B9A /* QiquwanProject */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				1255A4F312284A5D9D663C84 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -136,11 +221,12 @@
 			};
 			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "QiquwanProject" */;
 			compatibilityVersion = "Xcode 12.0";
-			developmentRegion = en;
+			developmentRegion = "zh-Hans";
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
@@ -157,8 +243,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				047FA90E2F6298B60059A9B8 /* ATAuthSDK.bundle in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				E844F53BFA90B388A227D215 /* PrivacyInfo.xcprivacy in Resources */,
+				19912962B7294C59BD321EFA /* MiSans-Medium.ttf in Resources */,
+				047FA9142F62B36D0059A9B8 /* applogo.png in Resources */,
+				3A00B873B664462A802D6AA2 /* MiSans-Regular.ttf in Resources */,
+				9C2F20B830C6486FBAD6D6C1 /* DingTalk JinBuTi-Regular.ttf in Resources */,
+				6EB237873FF94A3EACB7A749 /* MiSans-Bold.ttf in Resources */,
+				B0B93E3FB0C24DF485D7C28A /* antfill.ttf in Resources */,
+				043061A22F63E9F8006C5BD8 /* Assets.xcassets in Resources */,
+				C814E7DEF44F4153AE39C7AD /* antoutline.ttf in Resources */,
+				909FB052CBE242E1822CEF9F /* BootSplash.storyboard in Resources */,
+				17651F47326B4F4FAC579136 /* Colors.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,6 +342,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				047FA9122F629AC30059A9B8 /* AliOnePassModule.m in Sources */,
 				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -257,26 +356,38 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 9;
+				DEVELOPMENT_TEAM = 9A77ZS5JNQ;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks/ATAuthSDK.xcframework/ios-arm64",
+					"$(PROJECT_DIR)/Frameworks/YTXMonitor.xcframework/ios-arm64",
+					"$(PROJECT_DIR)/Frameworks/YTXOperators.xcframework/ios-arm64",
+				);
 				INFOPLIST_FILE = QiquwanProject/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = QiquwanProject;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
+					"-framework",
+					"\"YTXOperators\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.qiquwan.games;
 				PRODUCT_NAME = QiquwanProject;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -287,24 +398,36 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 9;
+				DEVELOPMENT_TEAM = 9A77ZS5JNQ;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks/ATAuthSDK.xcframework/ios-arm64",
+					"$(PROJECT_DIR)/Frameworks/YTXMonitor.xcframework/ios-arm64",
+					"$(PROJECT_DIR)/Frameworks/YTXOperators.xcframework/ios-arm64",
+				);
 				INFOPLIST_FILE = QiquwanProject/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = QiquwanProject;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
+					"-framework",
+					"\"YTXOperators\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.qiquwan.games;
 				PRODUCT_NAME = QiquwanProject;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
@@ -370,6 +493,10 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DRCT_REMOVE_LEGACY_ARCH=1",
+				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DFOLLY_NO_CONFIG",
@@ -377,8 +504,13 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
+					"-DRCT_REMOVE_LEGACY_ARCH=1",
 				);
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
+				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
+				USE_HERMES = true;
 			};
 			name = Debug;
 		};
@@ -435,6 +567,10 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CFLAGS = (
+					"$(inherited)",
+					"-DRCT_REMOVE_LEGACY_ARCH=1",
+				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-DFOLLY_NO_CONFIG",
@@ -442,8 +578,12 @@
 					"-DFOLLY_USE_LIBCPP=1",
 					"-DFOLLY_CFG_NO_COROUTINES=1",
 					"-DFOLLY_HAVE_CLOCK_GETTIME=1",
+					"-DRCT_REMOVE_LEGACY_ARCH=1",
 				);
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
+				USE_HERMES = true;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
