@@ -4087,6 +4087,11 @@ event-target-shim@^5.0.0:
   resolved "https://registry.yarnpkg.com/event-target-shim/-/event-target-shim-5.0.1.tgz#5d4d3ebdf9583d63a5333ce2deb7480ab2b05789"
   integrity sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ==
 
+events@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/events/-/events-1.0.1.tgz#386f6471cbb609e7925e7bfe7468634b9e069ac2"
+  integrity sha512-Ee2RsyA5p9FyGVnVvbb1j7VKg+ezi6IOcgis2crSNo1V7S/M0eUnMABobd/fRhm6L3p/jGhPJzDFQDRpYw3O+g==
+
 execa@^5.0.0:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/execa/-/execa-5.1.1.tgz#f80ad9cbf4298f7bd1d4c9555c21e93741c411dd"
@@ -7028,6 +7033,13 @@ react-native-webview@^13.16.1:
   dependencies:
     escape-string-regexp "^4.0.0"
     invariant "2.2.4"
+
+react-native-wechat-lib@^1.1.27:
+  version "1.1.27"
+  resolved "https://registry.yarnpkg.com/react-native-wechat-lib/-/react-native-wechat-lib-1.1.27.tgz#22d8c74bd6099627978ffe898f0ee089e113c7e9"
+  integrity sha512-OstWvE0vaBvIGqAegaCIS/jvsVg5bH1IYk/EU8flmDRPl3mMlraG2C2AnvzHkrzXbJLJamQigA44CDoYj2p/4g==
+  dependencies:
+    events "1.0.1"
 
 react-native-worklets@^0.7.4:
   version "0.7.4"

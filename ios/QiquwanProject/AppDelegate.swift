@@ -6,7 +6,7 @@ import RNBootSplash
 
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate,WXApiDelegate {
   var window: UIWindow?
 
   var reactNativeDelegate: ReactNativeDelegate?
@@ -40,17 +40,42 @@ func application(
   options: [UIApplication.OpenURLOptionsKey : Any] = [:]
 ) -> Bool {
 
-  // 转成 OC dictionary
+  let urlString = url.absoluteString
+
+  print("openURL:", urlString)
+
   let optionsDict = options.reduce(into: [String: Any]()) { result, item in
     result[item.key.rawValue] = item.value
   }
 
-  if RNTAlipay.handleOpenURL(app, open: url, options: optionsDict) {
-    return true
+  // ✅ 微信
+  if urlString.hasPrefix("wx") || urlString.contains("wechat") {
+
+    print("命中微信 URL")
+
+    RCTLinkingManager.application(app, open: url, options: options)
+
+    return WXApi.handleOpen(url, delegate: self)
   }
 
-  return true
+  // ✅ 支付宝
+  if urlString.hasPrefix("alipay") {
+
+    print("命中支付宝 URL")
+
+    return RNTAlipay.handleOpenURL(
+      app,
+      open: url,
+      options: optionsDict
+    )
+  }
+
+  // ✅ RN DeepLink
+  return RCTLinkingManager.application(app, open: url, options: options)
 }
+
+
+
 }
 
 class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {

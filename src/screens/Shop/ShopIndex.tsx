@@ -7,7 +7,7 @@ import StarRating from '../../components/Club/StarRating'
 import SlideSwitch from './components/Switch';
 import request from '../../api/request';
 import { IMG_URL } from '../../api/config';
-
+import { Toast } from '@ant-design/react-native'
 
 
 export default function ShopIndex({navigation,route}) {
@@ -32,7 +32,7 @@ navigation.navigate('ShopHomeOrder',{e})
  useEffect(() => {
     if(id){
    console.log(id);
-getstoreinfo(id)
+   getstoreinfo(id)
     }
  }, [id])
  const getstoreinfo = async(e) => { 
@@ -47,11 +47,53 @@ getstoreinfo(id)
         console.log('storeauth',response);
       if (response.data !== null && response.code == 0) {
        setStoreinfo(response.data)
+       if(response.data.openStatus=='OPEN'){ //营业中
+        setIsOn(true)
+       }else{
+        setIsOn(false)
+       }
       } 
       } catch (error) {
         console.error(error);
       }
   };
+  const handleison = (e) => { 
+  console.log(e,isOn);
+  if(e){ //开店
+  changestatus(true)
+  setIsOn(true)
+  }else{ //关店
+  changestatus(false)
+  setIsOn(false)
+  }
+   };
+const changestatus = async (e) => {
+  const openStatus = e ? 'OPEN' : 'CLOSED';
+  try {
+    const response = await request({
+      url: '/store/status',
+      method: 'PUT',
+      data: {
+        storeId: id,
+        openStatus,
+      },
+      query: {},
+    });
+    console.log(response);
+    if (response.data !== undefined && response.code == 0) {
+    setIsOn(e)
+    }else{
+      Toast.fail({
+        content: '更新失败，请稍后再试',
+        duration: 2,
+        position: 'center',
+        mask: false,
+      })
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
   return (
     <View style={styles.container}>
           <View style={{width: px(393),height: px(98),backgroundColor: '#fff',
@@ -103,7 +145,7 @@ justifyContent: 'space-between',
     </View>
   <SlideSwitch
         value={isOn}
-        onChange={setIsOn}
+        onChange={(e)=>handleison(e)}
       />
         </View> 
 <View style={{width: px(361),height: px(107),backgroundColor: '#fff',
@@ -272,7 +314,7 @@ marginTop: px(16),borderRadius: px(6),flexDirection: 'row',alignItems: 'center',
     flexWrap: 'wrap',gap:px(35)
 }}>
 <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',}}
- onPress={()=>navigation.navigate('ShopSetting')}>
+ onPress={()=>navigation.navigate('ShopSetting',{storeinfo:storeinfo})}>
   <Image source={require('../../../assets/images/my/other1.png')} 
     style={{width:px(33),height:px(33),}}></Image>
     <Text style={styles.bottomdes}>店铺设置</Text>

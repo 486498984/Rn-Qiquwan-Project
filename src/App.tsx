@@ -85,8 +85,8 @@ import {
   exitApp,
 } from '@react-native-hero/umeng-analytics'
 import { useIMStore } from './store/imStore';
-import { TUILogin } from '@tencentcloud/tui-core';
-
+//import { TUILogin } from '@tencentcloud/tui-core';
+ import * as WeChat from 'react-native-wechat-lib';
 
 
   const loginInfo =
@@ -448,6 +448,15 @@ chat.on(TencentCloudChat.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED, onTotalUnread
     checkPrivacy();
   }, []);
   const goinit = async() => {  //初始化sdk
+        WeChat.registerApp('wxa6e17fe1975fb8a6', 'https://tourok.com.cn').then((res) => {
+      console.log("registerApp: " + res)
+      WeChat.getApiVersion().then((num) => {
+        console.log("test:1 " + num)
+      })
+      checkWeChat();
+      
+      //openWeChat();
+    });
   init().then(() => {
   // 初始化完成
   //console.log("友盟初始化完成");
@@ -459,8 +468,16 @@ chat.on(TencentCloudChat.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED, onTotalUnread
   data.brand
   data.bundleId
 })
-})
+  })
   };
+  const checkWeChat = async () => {
+  const installed = await WeChat.isWXAppInstalled();
+  console.log('是否安装微信:', installed);
+};
+const openWeChat = async () => {
+  const res = await WeChat.openWXApp();
+  console.log('打开微信结果:', res);
+};
   const handlagree = () => {  //同意协议
     RNBootSplash.hide({ fade: true });
     setShowPrivacy(false);

@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View,Image,StatusBar,TouchableOpacity,ScrollView,
-Platform,BackHandler,Animated,ActivityIndicator,
+Platform,BackHandler,Animated,ActivityIndicator,DeviceEventEmitter,
  } from 'react-native'
 import React,{useState,useEffect,useRef,useMemo} from 'react'
 import { px } from '../../utils/scaleUtils';
@@ -18,8 +18,8 @@ import { pay } from '@react-native-hero/alipay';
 import Storage from '../../utils/storage';
 import PaymentLoadingModal from '../../components/Home/PaymentLoadingModal'; // 引入组件
 import SafeFastImage from '../../components/Home/SafeFastImage'
-
-
+ import * as WeChat from 'react-native-wechat-lib';
+ 
 
   const commnet=[{title:'东*******',content:'没毛病，很牛逼！！！'},
       {title:'西*******',content:'战绩可查，NB!'},
@@ -385,9 +385,17 @@ const handlecreatorder = async() => { //创建订单
   const storeData = await getstoreinfo(storeinfo?.id);
   console.log(storeData);
   // 店铺关闭
-  if (storeData?.openStatus !== 'BUSY') {
+  if (storeData?.openStatus !== 'OPEN') {
     Toast.info({
       content: '店铺已打烊，暂时无法下单',
+      mask: false
+    });
+    return;
+  }
+  const config = JSON.parse(storeData.openHours);
+    if (!isInTimeRange(config)) {
+    Toast.info({
+      content: '当前不在店铺营业时间，暂时无法下单',
       mask: false
     });
     return;
@@ -406,7 +414,7 @@ const handlecreatorder = async() => { //创建订单
       skuId: shopallinfo?.skuList[chshoptype].id,
       addonIds: addonIds,
       quantity: paynum,
-      paymentType: "ALIPAY",
+      paymentType:payways==1? "ALIPAY":'WECHAT',
       couponReceiveIds: selectedCoupon ? [selectedCoupon.userCouponId] : [],
       remark: "请尽快发货",
       attr: "{\"source\":\"app\"}"
@@ -415,12 +423,110 @@ const handlecreatorder = async() => { //创建订单
     });
     console.log('创建订单',response);
     if (response.data !== undefined && response.code == 0) {
+      const res = response.data.payInfo
+    if(payways==1){
     handlePay(response.data.payInfo.payInfo)
+    }else if(payways==2){
+        let payload={
+        partnerId: res.payParams.partnerid,
+        prepayId: res.prepayId,
+        nonceStr: res.payParams.noncestr,
+        timeStamp: res.payParams.timestamp,
+        package: res.payParams.package,
+        sign: res.payParams.sign,
+          }
+    handlewechatpay(payload)
+    }
     }
   } catch (error) {
     console.error(error);
   }
  };
+ function isInTimeRange(config) {
+  const now = new Date();
+
+  // 当前星期（1-7）
+  let currentWeek = now.getDay();
+  currentWeek = currentWeek === 0 ? 7 : currentWeek;
+
+  // 当前分钟数
+  const currentMinutes =
+    now.getHours() * 60 + now.getMinutes();
+
+  // 开始分钟数
+  const startMinutes =
+    config.start[0] * 60 + config.start[1];
+
+  // 结束分钟数
+  const endMinutes =
+    config.end[0] * 60 + config.end[1];
+
+  // 星期范围
+  const startWeek = Number(config.week[0]);
+  const endWeek = Number(config.week[1]);
+
+  // 是否在星期范围
+  const inWeekRange =
+    currentWeek >= startWeek &&
+    currentWeek <= endWeek;
+
+  // 是否在时间范围
+  const inTimeRange =
+    currentMinutes >= startMinutes &&
+    currentMinutes <= endMinutes;
+
+  return inWeekRange && inTimeRange;
+}
+
+ const handlewechatpay = async(e) => { 
+    try {
+      // 检查微信是否安装
+      const isInstalled = await WeChat.isWXAppInstalled();
+      if (!isInstalled) {
+        Toast.show({
+        content: '请先安装微信',
+        duration: 2,
+        position: 'center',
+        mask: false,
+      })
+        return;
+      }
+
+      // 调用支付
+      const result = await WeChat.pay(e);
+      console.log(result);
+      
+      if (result.errCode === 0) {
+         setLoading(false)
+        // 支付成功
+          goorder(3)
+          Toast.show({
+          content: '您已完成支付，请等待商家服务',
+          duration: 2,
+          position: 'center',
+          mask: false,
+        })
+     
+      } else {
+         setLoading(false)
+        // 支付失败或取消
+
+      }
+
+    } catch (error: any) {
+       setLoading(false)
+       //console.error('微信支付异常', error);
+         Toast.show({
+          content: '您已取消支付，请尽快完成支付',
+          duration: 2,
+          position: 'center',
+          mask: false,
+        })
+      navigation.goBack();
+      goorder(2)
+    }
+
+  };
   const handlePay = async (e) => {
     try {
       // 👉 这里应该从后端获取
@@ -436,7 +542,7 @@ const handlecreatorder = async() => { //创建订单
       const result = res?.data?.alipay_trade_app_pay_response;
 
       if (result?.code === '10000') {
-         goorder(1)
+         goorder(3)
           Toast.show({
           content: '您已完成支付，请等待商家服务',
           duration: 2,
@@ -452,7 +558,7 @@ const handlecreatorder = async() => { //创建订单
       console.log('支付失败:', err);
       if (err.code === 6001) {
          navigation.goBack();
-        goorder(1)
+        goorder(2)
         console.log('用户取消支付');
          Toast.show({
           content: '您已取消支付，请尽快完成支付',

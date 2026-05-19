@@ -38,6 +38,16 @@
 				<string>alipay2021006140652743</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>wechat</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>wxa6e17fe1975fb8a6</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
@@ -85,5 +95,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+	<string>weixin</string>
+	<string>wechat</string>
+	<string>weixinULAPI</string>
+	</array>
 </dict>
 </plist>

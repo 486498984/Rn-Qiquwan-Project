@@ -103,6 +103,8 @@ PODS:
     - FBLazyVector (= 0.84.1)
     - RCTRequired (= 0.84.1)
     - React-Core (= 0.84.1)
+  - RCTWeChat (1.1.27):
+    - React-Core
   - React (0.84.1):
     - React-Core (= 0.84.1)
     - React-Core/DevSupport (= 0.84.1)
@@ -2529,6 +2531,7 @@ DEPENDENCIES:
   - RCTSwiftUI (from `../node_modules/react-native/ReactApple/RCTSwiftUI`)
   - RCTSwiftUIWrapper (from `../node_modules/react-native/ReactApple/RCTSwiftUIWrapper`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
+  - RCTWeChat (from `../node_modules/react-native-wechat-lib`)
   - React (from `../node_modules/react-native/`)
   - React-callinvoker (from `../node_modules/react-native/ReactCommon/callinvoker`)
   - React-Core (from `../node_modules/react-native/`)
@@ -2656,6 +2659,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactApple/RCTSwiftUIWrapper"
   RCTTypeSafety:
     :path: "../node_modules/react-native/Libraries/TypeSafety"
+  RCTWeChat:
+    :path: "../node_modules/react-native-wechat-lib"
   React:
     :path: "../node_modules/react-native/"
   React-callinvoker:
@@ -2845,6 +2850,7 @@ SPEC CHECKSUMS:
   RCTSwiftUI: afc0a0a635860da1040a0b894bfd529da06d7810
   RCTSwiftUIWrapper: 3197c020094f3b2151bb2d1223f7276787be8166
   RCTTypeSafety: d13e192a37f151ce354641184bf4239844a3be17
+  RCTWeChat: 30f7ffea04116d2bf662599fb06f6d6c8b9c2578
   React: 1ba7d364ade7d883a1ec055bfc3606f35fdee17b
   React-callinvoker: bc2a26f8d84fb01f003fc6de6c9337b64715f95b
   React-Core: 7840d3a80b43a95c5e80ef75146bd70925ebab0f

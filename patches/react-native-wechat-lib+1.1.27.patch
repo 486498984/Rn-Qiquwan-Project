@@ -1,0 +1,552 @@
+diff --git a/node_modules/react-native-wechat-lib/android/build.gradle b/node_modules/react-native-wechat-lib/android/build.gradle
+index 872fb6b..f6c65a4 100644
+--- a/node_modules/react-native-wechat-lib/android/build.gradle
++++ b/node_modules/react-native-wechat-lib/android/build.gradle
+@@ -21,7 +21,9 @@ android {
+ 
+ allprojects {
+   repositories {
+-    jcenter()
++    google()
++    mavenCentral()
++    //jcenter()
+     maven { url "$projectDir/../../react-native/android" }
+   }
+ }
+diff --git a/node_modules/react-native-wechat-lib/android/build/.transforms/81817c4d06797afceef93ee400e2a1ad/results.bin b/node_modules/react-native-wechat-lib/android/build/.transforms/81817c4d06797afceef93ee400e2a1ad/results.bin
+new file mode 100644
+index 0000000..0d259dd
+--- /dev/null
++++ b/node_modules/react-native-wechat-lib/android/build/.transforms/81817c4d06797afceef93ee400e2a1ad/results.bin
+@@ -0,0 +1 @@
++o/classes
+diff --git a/node_modules/react-native-wechat-lib/android/build/.transforms/81817c4d06797afceef93ee400e2a1ad/transformed/classes/classes_dex/classes.dex b/node_modules/react-native-wechat-lib/android/build/.transforms/81817c4d06797afceef93ee400e2a1ad/transformed/classes/classes_dex/classes.dex
+new file mode 100644
+index 0000000..af00421
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/.transforms/81817c4d06797afceef93ee400e2a1ad/transformed/classes/classes_dex/classes.dex differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/results.bin b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/results.bin
+new file mode 100644
+index 0000000..7ed749e
+--- /dev/null
++++ b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/results.bin
+@@ -0,0 +1 @@
++o/bundleLibRuntimeToDirDebug
+diff --git a/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/BuildConfig.dex b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/BuildConfig.dex
+new file mode 100644
+index 0000000..5b7f4be
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/BuildConfig.dex differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$1.dex b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$1.dex
+new file mode 100644
+index 0000000..4e7d649
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$1.dex differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$10.dex b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$10.dex
+new file mode 100644
+index 0000000..570078c
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$10.dex differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$2.dex b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$2.dex
+new file mode 100644
+index 0000000..70d6a10
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$2.dex differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$3.dex b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$3.dex
+new file mode 100644
+index 0000000..d6b1ea9
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$3.dex differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$4.dex b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$4.dex
+new file mode 100644
+index 0000000..e9d2392
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$4.dex differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$5.dex b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$5.dex
+new file mode 100644
+index 0000000..36643d3
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$5.dex differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$6.dex b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$6.dex
+new file mode 100644
+index 0000000..5ec7fad
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$6.dex differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$7.dex b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$7.dex
+new file mode 100644
+index 0000000..316fc04
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$7.dex differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$8.dex b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$8.dex
+new file mode 100644
+index 0000000..e8ef810
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$8.dex differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$9.dex b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$9.dex
+new file mode 100644
+index 0000000..88c60e0
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$9.dex differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$ImageCallback.dex b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$ImageCallback.dex
+new file mode 100644
+index 0000000..b45dfc9
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$ImageCallback.dex differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$MediaObjectCallback.dex b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$MediaObjectCallback.dex
+new file mode 100644
+index 0000000..927b942
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule$MediaObjectCallback.dex differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule.dex b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule.dex
+new file mode 100644
+index 0000000..b635e4e
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatModule.dex differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatPackage.dex b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatPackage.dex
+new file mode 100644
+index 0000000..87cf2f5
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/bundleLibRuntimeToDirDebug_dex/com/theweflex/react/WeChatPackage.dex differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/desugar_graph.bin b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/desugar_graph.bin
+new file mode 100644
+index 0000000..e54fc45
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/.transforms/cb93f0526b7deb248a558dfffdc8724c/transformed/bundleLibRuntimeToDirDebug/desugar_graph.bin differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/generated/source/buildConfig/debug/com/theweflex/react/BuildConfig.java b/node_modules/react-native-wechat-lib/android/build/generated/source/buildConfig/debug/com/theweflex/react/BuildConfig.java
+new file mode 100644
+index 0000000..605fd73
+--- /dev/null
++++ b/node_modules/react-native-wechat-lib/android/build/generated/source/buildConfig/debug/com/theweflex/react/BuildConfig.java
+@@ -0,0 +1,10 @@
++/**
++ * Automatically generated file. DO NOT MODIFY
++ */
++package com.theweflex.react;
++
++public final class BuildConfig {
++  public static final boolean DEBUG = Boolean.parseBoolean("true");
++  public static final String LIBRARY_PACKAGE_NAME = "com.theweflex.react";
++  public static final String BUILD_TYPE = "debug";
++}
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml b/node_modules/react-native-wechat-lib/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml
+new file mode 100644
+index 0000000..d04cd4d
+--- /dev/null
++++ b/node_modules/react-native-wechat-lib/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml
+@@ -0,0 +1,13 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="com.theweflex.react" >
++
++    <uses-sdk android:minSdkVersion="24" />
++
++    <uses-permission android:name="android.permission.INTERNET" />
++    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
++    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
++    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
++    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json b/node_modules/react-native-wechat-lib/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json
+new file mode 100644
+index 0000000..004288a
+--- /dev/null
++++ b/node_modules/react-native-wechat-lib/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json
+@@ -0,0 +1,18 @@
++{
++  "version": 3,
++  "artifactType": {
++    "type": "AAPT_FRIENDLY_MERGED_MANIFESTS",
++    "kind": "Directory"
++  },
++  "applicationId": "com.theweflex.react",
++  "variantName": "debug",
++  "elements": [
++    {
++      "type": "SINGLE",
++      "filters": [],
++      "attributes": [],
++      "outputFile": "AndroidManifest.xml"
++    }
++  ],
++  "elementType": "File"
++}
+\ No newline at end of file
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties b/node_modules/react-native-wechat-lib/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties
+new file mode 100644
+index 0000000..1211b1e
+--- /dev/null
++++ b/node_modules/react-native-wechat-lib/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties
+@@ -0,0 +1,6 @@
++aarFormatVersion=1.0
++aarMetadataVersion=1.0
++minCompileSdk=1
++minCompileSdkExtension=0
++minAndroidGradlePluginVersion=1.0.0
++coreLibraryDesugaringEnabled=false
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json b/node_modules/react-native-wechat-lib/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json
+new file mode 100644
+index 0000000..9e26dfe
+--- /dev/null
++++ b/node_modules/react-native-wechat-lib/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json
+@@ -0,0 +1 @@
++{}
+\ No newline at end of file
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/compile_library_classes_jar/debug/bundleLibCompileToJarDebug/classes.jar b/node_modules/react-native-wechat-lib/android/build/intermediates/compile_library_classes_jar/debug/bundleLibCompileToJarDebug/classes.jar
+new file mode 100644
+index 0000000..e95c6d8
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/compile_library_classes_jar/debug/bundleLibCompileToJarDebug/classes.jar differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar b/node_modules/react-native-wechat-lib/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar
+new file mode 100644
+index 0000000..ba888a8
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/compile_symbol_list/debug/generateDebugRFile/R.txt b/node_modules/react-native-wechat-lib/android/build/intermediates/compile_symbol_list/debug/generateDebugRFile/R.txt
+new file mode 100644
+index 0000000..e69de29
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties b/node_modules/react-native-wechat-lib/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+new file mode 100644
+index 0000000..e8235f4
+--- /dev/null
++++ b/node_modules/react-native-wechat-lib/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+@@ -0,0 +1 @@
++#Tue May 19 04:45:11 CEST 2026
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml b/node_modules/react-native-wechat-lib/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+new file mode 100644
+index 0000000..8e87f76
+--- /dev/null
++++ b/node_modules/react-native-wechat-lib/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated" generated-set="generated$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/build/generated/res/resValues/debug"/></dataSet><mergedItems/></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/incremental/mergeDebugAssets/merger.xml b/node_modules/react-native-wechat-lib/android/build/intermediates/incremental/mergeDebugAssets/merger.xml
+new file mode 100644
+index 0000000..85e1f5e
+--- /dev/null
++++ b/node_modules/react-native-wechat-lib/android/build/intermediates/incremental/mergeDebugAssets/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/assets"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/debug/assets"/></dataSet><dataSet config="generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/build/intermediates/shader_assets/debug/compileDebugShaders/out"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml b/node_modules/react-native-wechat-lib/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
+new file mode 100644
+index 0000000..ea74b5c
+--- /dev/null
++++ b/node_modules/react-native-wechat-lib/android/build/intermediates/incremental/mergeDebugJniLibFolders/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/jniLibs"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/debug/jniLibs"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/incremental/mergeDebugShaders/merger.xml b/node_modules/react-native-wechat-lib/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
+new file mode 100644
+index 0000000..b1b544d
+--- /dev/null
++++ b/node_modules/react-native-wechat-lib/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/shaders"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/debug/shaders"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/BuildConfig.class b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/BuildConfig.class
+new file mode 100644
+index 0000000..2619b9a
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/BuildConfig.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$1.class b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$1.class
+new file mode 100644
+index 0000000..79fbee6
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$1.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$10.class b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$10.class
+new file mode 100644
+index 0000000..24c8d66
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$10.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$2.class b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$2.class
+new file mode 100644
+index 0000000..d549480
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$2.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$3.class b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$3.class
+new file mode 100644
+index 0000000..80ede8a
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$3.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$4.class b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$4.class
+new file mode 100644
+index 0000000..026ee34
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$4.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$5.class b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$5.class
+new file mode 100644
+index 0000000..413febd
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$5.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$6.class b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$6.class
+new file mode 100644
+index 0000000..bc76bf1
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$6.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$7.class b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$7.class
+new file mode 100644
+index 0000000..0c6c862
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$7.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$8.class b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$8.class
+new file mode 100644
+index 0000000..6631ede
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$8.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$9.class b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$9.class
+new file mode 100644
+index 0000000..640788b
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$9.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$ImageCallback.class b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$ImageCallback.class
+new file mode 100644
+index 0000000..62e2643
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$ImageCallback.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$MediaObjectCallback.class b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$MediaObjectCallback.class
+new file mode 100644
+index 0000000..d66976b
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule$MediaObjectCallback.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule.class b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule.class
+new file mode 100644
+index 0000000..880eb4d
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatModule.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatPackage.class b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatPackage.class
+new file mode 100644
+index 0000000..d39b3f4
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/theweflex/react/WeChatPackage.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt b/node_modules/react-native-wechat-lib/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt
+new file mode 100644
+index 0000000..78ac5b8
+--- /dev/null
++++ b/node_modules/react-native-wechat-lib/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt
+@@ -0,0 +1,2 @@
++R_DEF: Internal format may change without notice
++local
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt b/node_modules/react-native-wechat-lib/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt
+new file mode 100644
+index 0000000..08b8e3e
+--- /dev/null
++++ b/node_modules/react-native-wechat-lib/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt
+@@ -0,0 +1,23 @@
++1<?xml version="1.0" encoding="utf-8"?>
++2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++3    package="com.theweflex.react" >
++4
++5    <uses-sdk android:minSdkVersion="24" />
++6
++7    <uses-permission android:name="android.permission.INTERNET" />
++7-->/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:3:5-66
++7-->/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:3:22-64
++8    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
++8-->/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:4:5-78
++8-->/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:4:22-76
++9    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
++9-->/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:5:5-75
++9-->/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:5:22-73
++10    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
++10-->/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:6:5-74
++10-->/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:6:22-72
++11    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
++11-->/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:7:5-80
++11-->/Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:7:22-78
++12
++13</manifest>
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml b/node_modules/react-native-wechat-lib/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml
+new file mode 100644
+index 0000000..d04cd4d
+--- /dev/null
++++ b/node_modules/react-native-wechat-lib/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml
+@@ -0,0 +1,13 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="com.theweflex.react" >
++
++    <uses-sdk android:minSdkVersion="24" />
++
++    <uses-permission android:name="android.permission.INTERNET" />
++    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
++    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
++    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
++    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json b/node_modules/react-native-wechat-lib/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json
+new file mode 100644
+index 0000000..0637a08
+--- /dev/null
++++ b/node_modules/react-native-wechat-lib/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json
+@@ -0,0 +1 @@
++[]
+\ No newline at end of file
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt b/node_modules/react-native-wechat-lib/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt
+new file mode 100644
+index 0000000..08f4ebe
+--- /dev/null
++++ b/node_modules/react-native-wechat-lib/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt
+@@ -0,0 +1 @@
++0 Warning/Error
+\ No newline at end of file
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/BuildConfig.class b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/BuildConfig.class
+new file mode 100644
+index 0000000..2619b9a
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/BuildConfig.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$1.class b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$1.class
+new file mode 100644
+index 0000000..79fbee6
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$1.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$10.class b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$10.class
+new file mode 100644
+index 0000000..24c8d66
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$10.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$2.class b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$2.class
+new file mode 100644
+index 0000000..d549480
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$2.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$3.class b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$3.class
+new file mode 100644
+index 0000000..80ede8a
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$3.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$4.class b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$4.class
+new file mode 100644
+index 0000000..026ee34
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$4.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$5.class b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$5.class
+new file mode 100644
+index 0000000..413febd
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$5.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$6.class b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$6.class
+new file mode 100644
+index 0000000..bc76bf1
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$6.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$7.class b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$7.class
+new file mode 100644
+index 0000000..0c6c862
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$7.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$8.class b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$8.class
+new file mode 100644
+index 0000000..6631ede
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$8.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$9.class b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$9.class
+new file mode 100644
+index 0000000..640788b
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$9.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$ImageCallback.class b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$ImageCallback.class
+new file mode 100644
+index 0000000..62e2643
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$ImageCallback.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$MediaObjectCallback.class b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$MediaObjectCallback.class
+new file mode 100644
+index 0000000..d66976b
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule$MediaObjectCallback.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule.class b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule.class
+new file mode 100644
+index 0000000..880eb4d
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatModule.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatPackage.class b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatPackage.class
+new file mode 100644
+index 0000000..d39b3f4
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_dir/debug/bundleLibRuntimeToDirDebug/com/theweflex/react/WeChatPackage.class differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_jar/debug/bundleLibRuntimeToJarDebug/classes.jar b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_jar/debug/bundleLibRuntimeToJarDebug/classes.jar
+new file mode 100644
+index 0000000..98746b4
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/intermediates/runtime_library_classes_jar/debug/bundleLibRuntimeToJarDebug/classes.jar differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt b/node_modules/react-native-wechat-lib/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt
+new file mode 100644
+index 0000000..155d4fc
+--- /dev/null
++++ b/node_modules/react-native-wechat-lib/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt
+@@ -0,0 +1 @@
++com.theweflex.react
+diff --git a/node_modules/react-native-wechat-lib/android/build/outputs/logs/manifest-merger-debug-report.txt b/node_modules/react-native-wechat-lib/android/build/outputs/logs/manifest-merger-debug-report.txt
+new file mode 100644
+index 0000000..d9d5b78
+--- /dev/null
++++ b/node_modules/react-native-wechat-lib/android/build/outputs/logs/manifest-merger-debug-report.txt
+@@ -0,0 +1,37 @@
++-- Merging decision tree log ---
++manifest
++ADDED from /Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:1:1-8:12
++INJECTED from /Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:1:1-8:12
++	package
++		ADDED from /Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:2:11-40
++		INJECTED from /Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml
++	xmlns:android
++		ADDED from /Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:1:11-69
++uses-permission#android.permission.INTERNET
++ADDED from /Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:3:5-66
++	android:name
++		ADDED from /Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:3:22-64
++uses-permission#android.permission.ACCESS_NETWORK_STATE
++ADDED from /Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:4:5-78
++	android:name
++		ADDED from /Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:4:22-76
++uses-permission#android.permission.ACCESS_WIFI_STATE
++ADDED from /Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:5:5-75
++	android:name
++		ADDED from /Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:5:22-73
++uses-permission#android.permission.READ_PHONE_STATE
++ADDED from /Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:6:5-74
++	android:name
++		ADDED from /Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:6:22-72
++uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
++ADDED from /Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:7:5-80
++	android:name
++		ADDED from /Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml:7:22-78
++uses-sdk
++INJECTED from /Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
++INJECTED from /Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml
++INJECTED from /Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml
++	android:targetSdkVersion
++		INJECTED from /Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml
++	android:minSdkVersion
++		INJECTED from /Users/mac/Desktop/QiquwanProject/node_modules/react-native-wechat-lib/android/src/main/AndroidManifest.xml
+diff --git a/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$1.class.uniqueId12 b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$1.class.uniqueId12
+new file mode 100644
+index 0000000..79fbee6
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$1.class.uniqueId12 differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$10.class.uniqueId0 b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$10.class.uniqueId0
+new file mode 100644
+index 0000000..24c8d66
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$10.class.uniqueId0 differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$2.class.uniqueId10 b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$2.class.uniqueId10
+new file mode 100644
+index 0000000..d549480
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$2.class.uniqueId10 differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$3.class.uniqueId4 b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$3.class.uniqueId4
+new file mode 100644
+index 0000000..80ede8a
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$3.class.uniqueId4 differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$4.class.uniqueId1 b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$4.class.uniqueId1
+new file mode 100644
+index 0000000..026ee34
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$4.class.uniqueId1 differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$5.class.uniqueId8 b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$5.class.uniqueId8
+new file mode 100644
+index 0000000..413febd
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$5.class.uniqueId8 differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$6.class.uniqueId13 b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$6.class.uniqueId13
+new file mode 100644
+index 0000000..bc76bf1
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$6.class.uniqueId13 differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$7.class.uniqueId5 b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$7.class.uniqueId5
+new file mode 100644
+index 0000000..0c6c862
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$7.class.uniqueId5 differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$8.class.uniqueId3 b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$8.class.uniqueId3
+new file mode 100644
+index 0000000..6631ede
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$8.class.uniqueId3 differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$9.class.uniqueId2 b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$9.class.uniqueId2
+new file mode 100644
+index 0000000..640788b
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$9.class.uniqueId2 differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$ImageCallback.class.uniqueId9 b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$ImageCallback.class.uniqueId9
+new file mode 100644
+index 0000000..62e2643
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$ImageCallback.class.uniqueId9 differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$MediaObjectCallback.class.uniqueId6 b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$MediaObjectCallback.class.uniqueId6
+new file mode 100644
+index 0000000..d66976b
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule$MediaObjectCallback.class.uniqueId6 differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule.class.uniqueId7 b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule.class.uniqueId7
+new file mode 100644
+index 0000000..8944b0f
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatModule.class.uniqueId7 differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatPackage.class.uniqueId11 b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatPackage.class.uniqueId11
+new file mode 100644
+index 0000000..d39b3f4
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/compileTransaction/stash-dir/WeChatPackage.class.uniqueId11 differ
+diff --git a/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin
+new file mode 100644
+index 0000000..8786ec4
+Binary files /dev/null and b/node_modules/react-native-wechat-lib/android/build/tmp/compileDebugJavaWithJavac/previous-compilation-data.bin differ
+diff --git a/node_modules/react-native-wechat-lib/android/src/main/java/com/theweflex/react/WeChatModule.java b/node_modules/react-native-wechat-lib/android/src/main/java/com/theweflex/react/WeChatModule.java
+index c563522..121434c 100644
+--- a/node_modules/react-native-wechat-lib/android/src/main/java/com/theweflex/react/WeChatModule.java
++++ b/node_modules/react-native-wechat-lib/android/src/main/java/com/theweflex/react/WeChatModule.java
+@@ -111,7 +111,7 @@ public class WeChatModule extends ReactContextBaseJavaModule implements IWXAPIEv
+ 
+     @Override
+     public String getName() {
+-        return "RCTWeChat";
++        return "WeChat";
+     }
+ 
+     /**

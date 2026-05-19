@@ -60,5 +60,26 @@
       android:name="com.mobile.auth.gatewayauth.PrivacyDialogActivity"
       android:screenOrientation="behind"
       android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <!-- react-native-wechat-lib 支持 -->
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:label="@string/app_name"
+            android:exported="true"
+            android:theme="@style/WxTransparentTheme"
+            android:taskAffinity="com.furong.calendar"
+            android:launchMode="singleTask"/>
+        <activity
+            android:name=".wxapi.WXPayEntryActivity"
+            android:label="@string/app_name"
+            android:exported="true"/>
+
+
+    
   </application>
+
+      <!-- react-native-wechat-lib support -->
+    <queries>
+        <package android:name="com.tencent.mm" />
+    </queries>
 </manifest>

@@ -56,11 +56,12 @@ export default function ImageUploader({
     const newList = value.filter((_, i) => i !== index);
     onChange && onChange(newList);
   };
-const [errorIndexMap, setErrorIndexMap] = useState({});
-const handleImageError = (index) => {
-  setErrorIndexMap((prev) => ({
+//const [errorIndexMap, setErrorIndexMap] = useState({});
+const [errorMap, setErrorMap] = useState({});
+const handleImageError = (uri) => {
+  setErrorMap((prev) => ({
     ...prev,
-    [index]: true,
+    [uri]: true,
   }));
 };
   return (
@@ -71,7 +72,7 @@ const handleImageError = (index) => {
           <View key={index} style={styles.imageBox}>
             <TouchableOpacity
               onPress={() => {
-            if (errorIndexMap[index]) {
+            if (errorMap[item.uri]) {
               Toast.show('该图片无法展示,请重新上传');
               return;
             }
@@ -79,9 +80,9 @@ const handleImageError = (index) => {
             setPreviewVisible(true);
           }}
             >
- <FastImage
+<FastImage
   source={
-    errorIndexMap[index]
+    errorMap[item.uri]
       ? require('../../../assets/images/home/imgfail.png')
       : {
           uri: item.uri,
@@ -90,7 +91,7 @@ const handleImageError = (index) => {
   }
   style={styles.image}
   resizeMode={FastImage.resizeMode.cover}
-  onError={() => handleImageError(index)}
+  onError={() => handleImageError(item.uri)}
 />
             </TouchableOpacity>
 

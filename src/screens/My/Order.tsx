@@ -116,23 +116,17 @@ onEndReachedThreshold={0.2}
 export default function Order({navigation,route}) {
    const { e } = route.params || {};
   console.log(e);
-  const getTabIndexByE = (e) => {
-  switch (e) {
-    case 1:
-      return 0; // 全部
-    case 2:
-      return 1; // 待付款
-    case 3:
-      return 2; // 待服务
-    case 4:
-      return 4; // 待收货
-    case 5:
-      return 5; // 待评论
-    case 6:
-      return 6; // 已完成
-    default:
-      return 0;
-  }
+const TAB_INDEX_MAP = {
+  1: 0, // 全部
+  2: 1, // 待付款
+  3: 2, // 待服务
+  4: 4, // 待收货
+  5: 5, // 待评论
+  6: 6, // 已完成
+};
+
+const getTabIndexByE = (e) => {
+  return TAB_INDEX_MAP[e] ?? 0;
 };
   const layout = useWindowDimensions();
   const [index, setIndex] = useState(() => getTabIndexByE(e)); 
@@ -186,6 +180,9 @@ export default function Order({navigation,route}) {
     loading: false,
   },
 });
+useEffect(() => {
+  setIndex(getTabIndexByE(e));
+}, [e]);
   const handleback = () => {  //返回上一页
    navigation.goBack();
      };

@@ -210,7 +210,7 @@ if(e=="再次购买"){
            });
            console.log(response);
           if(response.data!==undefined&&response.code==0){
-          handlePay(response.data.payInfo.payInfo)
+          //handlePay(response.data.payInfo.payInfo)
           }else{
               Toast.show({
            content: '订单已过期，无法付款',
