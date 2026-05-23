@@ -7,11 +7,6 @@ import Storage from '../../utils/storage';
 
 
 
-const shoplistd=[
-    { key: "0",title:'全部',type:1, },
-  { key: "1",title:'护航',type:2, },
-  { key: "2",title:'大神',type:3, },
-];
 export default function Collect({navigation}) {
     const [shoplist, setShoplist] = useState([]); //关注商品
      const handleback = () => {  //返回上一页
@@ -31,8 +26,8 @@ export default function Collect({navigation}) {
           query: {userId:user.user.userId},
         }); 
         console.log(response);
-      if (response.data !== null && response.code == 0) {
-setShoplist(response.data.list)
+      if (response.data !== null && response.code == 0&&response.data.list!==null) {
+      setShoplist(response.data.list)
       } 
       } catch (error) {
         console.error(error);
@@ -61,12 +56,12 @@ setShoplist(response.data.list)
     {shoplist.map((item,index)=>
      <ShopItem key={index} item={item} navigation={navigation} type={2}/>
     )}
-    {shoplistd.length!==0&&
+    {shoplist.length!==0&&
      <View style={{alignItems:'center',marginTop:px(10)}}>
      <Text style={styles.bottomtext}>我是有底线的～</Text>
      </View>
     }
-    {shoplistd.length==0&&
+    {shoplist.length==0&&
      <View style={{alignItems:'center',marginTop:px(10)}}>
      <Text style={styles.bottomtext}>暂无内容</Text>
      </View>

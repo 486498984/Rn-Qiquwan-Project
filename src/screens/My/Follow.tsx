@@ -1,20 +1,45 @@
 import { StyleSheet, Text, View,TouchableOpacity,Image,ScrollView } from 'react-native'
-import React from 'react'
+import React,{useEffect,useState} from 'react'
 import { px } from '../../utils/scaleUtils';
 import request from '../../api/request';
-import ClubItem from '../../components/Club/ClubItem'
+import ClubItem from '../../components/Club/FollowClubItem'
+import Storage from '../../utils/storage';
 
 
-
-const shoplistd=[
-    { key: "0",title:'全部',type:1, },
-  { key: "1",title:'护航',type:2, },
-  { key: "2",title:'大神',type:3, },
-];
 export default function Follow({navigation}) {
+  const [followlist, setFollowlist] = useState([]); //关注列表
   const handleback = () => {  //返回上一页
    navigation.goBack();
-     }; 
+  }; 
+  useEffect(() => {
+    getfollwlist()
+  }, [])
+  const getfollwlist = async() => { 
+        const user = await Storage.get("userinfo");
+          try {
+           const response = await request({
+             url: '/user/follows/stores',
+             method: 'GET',
+             data:{
+            },
+             query: {
+              userId:user.user.userId,
+               page:1,
+                size:10,
+             }
+           });
+           console.log(response);
+          if(response.data!==undefined&&response.code==0){
+          if(response.data.list!==null){
+          setFollowlist(response.data.list)
+          }
+          }
+         } catch (error) {
+           console.error(error);
+         }
+
+   };
+  
   return (
      <View style={styles.container}>
        <View style={{width: px(393),height: px(98),backgroundColor: '#fff',
@@ -35,16 +60,17 @@ export default function Follow({navigation}) {
          paddingTop:px(20),paddingBottom:px(35)
      }} showsVerticalScrollIndicator={false}
      >
-          {shoplistd.map((item,index)=>
-           <ClubItem navigation={navigation} key={index} item={item}
-           status={2}/>
+          {followlist.map((item,index)=>
+           <ClubItem navigation={navigation} key={index} item={item} 
+           type={2}
+           />
           )}
-   {shoplistd.length!==0&&
+   {followlist.length!==0&&
     <View style={{alignItems:'center',marginTop:px(10)}}>
     <Text style={styles.bottomtext}>我是有底线的～</Text>
     </View>
    }
-   {shoplistd.length==0&&
+   {followlist.length==0&&
     <View style={{alignItems:'center',marginTop:px(10)}}>
     <Text style={styles.bottomtext}>暂无内容</Text>
     </View>

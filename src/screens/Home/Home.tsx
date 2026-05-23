@@ -18,7 +18,7 @@ import { addEventListener } from "@react-native-community/netinfo";
 import request from '../../api/request';
 import { BASE_URL,IMG_URL } from '../../api/config';
 import FastImage from 'react-native-fast-image';
-
+import { Toast } from '@ant-design/react-native'
 
   const routes = [
     { key: "0", title: "全部" },
@@ -89,7 +89,8 @@ const getHomeConfig = async () => {
       url: '/home/config',
       method: 'GET',
     });
-
+    console.log(response);
+    
     if (response.data && response.code == 0) {
 
       const modules = response.data.modules || [];
@@ -184,10 +185,10 @@ setBannerlist(newList)
              });
              console.log(response);
             if(response.data!==undefined&&response.code==0){
-        let data=response.data.modules
-   const shopData = data.find(item => item.moduleKey === "hotGoods")
-   console.log(shopData); 
-setShoplist(shopData.items)
+            let data=response.data.modules
+            const shopData = data.find(item => item.moduleKey === "hotGoods")
+            console.log(shopData); 
+            setShoplist(shopData.items)
             }
            } catch (error) {
              console.error(error);
@@ -357,7 +358,18 @@ const gettabslist = async () => {
  if(e.linkType=="URL"){ //跳转网站
  Linking.openURL(e.linkValue)
  }else if(e.linkType=="GOODS"){ //跳转商品
- navigation.navigate('Shopinfo',{shopinfo:e.goodsInfo})
+  console.log(e);
+  if(e.goodsInfo!==undefined){
+  navigation.navigate('Shopinfo',{shopinfo:e.goodsInfo})
+  }else{
+ Toast.show({
+  content: '该商品已下架，请稍后再试',
+  duration: 2,
+  position: 'center',
+  mask: false,
+})
+  }
+
  }
   };
     const [refreshing, setRefreshing] = useState(false);
@@ -410,8 +422,10 @@ const onRefresh = async () => {
             />
           }
           >
-      <View style={{paddingHorizontal:px(16),marginTop: px(8),}}>
-<HotServices shoplist={shoplist} navigation={navigation}></HotServices>
+  <View style={{paddingHorizontal:px(16),marginTop: px(8),}}>
+  {shoplist.length!==0&&
+  <HotServices shoplist={shoplist} navigation={navigation}></HotServices>
+  }
   </View>
  <View style={{width: '100%',flexDirection: 'row',
   justifyContent: 'center',marginTop: px(16),}}>
@@ -430,7 +444,7 @@ const onRefresh = async () => {
           <TouchableOpacity activeOpacity={0.8}
           onPress={()=>handlegobanner(item)}>
           <FastImage
-            source={{uri: item.imageUrl}}
+            source={{uri: item?.imageUrl}}
             style={styles.image}
             resizeMode="cover"
           />

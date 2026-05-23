@@ -3,7 +3,7 @@ import React,{useEffect,useRef,} from 'react'
 import { px } from '../../../utils/scaleUtils';
 import LinearGradient from 'react-native-linear-gradient';
 import { IMG_URL } from '../../../api/config';
-
+import SafeFastImage from '../../../components/Home/SafeFastImage'
 
 const StarClub = ({storelist,navigation}) => {
     console.log(storelist);
@@ -64,7 +64,8 @@ const StarClub = ({storelist,navigation}) => {
         justifyContent: 'space-between',marginTop: px(6),}}>
 
    {(randomList || []).map((item,index)=>
- <View style={{flexDirection: 'column',}} key={index}>
+ <TouchableOpacity style={{flexDirection: 'column',}} key={index}
+ activeOpacity={0.8} onPress={()=>navigation.navigate('ClubHome',{storeinfo:item.storeInfo})}>
         <View style={{position: 'relative',width: px(64),height: px(64),
             borderRadius: px(4),
         }}>
@@ -78,17 +79,17 @@ const StarClub = ({storelist,navigation}) => {
                    <Text style={styles.clubdes}>平台保障</Text> 
                     </View> 
                    </LinearGradient>
-<Image source={{uri:IMG_URL+item.storeInfo.storeLogo}} 
+<SafeFastImage source={{uri:IMG_URL+item?.storeInfo?.storeLogo}} 
             style={{width:px(64),height:px(64),position: 'absolute',
                 borderRadius: px(4),
-            }}></Image>
+            }} />
         </View>
         <View style={{flexDirection: 'row',alignItems: 'center',
             justifyContent: 'center',marginTop: px(3),}}>
-<Text style={styles.clubname} numberOfLines={1}>{item.storeInfo.storeName}</Text>
+<Text style={styles.clubname} numberOfLines={1}>{item?.storeInfo?.storeName}</Text>
         </View>
 
-    </View>
+    </TouchableOpacity>
 )}         
    
        

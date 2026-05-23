@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View,TouchableOpacity,ActivityIndicator,Image,
 ScrollView,Linking
  } from 'react-native'
-import React,{useEffect,useRef,useState} from 'react'
+import React,{useEffect,useRef,useState,useCallback,} from 'react'
 import { px } from '../../utils/scaleUtils';
 import { Toast } from '@ant-design/react-native';
 import Storage from '../../utils/storage';
@@ -12,8 +12,13 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { scheduleOnRN } from 'react-native-worklets';
 import { IMG_URL,TOTAL_URL } from '../../api/config';
 import StorePickerModal from '../../components/My/StorePickerModal'
+import { useFocusEffect } from '@react-navigation/native';
 
 
+
+const bages={
+  AFTER_SALE: 0,CREATED: 0,WAIT_COMMENT: 0,WAIT_CONFIRM: 0,WAIT_SERVICE: 0,
+}
 export default function My({navigation}) {
   const isLogin = useAuthStore(state => state.isLogin);
   const loginChanged = useAuthStore(state => state.loginChanged);
@@ -24,6 +29,21 @@ export default function My({navigation}) {
   const [avatarError, setAvatarError] = useState(false);
   const [storeauth, setStoreauth] = useState([]); //俱乐部权限
   const [visiblestorec, setVisiblestorec] = useState(false); //店铺选择弹窗
+  const [badge, setBadge] = useState(bages); //下标数字
+  const [collect, setCollect] = useState(0); //收藏数字
+  const [fllow, setFllow] = useState(0); //关注数字
+
+
+  useFocusEffect(
+    useCallback(() => {
+     getloginstatus();//获取登陆状态
+    }, [])
+  );
+ 
+    const orderListRefreshKey =
+  useAuthStore(
+    state => state.orderListRefreshKey
+  );
    const handletoast = () => { 
     Toast.config({ mask:false })
     //Toast.success('Success')
@@ -37,23 +57,71 @@ export default function My({navigation}) {
       mask: true,
     })
      //Toast.removeAll()
-    };
+    }; 
   useEffect(() => {
    console.log('isLogin:', isLogin);
    getloginstatus();//获取登陆状态
-   }, [isLogin]);
+   }, [isLogin,orderListRefreshKey]);
    const getloginstatus = async() => {  //获取登陆状态
    const user = await Storage.get("userinfo");
    if(user!==null){
    setLoginstatus(true)
    setUserinfo(user)
-   getuserinfo(user)
+   getuserinfo(user) //获取用户信息
+   getcollect() //获取收藏数字
+   getfollwlist() //获取关注数字
    //getclubpermission(user.user.userId)
    }else{
    setLoginstatus(false)
    setUserinfo(null)
    }
    console.log(user); // { name: 'Tom', age: 18 }
+   };
+       const getcollect = async() => { 
+        const user = await Storage.get("userinfo");
+        try {
+        const response = await request({
+          url: '/favorites/list',
+          method: 'GET',
+          data: {
+          },
+          query: {userId:user.user.userId},
+        }); 
+        console.log(response);
+      if (response.data !== null && response.code == 0) {
+        if(response.data.list!==null){
+       setCollect(response.data.list.length)
+        }
+       
+      } 
+      } catch (error) {
+        console.error(error);
+      }
+      };
+        const getfollwlist = async() => { 
+        const user = await Storage.get("userinfo");
+          try {
+           const response = await request({
+             url: '/user/follows/stores',
+             method: 'GET',
+             data:{
+            },
+             query: {
+              userId:user.user.userId,
+               page:1,
+                size:10,
+             }
+           });
+           console.log(response);
+          if(response.data!==undefined&&response.code==0){
+            if(response.data.list!==null){
+       setFllow(response.data.list.length)
+        }
+          }
+         } catch (error) {
+           console.error(error);
+         }
+
    };
    const getuserinfo = async(e) => { 
    console.log(e);
@@ -64,15 +132,35 @@ export default function My({navigation}) {
             data:{},
             query: { userId: e.user.userId }
           });
-          console.log(response);
+          console.log(response); 
          if(response.data!==undefined&&response.code==0){
          setAvatarError(false);
          setUserprofile(response.data.profile)
-         }
+         getbadge(response.data.profile.userId)
+         } 
         } catch (error) {
           console.error(error);
         }
     };
+    const getbadge = async(e) => { 
+        try {
+          const response = await request({
+            url: '/order/list',
+            method: 'GET',
+            data:{},
+            query: { 
+              userId: e,
+              page:1,pageSize:10,
+             }
+          });
+          console.log(response); 
+         if(response.data!==undefined&&response.code==0){
+         setBadge(response.data.badge)
+         }
+        } catch (error) {
+          console.error(error);
+        }
+     };
     const handlestorage = async() => { //跳转登陆页
       if(userinfo==null){
      navigation.navigate('Login');
@@ -131,7 +219,9 @@ export default function My({navigation}) {
       return;
       navigation.navigate('ShopIndex')
       }else if(e==4){
-navigation.navigate('Asset')
+      navigation.navigate('Asset')
+      }else if(e==5){
+      navigation.navigate('Aftersales')
       }
     };
     const getclubpermission = async(e) => { 
@@ -234,19 +324,19 @@ const goStore = (store) => { //跳转俱乐部
         }}>
         <TouchableOpacity onPress={()=>handlestorage()} style={{gap:px(3)}}>
 <Text style={styles.nikename}>{userinfo!==null?userprofile?.nickName:'前往登陆'}</Text>
-<Text style={styles.idnumber}>ID {userinfo!==null?'1258'+userinfo?.user?.userId:'-'}</Text>
+{/* <Text style={styles.idnumber}>ID {userinfo!==null?'1258'+userinfo?.user?.userId:'-'}</Text> */}
         </TouchableOpacity>
         {userinfo!==null&&
 <View style={{flexDirection: 'row',alignItems: 'center',}}>
   <TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}
   onPress={()=>navigation.navigate('Collect')}>
-<Text style={styles.follnum}>19</Text>
-<Text style={styles.idnumber}>收藏</Text>
+<Text style={styles.follnum}>{collect}</Text>
+<Text style={styles.idnumber}>收藏</Text> 
   </TouchableOpacity>
   <TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',gap:px(3),
     marginLeft: px(12),
   }}   onPress={()=>navigation.navigate('Follow')}>
-<Text style={styles.follnum}>9</Text>
+<Text style={styles.follnum}>{fllow}</Text>
 <Text style={styles.idnumber}>关注</Text>
   </TouchableOpacity>
 </View>
@@ -295,14 +385,14 @@ onPress={()=>goorder(2)}>
   <View style={{width:px(30),height:px(30),position: 'relative',}}>
  <Image source={require('../../../assets/images/my/status1.png')} 
         style={{width:px(30),height:px(30)}}></Image>
-      {message&&
+      {badge.CREATED!==0&&
       <View style={{width: px(16),height: px(16),borderRadius: px(8),
     backgroundColor: '#DE5452',position: 'absolute',right: -px(8),top: -px(8),
     flexDirection: 'row',alignItems: 'center',justifyContent: 'center',}}>
-<Text style={styles.message}>9</Text>
-  </View> 
+   <Text style={styles.message}>{badge.CREATED}</Text>
+   </View>
     }
-  </View>
+   </View>
 
        <Text style={styles.statustext}>待付款</Text> 
 </TouchableOpacity>
@@ -311,11 +401,11 @@ onPress={()=>goorder(3)}>
   <View style={{width:px(30),height:px(30),position: 'relative',}}>
  <Image source={require('../../../assets/images/my/status2.png')} 
         style={{width:px(30),height:px(30)}}></Image>
-      {message&&
+      {badge.WAIT_SERVICE!==0&&
       <View style={{width: px(16),height: px(16),borderRadius: px(8),
     backgroundColor: '#DE5452',position: 'absolute',right: -px(8),top: -px(8),
     flexDirection: 'row',alignItems: 'center',justifyContent: 'center',}}>
-<Text style={styles.message}>2</Text>
+<Text style={styles.message}>{badge.WAIT_SERVICE}</Text>
   </View> 
     }
   </View>
@@ -323,20 +413,47 @@ onPress={()=>goorder(3)}>
 </TouchableOpacity>
 <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',flex: 1,gap:px(8)}}
 onPress={()=>goorder(4)}>
+  <View style={{width:px(30),height:px(30),position: 'relative',}}>
  <Image source={require('../../../assets/images/my/status3.png')} 
         style={{width:px(30),height:px(30)}}></Image>
+      {badge.WAIT_CONFIRM!==0&&
+      <View style={{width: px(16),height: px(16),borderRadius: px(8),
+    backgroundColor: '#DE5452',position: 'absolute',right: -px(8),top: -px(8),
+    flexDirection: 'row',alignItems: 'center',justifyContent: 'center',}}>
+<Text style={styles.message}>{badge.WAIT_CONFIRM}</Text>
+  </View> 
+    }
+  </View>
        <Text style={styles.statustext}>待收货</Text> 
 </TouchableOpacity>
 <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',flex: 1,gap:px(8)}}
 onPress={()=>goorder(5)}>
+  <View style={{width:px(30),height:px(30),position: 'relative',}}>
  <Image source={require('../../../assets/images/my/status4.png')} 
         style={{width:px(30),height:px(30)}}></Image>
+      {badge.WAIT_COMMENT!==0&&
+      <View style={{width: px(16),height: px(16),borderRadius: px(8),
+    backgroundColor: '#DE5452',position: 'absolute',right: -px(8),top: -px(8),
+    flexDirection: 'row',alignItems: 'center',justifyContent: 'center',}}>
+<Text style={styles.message}>{badge.WAIT_COMMENT}</Text>
+  </View> 
+    }
+  </View>
        <Text style={styles.statustext}>待评论</Text> 
 </TouchableOpacity>
 <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',flex: 1,gap:px(8)}}
-onPress={()=>goorder(6)}>
+onPress={()=>handlegocoupon(5)}>
+  <View style={{width:px(30),height:px(30),position: 'relative',}}>
  <Image source={require('../../../assets/images/my/status5.png')} 
         style={{width:px(30),height:px(30)}}></Image>
+      {badge.AFTER_SALE!==0&&
+      <View style={{width: px(16),height: px(16),borderRadius: px(8),
+    backgroundColor: '#DE5452',position: 'absolute',right: -px(8),top: -px(8),
+    flexDirection: 'row',alignItems: 'center',justifyContent: 'center',}}>
+<Text style={styles.message}>{badge.AFTER_SALE}</Text>
+  </View> 
+    }
+  </View>
        <Text style={styles.statustext}>售后</Text> 
 </TouchableOpacity>
 </View>

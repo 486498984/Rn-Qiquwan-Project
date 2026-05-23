@@ -4,7 +4,7 @@ import { px } from '../../../utils/scaleUtils';
 
 
 
-const OrderItem=({item={type:1}})=> {
+const OrderItem=({item})=> {
     const STATUS_MAP = {
   1: {
     text: '待入账',
@@ -28,7 +28,7 @@ const OrderItem=({item={type:1}})=> {
     textStyle: { color: '#3CF15F' },
   },
 }
-const status = STATUS_MAP[item.type] || STATUS_MAP[1];
+const status =  STATUS_MAP[1];
   return (
     <View style={{width:px(361),height: px(127),backgroundColor: '#fff',
         borderRadius: px(8),paddingHorizontal:px(16)
@@ -36,29 +36,30 @@ const status = STATUS_MAP[item.type] || STATUS_MAP[1];
     <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
         justifyContent: 'space-between',marginTop: px(14),
     }}>
-<Text style={styles.ordernum}>订单编号：219739012479102</Text>
+<Text style={styles.ordernum}>订单编号：{item.orderNo}</Text>
 <View style={{flexDirection: 'row',alignItems: 'center',gap:px(8)}}>
-<Text style={styles.ordernum}>2026-10-12 10:39</Text>
+{/* <Text style={styles.ordernum}>2026-10-12 10:39</Text> */}
     <View style={[styles.lrbox, status.boxStyle]}>
 <Text style={[styles.ordes, status.textStyle]}>{status.text}</Text>
 </View>
 </View>
     </View>
+     {/* <Text style={styles.ordernum}>2026-10-12 10:39</Text> */}
 <View style={{width: '100%',marginTop: px(16),flexDirection: 'row',
-    alignItems: 'center',justifyContent: 'center',
+    alignItems: 'center',
 }}>
 <Text style={styles.ordertitle}
-numberOfLines={1}>绝密航天清图国服在榜单三大师/单局保底850W单局保底850W</Text>
+numberOfLines={1}>{item.goodsTitle}</Text>
 </View>
 <View style={{width: '100%',height: px(1),
     backgroundColor: 'rgba(118, 118, 118, 0.2)',marginTop: px(10),}}></View>
     <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
         justifyContent: 'space-between',marginTop: px(15),
     }}>
-<Text style={styles.ordernum}>ID 352235</Text>
+<Text style={styles.ordernum}>入账时间：{item.expectedDate}</Text>
 <View style={{flexDirection: 'row',alignItems: 'center',}}>
 <Text style={styles.ordernum}>实付:</Text>
-<Text style={styles.smallprice}>￥220.59</Text>
+<Text style={styles.smallprice}>￥{item.amount/100}</Text>
 </View>
     </View>
     </View>

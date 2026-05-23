@@ -1,0 +1,163 @@
+Date : 2026-05-20 11:48:02
+Directory : /Users/mac/Desktop/QiquwanProject/src
+Total : 111 files,  29045 codes, 1959 comments, 2384 blanks, all 33388 lines
+
+Languages
++----------------+------------+------------+------------+------------+------------+
+| language       | files      | code       | comment    | blank      | total      |
++----------------+------------+------------+------------+------------+------------+
+| TypeScript JSX |        100 |     28,529 |      1,856 |      2,306 |     32,691 |
+| JavaScript     |         11 |        516 |        103 |         78 |        697 |
++----------------+------------+------------+------------+------------+------------+
+
+Directories
++-----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                    | files      | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                       |        111 |     29,045 |      1,959 |      2,384 |     33,388 |
+| . (Files)                                                                               |          1 |        554 |         75 |         31 |        660 |
+| api                                                                                     |          4 |        340 |         29 |         26 |        395 |
+| components                                                                              |         25 |      4,088 |        279 |        438 |      4,805 |
+| components/Club                                                                         |          4 |        331 |         57 |         57 |        445 |
+| components/Home                                                                         |          6 |        665 |         40 |         51 |        756 |
+| components/My                                                                           |          7 |      1,308 |         80 |        196 |      1,584 |
+| components/Shop                                                                         |          8 |      1,784 |        102 |        134 |      2,020 |
+| screens                                                                                 |         74 |     23,887 |      1,502 |      1,837 |     27,226 |
+| screens/Club                                                                            |          6 |      1,484 |        160 |        153 |      1,797 |
+| screens/Club (Files)                                                                    |          3 |      1,201 |        136 |        134 |      1,471 |
+| screens/Club/components                                                                 |          3 |        283 |         24 |         19 |        326 |
+| screens/Home                                                                            |          8 |      2,947 |        194 |        195 |      3,336 |
+| screens/Home (Files)                                                                    |          3 |      2,356 |        156 |        153 |      2,665 |
+| screens/Home/components                                                                 |          5 |        591 |         38 |         42 |        671 |
+| screens/Lottery                                                                         |          5 |      1,160 |         71 |        134 |      1,365 |
+| screens/Lottery (Files)                                                                 |          2 |        598 |         21 |         37 |        656 |
+| screens/Lottery/components                                                              |          3 |        562 |         50 |         97 |        709 |
+| screens/My                                                                              |         24 |      6,147 |        307 |        477 |      6,931 |
+| screens/News                                                                            |          5 |      1,877 |        172 |        229 |      2,278 |
+| screens/News (Files)                                                                    |          2 |      1,206 |        115 |        156 |      1,477 |
+| screens/News/components                                                                 |          3 |        671 |         57 |         73 |        801 |
+| screens/Policy                                                                          |          2 |         92 |          4 |         14 |        110 |
+| screens/Shop                                                                            |         24 |     10,180 |        594 |        635 |     11,409 |
+| screens/Shop (Files)                                                                    |         17 |      9,244 |        552 |        555 |     10,351 |
+| screens/Shop/components                                                                 |          7 |        936 |         42 |         80 |      1,058 |
+| store                                                                                   |          1 |         15 |          1 |          3 |         19 |
+| utils                                                                                   |          6 |        161 |         73 |         49 |        283 |
++-----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-----------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| filename                                                                                | language       | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+
+| /Users/mac/Desktop/QiquwanProject/src/App.tsx                                           | TypeScript JSX |        554 |         75 |         31 |        660 |
+| /Users/mac/Desktop/QiquwanProject/src/api/config.js                                     | JavaScript     |          3 |          3 |          0 |          6 |
+| /Users/mac/Desktop/QiquwanProject/src/api/md5.js                                        | JavaScript     |        204 |          1 |          0 |        205 |
+| /Users/mac/Desktop/QiquwanProject/src/api/request.js                                    | JavaScript     |         77 |         18 |         12 |        107 |
+| /Users/mac/Desktop/QiquwanProject/src/api/uploadImage.js                                | JavaScript     |         56 |          7 |         14 |         77 |
+| /Users/mac/Desktop/QiquwanProject/src/components/Club/AutoImage.tsx                     | TypeScript JSX |         48 |         10 |         18 |         76 |
+| /Users/mac/Desktop/QiquwanProject/src/components/Club/ClubItem.tsx                      | TypeScript JSX |        162 |         30 |          7 |        199 |
+| /Users/mac/Desktop/QiquwanProject/src/components/Club/PullToRefreshDemo.tsx             | TypeScript JSX |         89 |         11 |         21 |        121 |
+| /Users/mac/Desktop/QiquwanProject/src/components/Club/StarRating.tsx                    | TypeScript JSX |         32 |          6 |         11 |         49 |
+| /Users/mac/Desktop/QiquwanProject/src/components/Home/BottomSheet.tsx                   | TypeScript JSX |        105 |          3 |         14 |        122 |
+| /Users/mac/Desktop/QiquwanProject/src/components/Home/PaymentLoadingModal.tsx           | TypeScript JSX |         42 |          0 |          3 |         45 |
+| /Users/mac/Desktop/QiquwanProject/src/components/Home/PrivacyModal.tsx                  | TypeScript JSX |        179 |         15 |         12 |        206 |
+| /Users/mac/Desktop/QiquwanProject/src/components/Home/SafeFastImage.tsx                 | TypeScript JSX |         36 |          2 |         12 |         50 |
+| /Users/mac/Desktop/QiquwanProject/src/components/Home/ShopItem.tsx                      | TypeScript JSX |        245 |         18 |          9 |        272 |
+| /Users/mac/Desktop/QiquwanProject/src/components/Home/WebviewModal.tsx                  | TypeScript JSX |         58 |          2 |          1 |         61 |
+| /Users/mac/Desktop/QiquwanProject/src/components/My/BottomModal.tsx                     | TypeScript JSX |        107 |          5 |         12 |        124 |
+| /Users/mac/Desktop/QiquwanProject/src/components/My/CouponItem.tsx                      | TypeScript JSX |        231 |         13 |         71 |        315 |
+| /Users/mac/Desktop/QiquwanProject/src/components/My/CustomModal.tsx                     | TypeScript JSX |         78 |          9 |          1 |         88 |
+| /Users/mac/Desktop/QiquwanProject/src/components/My/OrderItem.tsx                       | TypeScript JSX |        552 |         24 |         77 |        653 |
+| /Users/mac/Desktop/QiquwanProject/src/components/My/RewardOrder.tsx                     | TypeScript JSX |         96 |          3 |          4 |        103 |
+| /Users/mac/Desktop/QiquwanProject/src/components/My/SelectModal.tsx                     | TypeScript JSX |         51 |          2 |          2 |         55 |
+| /Users/mac/Desktop/QiquwanProject/src/components/My/StorePickerModal.tsx                | TypeScript JSX |        193 |         24 |         29 |        246 |
+| /Users/mac/Desktop/QiquwanProject/src/components/Shop/EditSelectModal.tsx               | TypeScript JSX |        142 |          0 |         12 |        154 |
+| /Users/mac/Desktop/QiquwanProject/src/components/Shop/GoodsItem.tsx                     | TypeScript JSX |        585 |         23 |         15 |        623 |
+| /Users/mac/Desktop/QiquwanProject/src/components/Shop/ImagePreviewer.tsx                | TypeScript JSX |        106 |          6 |         18 |        130 |
+| /Users/mac/Desktop/QiquwanProject/src/components/Shop/ImageUploader.tsx                 | TypeScript JSX |        176 |          8 |         14 |        198 |
+| /Users/mac/Desktop/QiquwanProject/src/components/Shop/ShopOrderItem.tsx                 | TypeScript JSX |        215 |         29 |         14 |        258 |
+| /Users/mac/Desktop/QiquwanProject/src/components/Shop/TagInputModal.tsx                 | TypeScript JSX |        259 |         13 |         29 |        301 |
+| /Users/mac/Desktop/QiquwanProject/src/components/Shop/TextCheckboxModal.tsx             | TypeScript JSX |        162 |         17 |         20 |        199 |
+| /Users/mac/Desktop/QiquwanProject/src/components/Shop/TextRadioModal.tsx                | TypeScript JSX |        139 |          6 |         12 |        157 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Club/Club.tsx                             | TypeScript JSX |        251 |         28 |         75 |        354 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Club/ClubHome.tsx                         | TypeScript JSX |        701 |         86 |         48 |        835 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Club/ClubInfo.tsx                         | TypeScript JSX |        249 |         22 |         11 |        282 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Club/components/Content.tsx               | TypeScript JSX |         70 |          2 |         11 |         83 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Club/components/HotService.tsx            | TypeScript JSX |         79 |          2 |          3 |         84 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Club/components/Tabs.tsx                  | TypeScript JSX |        134 |         20 |          5 |        159 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Home/Allcomments.tsx                      | TypeScript JSX |        224 |          3 |         26 |        253 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Home/Home.tsx                             | TypeScript JSX |        515 |         76 |         50 |        641 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Home/Shopinfo.tsx                         | TypeScript JSX |      1,617 |         77 |         77 |      1,771 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Home/components/Comment.tsx               | TypeScript JSX |         65 |          1 |          3 |         69 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Home/components/Content.tsx               | TypeScript JSX |         70 |          2 |         11 |         83 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Home/components/HotServices.tsx           | TypeScript JSX |        146 |          7 |         10 |        163 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Home/components/StarClub.tsx              | TypeScript JSX |        176 |          8 |         13 |        197 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Home/components/Tabs.tsx                  | TypeScript JSX |        134 |         20 |          5 |        159 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Lottery/Lottery.tsx                       | TypeScript JSX |        474 |         18 |         32 |        524 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Lottery/Preze.tsx                         | TypeScript JSX |        124 |          3 |          5 |        132 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Lottery/components/LotteryResultModal.tsx | TypeScript JSX |        177 |         14 |         17 |        208 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Lottery/components/PrizeItem.tsx          | TypeScript JSX |        105 |          0 |          5 |        110 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Lottery/components/Wheel.tsx              | TypeScript JSX |        280 |         36 |         75 |        391 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Asset.tsx                              | TypeScript JSX |        224 |          4 |         21 |        249 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Avtar.tsx                              | TypeScript JSX |        250 |         14 |         15 |        279 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Cashout.tsx                            | TypeScript JSX |        273 |          5 |         15 |        293 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Code.tsx                               | TypeScript JSX |        277 |          8 |          9 |        294 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Collect.tsx                            | TypeScript JSX |         93 |          1 |          6 |        100 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Comment.tsx                            | TypeScript JSX |        209 |          6 |         11 |        226 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Confirm.tsx                            | TypeScript JSX |        350 |         15 |         23 |        388 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Coupon.tsx                             | TypeScript JSX |        188 |         38 |         42 |        268 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Details.tsx                            | TypeScript JSX |        159 |          4 |         15 |        178 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Follow.tsx                             | TypeScript JSX |         71 |          1 |          4 |         76 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Guarantee.tsx                          | TypeScript JSX |         55 |          1 |          7 |         63 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Invite.tsx                             | TypeScript JSX |        303 |         17 |         16 |        336 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/InviteOrder.tsx                        | TypeScript JSX |         70 |          1 |          5 |         76 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Join.tsx                               | TypeScript JSX |        273 |          6 |         14 |        293 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Login.tsx                              | TypeScript JSX |        270 |         26 |         14 |        310 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/My.tsx                                 | TypeScript JSX |        505 |         29 |         18 |        552 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Name.tsx                               | TypeScript JSX |        179 |          9 |         10 |        198 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Notice.tsx                             | TypeScript JSX |         90 |          1 |          6 |         97 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Order.tsx                              | TypeScript JSX |        426 |         19 |         74 |        519 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/OrderInfo.tsx                          | TypeScript JSX |        864 |         39 |         98 |      1,001 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Profile.tsx                            | TypeScript JSX |        214 |         44 |         12 |        270 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Register.tsx                           | TypeScript JSX |        118 |          3 |          8 |        129 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Setting.tsx                            | TypeScript JSX |        512 |         12 |         25 |        549 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/My/Withdraw.tsx                           | TypeScript JSX |        174 |          4 |          9 |        187 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/News/News.tsx                             | TypeScript JSX |        130 |         16 |         19 |        165 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/News/OneChat.tsx                          | TypeScript JSX |      1,076 |         99 |        137 |      1,312 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/News/components/MessageItem.tsx           | TypeScript JSX |        421 |         43 |         40 |        504 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/News/components/NewItem.tsx               | TypeScript JSX |        108 |          7 |         16 |        131 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/News/components/VoiceWave.tsx             | TypeScript JSX |        142 |          7 |         17 |        166 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Policy/PrivacyAgree.tsx                   | TypeScript JSX |         46 |          2 |          7 |         55 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Policy/UserAgree.tsx                      | TypeScript JSX |         46 |          2 |          7 |         55 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopAddEmployee.tsx                  | TypeScript JSX |         83 |          1 |         14 |         98 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopCashItem.tsx                     | TypeScript JSX |         46 |          1 |          9 |         56 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopCashout.tsx                      | TypeScript JSX |        505 |          8 |         21 |        534 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopEdit.tsx                         | TypeScript JSX |      1,892 |        105 |         88 |      2,085 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopEditEmployee.tsx                 | TypeScript JSX |        255 |         11 |         13 |        279 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopEmployee.tsx                     | TypeScript JSX |        212 |          3 |         12 |        227 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopEnter.tsx                        | TypeScript JSX |      1,401 |        137 |         63 |      1,601 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopHomeOrder.tsx                    | TypeScript JSX |        449 |         21 |         69 |        539 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopIndex.tsx                        | TypeScript JSX |        396 |         15 |         15 |        426 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopManage.tsx                       | TypeScript JSX |        479 |          2 |         53 |        534 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopNotice.tsx                       | TypeScript JSX |        284 |         45 |         14 |        343 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopOrder.tsx                        | TypeScript JSX |        156 |          1 |         10 |        167 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopOrderInfo.tsx                    | TypeScript JSX |        602 |         37 |         38 |        677 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopPending.tsx                      | TypeScript JSX |        122 |          1 |          7 |        130 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopPreview.tsx                      | TypeScript JSX |      1,087 |         59 |         38 |      1,184 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopScreenshot.tsx                   | TypeScript JSX |        194 |         13 |         14 |        221 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopSetting.tsx                      | TypeScript JSX |      1,081 |         92 |         77 |      1,250 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/components/AccountItem.tsx           | TypeScript JSX |         71 |          1 |          6 |         78 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/components/AddonModal.tsx            | TypeScript JSX |        171 |          7 |         16 |        194 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/components/CashItem.tsx              | TypeScript JSX |         88 |          3 |          5 |         96 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/components/EmployeeItem.tsx          | TypeScript JSX |        118 |          1 |          8 |        127 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/components/OrderItem.tsx             | TypeScript JSX |        109 |          5 |          3 |        117 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/components/SkuModal.tsx              | TypeScript JSX |        237 |         14 |         21 |        272 |
+| /Users/mac/Desktop/QiquwanProject/src/screens/Shop/components/Switch.tsx                | TypeScript JSX |        142 |         11 |         21 |        174 |
+| /Users/mac/Desktop/QiquwanProject/src/store/imStore.js                                  | JavaScript     |         15 |          1 |          3 |         19 |
+| /Users/mac/Desktop/QiquwanProject/src/utils/global.js                                   | JavaScript     |          3 |          1 |          0 |          4 |
+| /Users/mac/Desktop/QiquwanProject/src/utils/im.js                                       | JavaScript     |         11 |          2 |          5 |         18 |
+| /Users/mac/Desktop/QiquwanProject/src/utils/scaleUtils.js                               | JavaScript     |          6 |          7 |          3 |         16 |
+| /Users/mac/Desktop/QiquwanProject/src/utils/storage.js                                  | JavaScript     |         64 |         39 |         18 |        121 |
+| /Users/mac/Desktop/QiquwanProject/src/utils/wukongim.js                                 | JavaScript     |         61 |         17 |         19 |         97 |
+| /Users/mac/Desktop/QiquwanProject/src/utils/zustand.js                                  | JavaScript     |         16 |          7 |          4 |         27 |
+| Total                                                                                   |                |     29,045 |      1,959 |      2,384 |     33,388 |
++-----------------------------------------------------------------------------------------+----------------+------------+------------+------------+------------+

@@ -1,23 +1,100 @@
 import { StyleSheet, Text, View,TouchableOpacity,Image,TextInput,TouchableWithoutFeedback,
     Keyboard
  } from 'react-native'
-import React,{useState} from 'react'
+import React,{useState,useEffect,} from 'react'
 import { px } from '../../utils/scaleUtils';
 import LinearGradient from 'react-native-linear-gradient';
+import useAuthStore from '../../utils/zustand';
+import {
+ Toast, Modal as Modalitem,
+} from '@ant-design/react-native'
+import request from '../../api/request';
+import Storage from '../../utils/storage';
 
 
 
-export default function Comment({navigation}) {
-       const [score, setScore] = useState(5); //评价分数，默认5分
-
+const scoreText = ['非常差','差','一般','好','非常好'];
+export default function Comment({navigation,route}) {
+    const triggerListOrderRefresh =
+    useAuthStore(
+        state => state.triggerListOrderRefresh
+    );
+    const [score, setScore] = useState(5); //评价分数，默认5分
+    const [goodsid, setGoodsid] = useState(1); //商品id
+    const {orderinfo} = route.params || {}
      const handleback = () => {  //返回上一页
-   navigation.goBack();
+     navigation.goBack();
      };
-           const [username, setUsername] = useState(null);
-                 const onChangeText = (e) => { 
-                     console.log(e);
-                     setUsername(e)
-                   };
+     useEffect(() => {
+       if(orderinfo){
+        console.log(orderinfo);
+        console.log(JSON.parse(orderinfo.goodsSnapshot).goods.id);
+        setGoodsid(JSON.parse(orderinfo.goodsSnapshot).goods.id)
+       }
+     }, [orderinfo])
+    
+    const [username, setUsername] = useState("");
+    const onChangeText = (e) => { 
+        console.log(e);
+        setUsername(e)
+    };
+    const handlesubmit = () => {  //提交评价
+        if(username==""){
+        Toast.show({
+        content: '请输入内容',
+        duration: 2,
+        position: 'center',
+        mask: false,
+        })
+        return
+        }
+   Modalitem.alert('提示', '是否提交？', [
+      { text: '取消', onPress: () => console.log('cancel'), style: 'cancel' },
+      { text: '确定', onPress: () => complete(),
+       style: { color: '#FC9026' },
+       },
+    ])
+     };
+     const complete = async() => {  //正式提交
+     console.log(score);
+          const user = await Storage.get("userinfo");
+           try {
+             const response = await request({
+               url: '/comment/add',
+               method: 'POST',
+               data:{
+                orderId: orderinfo.id,
+                goodsId: goodsid,
+                rating: score,
+                comment: username,
+                images: "",
+                //isAnonymous: 0
+               },
+               query: {}
+             });
+             console.log(response);
+            if(response.data!==undefined&&response.code==0){
+            triggerListOrderRefresh();
+            handleback();
+              Toast.success({
+            content: '评价成功',
+            duration: 2,
+            position: 'center',
+            mask: false,
+            })
+            }else{
+         Toast.fail({
+           content: '评价失败',
+           duration: 2,
+           position: 'center',
+           mask: false,
+           })
+            }
+           } catch (error) {
+             console.error(error);
+           }
+
+      };
   return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
     <View style={styles.container}>
@@ -34,7 +111,7 @@ export default function Comment({navigation}) {
                 </TouchableOpacity>
                 <Text style={styles.title}>写评价</Text>
                  <TouchableOpacity  style={{  position: 'absolute',
-               right: px(16),}}>
+               right: px(16),}} onPress={()=>handlesubmit()}>
   <LinearGradient
               colors={['#FEC525', '#FC9026']} // 渐变颜色
               start={{ x: 1, y: 0 }}   
@@ -82,68 +159,21 @@ export default function Comment({navigation}) {
 }}>
 <Text style={styles.comtx}>服务评价</Text>
 <View style={{flexDirection: 'row',alignItems: 'center',gap:px(9)}}>
-    {score==1?(
-<Text style={styles.comstx}>非常差</Text>
-    ):score==2?(
-<Text style={styles.comstx}>差</Text>
-    ):score==3?(
-<Text style={styles.comstx}>一般</Text>
-    ):score==4?(
-<Text style={styles.comstx}>好</Text>
-    ):score==5?(
-<Text style={styles.comstx}>非常好</Text>
-    ):null
+<Text style={styles.comstx}>{scoreText[score-1]}</Text>
 
-    }
-
-<View style={{flexDirection: 'row',alignItems: 'center',gap:px(2)}}>
-    <TouchableOpacity onPress={()=>setScore(1)}>
-        {score>=1&&
-         <Image source={require('../../../assets/images/my/comstar.png')} 
-  style={{width:px(29),height:px(29)}}></Image>
-        }
+<View style={{flexDirection: 'row', alignItems: 'center', gap: px(2)}}>
+  {[1,2,3,4,5].map(i => (
+    <TouchableOpacity key={i} onPress={() => setScore(i)}>
+      <Image 
+        source={score >= i 
+          ? require('../../../assets/images/my/comstar.png') 
+          : require('../../../assets/images/my/comnostar.png')} 
+        style={{width: px(29), height: px(29)}}
+      />
     </TouchableOpacity>
-   <TouchableOpacity onPress={()=>setScore(2)}>
-     {score>=2&&
-         <Image source={require('../../../assets/images/my/comstar.png')} 
-  style={{width:px(29),height:px(29)}}></Image>
-        }
-             {score<2&&
-         <Image source={require('../../../assets/images/my/comnostar.png')} 
-  style={{width:px(29),height:px(29)}}></Image>
-        }
-    </TouchableOpacity>
-       <TouchableOpacity onPress={()=>setScore(3)}>
-   {score>=3&&
-         <Image source={require('../../../assets/images/my/comstar.png')} 
-  style={{width:px(29),height:px(29)}}></Image>
-        }
-             {score<3&&
-         <Image source={require('../../../assets/images/my/comnostar.png')} 
-  style={{width:px(29),height:px(29)}}></Image>
-        }
-    </TouchableOpacity>
-       <TouchableOpacity onPress={()=>setScore(4)}>
-   {score>=4&&
-         <Image source={require('../../../assets/images/my/comstar.png')} 
-  style={{width:px(29),height:px(29)}}></Image>
-        }
-             {score<4&&
-         <Image source={require('../../../assets/images/my/comnostar.png')} 
-  style={{width:px(29),height:px(29)}}></Image>
-        }
-    </TouchableOpacity>
-       <TouchableOpacity onPress={()=>setScore(5)}>
-   {score>=5&&
-         <Image source={require('../../../assets/images/my/comstar.png')} 
-  style={{width:px(29),height:px(29)}}></Image>
-        }
-             {score<5&&
-         <Image source={require('../../../assets/images/my/comnostar.png')} 
-  style={{width:px(29),height:px(29)}}></Image>
-        }
-    </TouchableOpacity>
+  ))}
 </View>
+
 </View>
 </View>
     </View>

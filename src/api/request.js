@@ -84,9 +84,9 @@ export default async function request(obj) {
     if (result.code === 0) {
       return result;
     } else if (result.code === 402) {
-      Toast.info({content:'当前账号已经在其他设备登陆',mask:false});
-      await Storage.remove('userinfo');
-      useAuthStore.getState().loginChanged();
+      //Toast.info({content:'当前账号已经在其他设备登陆',mask:false});
+      //await Storage.remove('userinfo');
+      //useAuthStore.getState().loginChanged();
       //Alert.alert('提示', '登录已过期');
       // 跳转到登录页
       // navigation.navigate('Login');

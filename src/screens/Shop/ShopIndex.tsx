@@ -1,19 +1,28 @@
 import { StyleSheet, Text, View ,ScrollView,Image,TouchableOpacity,
 
 } from 'react-native'
-import React,{useState,useEffect,} from 'react'
+import React,{useState,useEffect,useCallback,} from 'react'
 import { px } from '../../utils/scaleUtils';
 import StarRating from '../../components/Club/StarRating'
 import SlideSwitch from './components/Switch';
 import request from '../../api/request';
 import { IMG_URL } from '../../api/config';
 import { Toast } from '@ant-design/react-native'
+import { useFocusEffect } from '@react-navigation/native';
+
+
 
 
 export default function ShopIndex({navigation,route}) {
     const {id} =route.params || null
     const [storeinfo, setStoreinfo] = useState(null);
     const [logoError, setLogoError] = useState(false);
+  const [badge, setBadge] = useState({}); //订单下标
+  const [todaydata, setTodaydata] = useState({}); //今日数据
+  const [money, setMoney] = useState({}); //提现数据
+
+
+
     const logoUrl =
   storeinfo?.storeLogo &&
   storeinfo.storeLogo.trim() !== ''
@@ -25,16 +34,68 @@ export default function ShopIndex({navigation,route}) {
 const handlegohome = (e) => { 
 console.log(e);
 if(e!==5){
-navigation.navigate('ShopHomeOrder',{e})
+navigation.navigate('ShopHomeOrder',{e,id:id})
+}else{
+  console.log(2131);
+  navigation.navigate('ShopSale',{id:id})
+  
 }
  };
  const [isOn, setIsOn] = useState(true);
  useEffect(() => {
     if(id){
-   console.log(id);
-   getstoreinfo(id)
+   console.log(id); //店铺id
+   getstoreinfo(id) //获取店铺详情
+   gettodaydata(id) //获取今日数据
+   getmoney(id) //获取提现金额
     }
- }, [id])
+ }, [id]) 
+   useFocusEffect(
+     useCallback(() => {
+    if(id){
+   console.log(id); //店铺id
+   getstoreinfo(id) //获取店铺详情
+   gettodaydata(id) //获取今日数据
+   getmoney(id) //获取提现金额
+    }
+     }, [])
+   );
+ const getmoney = async(e) => { 
+          try {
+        const response = await request({
+          url: '/store/dashboard/fund',
+          method: 'GET',
+          data: {
+          },
+          query: {storeId:e},
+        }); 
+        console.log('storeauth',response);
+      if (response.data !== null && response.code == 0) {
+      setMoney(response.data)
+      } 
+      } catch (error) {
+        console.error(error);
+      }
+
+  };
+ const gettodaydata = async(e) => { 
+          try {
+        const response = await request({
+          url: '/store/dashboard/today',
+          method: 'GET',
+          data: {
+          },
+          query: {storeId:e},
+        }); 
+        console.log('storeauth',response);
+      if (response.data !== null && response.code == 0) {
+       setBadge(response.data.badgeCounts)
+       setTodaydata(response.data)
+      } 
+      } catch (error) {
+        console.error(error);
+      }
+ };
  const getstoreinfo = async(e) => { 
         try {
         const response = await request({
@@ -137,8 +198,8 @@ justifyContent: 'space-between',
 <View style={{flexDirection: 'row',alignItems: 'flex-start',
    marginTop: px(2),}}>
         <View style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}>
-<StarRating score={4.5}></StarRating>
-<Text style={styles.score}>4.5</Text>
+<StarRating score={5}></StarRating>
+<Text style={styles.score}>5.0</Text>
         </View>
 </View>
 </View>
@@ -170,19 +231,19 @@ justifyContent: 'space-between',
 <View style={{flexDirection: 'column',alignItems: 'center',
     gap:px(8)
 }}>
-<Text style={styles.price}>￥3,124.4</Text>
+<Text style={styles.price}>￥{todaydata.todayOrderAmount/100}</Text>
 <Text style={styles.pricedes}>成交金额</Text>
 </View>
 <View style={{flexDirection: 'column',alignItems: 'center',
     gap:px(8)
 }}>
-<Text style={styles.price}>43</Text>
+<Text style={styles.price}>{todaydata.todayOrderCount}</Text>
 <Text style={styles.pricedes}>成交订单数</Text>
 </View>
 <View style={{flexDirection: 'column',alignItems: 'center',
     gap:px(8)
 }}>
-<Text style={styles.price}>￥124.4</Text>
+<Text style={styles.price}>￥{todaydata.todayRefundAmount/100}</Text>
 <Text style={styles.pricedes}>今日退款</Text>
 </View>
 </View>
@@ -197,19 +258,19 @@ justifyContent: 'space-between',
 onPress={()=>handlegohome(1)}>
      <Image source={require('../../../assets/images/my/willserve.png')} 
            style={{width:px(30),height:px(30)}}></Image>
-           <Text style={styles.servetx}>待服务(16)</Text>
+           <Text style={styles.servetx}>待服务({badge.WAIT_SERVICE})</Text>
 </TouchableOpacity>
 <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',gap:px(8),}}
 onPress={()=>handlegohome(2)}>
      <Image source={require('../../../assets/images/my/status3.png')} 
            style={{width:px(30),height:px(30)}}></Image>
-           <Text style={styles.servetx}>服务中(3)</Text>
+           <Text style={styles.servetx}>服务中({badge.IN_SERVICE})</Text>
 </TouchableOpacity>
 <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',gap:px(8),}}
 onPress={()=>handlegohome(3)}>
      <Image source={require('../../../assets/images/my/status4.png')} 
            style={{width:px(30),height:px(30)}}></Image>
-           <Text style={styles.servetx}>待确认(0)</Text>
+           <Text style={styles.servetx}>待确认({badge.WAIT_CONFIRM})</Text>
 </TouchableOpacity>
 <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',gap:px(8),}}
 onPress={()=>handlegohome(4)}>
@@ -221,7 +282,7 @@ onPress={()=>handlegohome(4)}>
 onPress={()=>handlegohome(5)}>
      <Image source={require('../../../assets/images/my/status5.png')} 
            style={{width:px(30),height:px(30)}}></Image>
-           <Text style={styles.servetx}>售后中(1)</Text>
+           <Text style={styles.servetx}>售后中({badge.AFTER_SALE})</Text>
 </TouchableOpacity>
 </View>
 
@@ -232,45 +293,45 @@ onPress={()=>handlegohome(5)}>
   
 }}>
 <View style={{flexDirection: 'column',marginLeft: px(30),
-     height: px(110),justifyContent: 'space-between',
+     justifyContent: 'space-between',
 }}>
 <TouchableOpacity style={{flexDirection: 'column',gap:px(6)}} 
-onPress={()=>navigation.navigate('ShopCashout')}>
+onPress={()=>navigation.navigate('ShopCashout',{id:id})}>
 <View style={{flexDirection: 'row',alignItems: 'center',}}>
     <Text style={styles.pricedes}>可提现(元)</Text>
     <Image source={require('../../../assets/images/my/greyright.png')} 
    style={{width:px(16),height:px(16)}}></Image>
 </View>
-<Text style={styles.price}>9,124.4</Text>
+<Text style={styles.price}>{money.withdrawableAmount/100}</Text>
 </TouchableOpacity>
-<View style={{flexDirection: 'column',gap:px(6)}}>
+{/* <View style={{flexDirection: 'column',gap:px(6)}}>
     <Text style={styles.pricedes}>总金额(元)</Text>
 <Text style={styles.price}>3,124.4万</Text>
-</View>
+</View> */}
 </View>
 <View style={{flexDirection: 'column',marginLeft: px(49),
-    height: px(110),justifyContent: 'space-between',
+   justifyContent: 'space-between',
 }}>
 <TouchableOpacity style={{flexDirection: 'column',gap:px(6)}}
-onPress={()=>navigation.navigate('ShopPending',{type: 1})}>
+onPress={()=>navigation.navigate('ShopPending',{id:id})}>
 <View style={{flexDirection: 'row',alignItems: 'center',}}>
     <Text style={styles.pricedes}>待入账(元)</Text>
     <Image source={require('../../../assets/images/my/greyright.png')} 
    style={{width:px(16),height:px(16)}}></Image>
 </View>
-<Text style={styles.price}>1,124.4</Text>
+<Text style={styles.price}>{money.pendingAmount/100}</Text>
 </TouchableOpacity>
-<View style={{flexDirection: 'column',gap:px(6)}}>
+{/* <View style={{flexDirection: 'column',gap:px(6)}}>
     <Text style={styles.pricedes}>订单数</Text>
 <Text style={styles.price}>43万</Text>
-</View>
+</View> */}
 </View>
 <View style={{flexDirection: 'column',alignItems: 'flex-end',
-    marginLeft: px(30),justifyContent: 'flex-end',height: px(110),
+    marginLeft: px(30),justifyContent: 'flex-end',
     marginRight: px(24),
 }}>
 
-<TouchableOpacity style={{flexDirection: 'column',gap:px(6),paddingRight:px(0)}}
+{/* <TouchableOpacity style={{flexDirection: 'column',gap:px(6),paddingRight:px(0)}}
 onPress={()=>navigation.navigate('ShopPending',{type: 2})}>
 <View style={{flexDirection: 'row',alignItems: 'center',}}>
     <Text style={styles.pricedes}>订单退款(元)</Text>
@@ -278,7 +339,7 @@ onPress={()=>navigation.navigate('ShopPending',{type: 2})}>
    style={{width:px(16),height:px(16)}}></Image>
 </View>
 <Text style={styles.price}>3,124.4</Text>
-</TouchableOpacity>
+</TouchableOpacity> */}
 </View>
 
 </View>
@@ -300,7 +361,7 @@ marginTop: px(16),borderRadius: px(6),flexDirection: 'row',alignItems: 'center',
     <View style={{height: px(48),flexDirection: 'column',
         justifyContent: 'space-between',marginLeft: px(14),}}>
   <Text style={[styles.entertx,{marginTop: px(4),}]}>+商品录入</Text>
-    <Text style={styles.pricedes}>已录入23个商品</Text>
+    <Text style={styles.pricedes}>点击快速录入商品～</Text>
     </View>
 </TouchableOpacity>
 

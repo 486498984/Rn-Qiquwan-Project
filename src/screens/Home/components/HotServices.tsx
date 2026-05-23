@@ -3,7 +3,7 @@ import React,{useEffect,useRef} from 'react'
 import { px } from '../../../utils/scaleUtils';
 import { IMG_URL } from '../../../api/config';
 import FastImage from 'react-native-fast-image';
-
+import SafeFastImage from '../../../components/Home/SafeFastImage'
 
 const HotServices = ({shoplist,navigation}) => {
 const [randomList, setRandomList] = React.useState([])
@@ -44,7 +44,7 @@ const rotate = rotateAnim.interpolate({
     <TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}
       onPress={() => {
       startRotate()
-  setRandomList(getRandomThree(shoplist))
+      setRandomList(getRandomThree(shoplist))
   }}>
 <Animated.Image
   source={require('../../../../assets/images/home/refresh.png')}
@@ -71,24 +71,25 @@ const rotate = rotateAnim.interpolate({
                     top:px(8),left:-px(4)
                  }}></Image>
                  <Text style={styles.lefttoptext}>活动</Text>
-       <FastImage source={{uri:IMG_URL+item.goodsInfo.coverImage.split(',')[0]}} 
+       <SafeFastImage source={{uri:IMG_URL+item?.goodsInfo?.coverImage.split(',')[0]}} 
                  style={{width:px(114),height:px(114),position: 'absolute',
                     borderRadius: px(12),
                  }}/>
                 </View>
-  <View style={{flexDirection: 'row',alignItems: 'flex-end',gap:px(3),marginTop: px(3),}}>
- <Text style={styles.price}>￥{item.goodsInfo.minPrice/100}</Text>
+<View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: px(3), marginTop: px(3) }}>
+  <Text style={styles.price}>
+    ￥{item?.goodsInfo?.minPrice ? item.goodsInfo.minPrice / 100 : 128}
+  </Text>
   {/* <Text style={styles.smallprice}>￥388</Text> */}
-                 </View>
+</View>
  <Text style={styles.destitle}
- numberOfLines={1} ellipsizeMode='tail'>{item.goodsInfo.title}</Text>
+ numberOfLines={1} ellipsizeMode='tail'>{item?.goodsInfo?.title}</Text>
   <Text style={styles.smadestitle}
    numberOfLines={1} ellipsizeMode='tail'>纯绿护航 开挂必赔 炸单包赔</Text>
-            </TouchableOpacity>
-            )}
+   </TouchableOpacity>
+   )}
             
-       
-      
+
     </View>
       
     </View>

@@ -1,17 +1,69 @@
 import { StyleSheet, Text, View,Image,ScrollView,TouchableOpacity} from 'react-native'
-import React from 'react'
+import React,{useEffect,useState,useCallback,} from 'react'
 import { px } from '../../utils/scaleUtils';
 import LinearGradient from 'react-native-linear-gradient';
 import RewardOrder from '../../components/My/RewardOrder'
-
-
+import request from '../../api/request';
+import Storage from '../../utils/storage';
+import { useFocusEffect } from '@react-navigation/native';
+import { IMG_URL} from '../../api/config';
 
 
 const orderlist1=[{type:1},{type:1},{type:1},{type:1},{type:1},{type:1}] //待入账
 export default function Asset({ navigation }) {
-     const handleback = () => {  //返回上一页
+    const [moneyinfo, setMoneyinfo] = useState({}); //资金明细
+    const [userinfo, setUserinfo] = useState({}); //用户明细
+  useFocusEffect(
+    useCallback(() => {
+     getuserinfo();//获取资金明细
+    }, [])
+   );
+    const handleback = () => {  //返回上一页
     navigation.goBack();
-     };
+    };
+     useEffect(() => {
+      getuserinfo();
+      getuser();
+     }, [])
+     const getuser = async() => { 
+    const user = await Storage.get("userinfo");
+     try {
+        const response = await request({
+        url: '/user/profile',
+        method: 'GET',
+        data:{},
+        query: { userId: user.user.userId }
+        });
+        console.log(response); 
+        if(response.data!==undefined&&response.code==0){
+        setUserinfo(response.data.profile)
+        } 
+        } catch (error) {
+            console.error(error);
+        }
+
+      };
+     const getuserinfo = async() => { 
+       const user = await Storage.get("userinfo");
+    try {
+    const response = await request({
+      url: '/user/asset/overview',
+      method: 'GET',
+      data: {},
+    query: {
+    userId:user.user.userId,
+    }
+    });
+    console.log(response);
+    if (response.data !== null && response.code == 0) {
+    setMoneyinfo(response.data)
+    }
+    console.log('操作成功:', response);
+  } catch (error) {
+    console.error('操作失败:', error);
+  }
+
+    };
   return (
     <View style={styles.container}>
 
@@ -41,9 +93,15 @@ contentContainerStyle={{paddingBottom:px(38)}}>
 <View style={{flexDirection: 'row',alignItems: 'flex-end',marginLeft: px(16),
     gap:px(8)
 }}>
-       <Image source={require('../../../assets/images/my/defultavtar.png')} 
+    <Image 
+    source={
+    userinfo?.avatarUrl == ""
+      ?  require('../../../assets/images/my/defultavtar.png')
+      : { uri: IMG_URL+userinfo?.avatarUrl }
+    }
+       //source={{uri:IMG_URL+userinfo?.avatarUrl}} 
    style={{width:px(30),height:px(30),borderRadius: px(15),}}></Image>
-<Text style={styles.nikename}>Cougar Liu</Text>
+<Text style={styles.nikename}>{userinfo?.nickName}</Text>
 </View>
 <TouchableOpacity style={{height: px(29),backgroundColor: 'rgba(0, 0, 0,0.3)',
     borderBottomLeftRadius: px(15),borderTopLeftRadius: px(15),
@@ -64,12 +122,12 @@ contentContainerStyle={{paddingBottom:px(38)}}>
 }}>
     <View style={{flexDirection: 'column',alignItems: 'flex-start',gap:px(3)}}>
 <Text style={styles.firtitle}>累计佣金(元)</Text>
-<Text style={styles.firmoney}>2689.56</Text>
+<Text style={styles.firmoney}>{moneyinfo?.totalIncome/100}</Text>
     </View>
 
     <View style={{flexDirection: 'column',alignItems: 'flex-start',gap:px(3)}}>
 <Text style={styles.firtitle}>下单总数</Text>
-<Text style={styles.firmoney}>630</Text>
+<Text style={styles.firmoney}>{moneyinfo?.invitedOrderCount}</Text>
     </View>
     <TouchableOpacity style={{flexDirection: 'column',alignItems: 'flex-start',gap:px(3)}}
     onPress={()=>navigation.navigate('Register')}>
@@ -78,36 +136,27 @@ contentContainerStyle={{paddingBottom:px(38)}}>
   <Image source={require('../../../assets/images/my/cright.png')} 
    style={{width:px(20),height:px(20)}}></Image>
         </View>
-<Text style={styles.firmoney}>43</Text>
+<Text style={styles.firmoney}>{moneyinfo?.invitedUserCount}</Text>
     </TouchableOpacity>
 </View>
 
-<View style={{width: px(361),height: px(216),backgroundColor: '#fff',
+<View style={{width: px(361),backgroundColor: '#fff',
     borderRadius: px(12),flexDirection: 'column',paddingVertical:px(20),
     justifyContent: 'space-between',paddingHorizontal:px(16),marginTop: px(12),
 }}>
     <View>
   <View style={{flexDirection: 'row',alignItems: 'flex-start',
     justifyContent: 'space-between',}}>
-   <TouchableOpacity style={{flexDirection: 'column',alignItems: 'flex-start',gap:px(5)}}
-   onPress={()=>navigation.navigate('InviteOrder',{type:1})}>
+   <View style={{flexDirection: 'column',alignItems: 'flex-start',gap:px(5)}}
+   >
         <View style={{flexDirection: 'row',alignItems: 'center',}}>
   <Text style={styles.firtitle}>可提现(元)</Text>
-  <Image source={require('../../../assets/images/my/cright.png')} 
-   style={{width:px(20),height:px(20)}}></Image>
+  {/* <Image source={require('../../../assets/images/my/cright.png')} 
+   style={{width:px(20),height:px(20)}}></Image> */}
         </View>
-<Text style={styles.midmoney}>905.99</Text>
-    </TouchableOpacity>
- <TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',}}
- onPress={()=>navigation.navigate('Details')}>
-  <Text style={styles.firtitle}>资产明细</Text>
-  <Image source={require('../../../assets/images/my/cright.png')} 
-   style={{width:px(20),height:px(20)}}></Image>
-        </TouchableOpacity>
-  </View>
-<View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
-    justifyContent: 'space-between',marginTop: px(18),
-}}>
+<Text style={styles.midmoney}>{moneyinfo?.availableBalance/100}</Text>
+    </View>
+
    <TouchableOpacity style={{flexDirection: 'column',alignItems: 'flex-start',gap:px(2)}}
    onPress={()=>navigation.navigate('InviteOrder',{type:2})}>
         <View style={{flexDirection: 'row',alignItems: 'center',}}>
@@ -115,9 +164,23 @@ contentContainerStyle={{paddingBottom:px(38)}}>
   <Image source={require('../../../assets/images/my/cright.png')} 
    style={{width:px(20),height:px(20)}}></Image>
         </View>
-<Text style={styles.midmoney}>39.59</Text>
+<Text style={styles.midmoney}>{moneyinfo?.pendingSettleAmount/100}</Text>
     </TouchableOpacity>
-       <TouchableOpacity style={{flexDirection: 'column',alignItems: 'flex-start',gap:px(2)}}
+
+ <TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',}}
+ onPress={()=>navigation.navigate('Details')}>
+  <Text style={styles.firtitle}>资产明细</Text>
+  <Image source={require('../../../assets/images/my/cright.png')} 
+   style={{width:px(20),height:px(20)}}></Image>
+        </TouchableOpacity>
+
+        
+  </View>
+<View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
+    justifyContent: 'space-between',marginTop: px(18),
+}}>
+
+       {/* <TouchableOpacity style={{flexDirection: 'column',alignItems: 'flex-start',gap:px(2)}}
      onPress={()=>navigation.navigate('Withdraw')}>
         <View style={{flexDirection: 'row',alignItems: 'center',}}>
   <Text style={styles.firtitle}>提现中(元)</Text>
@@ -125,8 +188,8 @@ contentContainerStyle={{paddingBottom:px(38)}}>
    style={{width:px(20),height:px(20)}}></Image>
         </View>
 <Text style={styles.midmoney}>0.00</Text>
-    </TouchableOpacity>
-       <TouchableOpacity style={{flexDirection: 'column',alignItems: 'flex-start',gap:px(2)}}
+    </TouchableOpacity> */}
+       {/* <TouchableOpacity style={{flexDirection: 'column',alignItems: 'flex-start',gap:px(2)}}
         onPress={()=>navigation.navigate('Withdraw')}>
         <View style={{flexDirection: 'row',alignItems: 'center',}}>
   <Text style={styles.firtitle}>已提现(元)</Text>
@@ -134,7 +197,7 @@ contentContainerStyle={{paddingBottom:px(38)}}>
    style={{width:px(20),height:px(20)}}></Image>
         </View>
 <Text style={styles.midmoney}>269.00</Text>
-    </TouchableOpacity>
+    </TouchableOpacity> */}
 </View>
 </View>
 

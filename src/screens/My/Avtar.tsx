@@ -58,21 +58,21 @@ const handleavtar = async(e) => {  //上传头像
         height: 400,
         cropping: true, // 裁剪
         cropperCancelText: '取消',
-  cropperChooseText: '确定',
-  }).then(image => {
-    console.log(image);
-   setImageUri(image.path)
- setAvatarLoadError(false);
-   //handleuploadImage(image.path)imageUri
-  });
+        cropperChooseText: '确定',
+        }).then(image => {
+          console.log(image);
+        setImageUri(image.path)
+        setAvatarLoadError(false);
+        //handleuploadImage(image.path)imageUri
+        });
         }else{
           const result = await check(PERMISSIONS.ANDROID.CAMERA)
           console.log(result);
           if(result!=="granted"){
-  Alert.alert(
-    '相机权限申请',
-    '为了上传头像，我们需要使用您的相机权限。\n该权限仅用于上传头像，不会用于其他用途。',
-    [
+    Alert.alert(
+      '相机权限申请',
+      '为了上传头像，我们需要使用您的相机权限。\n该权限仅用于上传头像，不会用于其他用途。',
+      [
       {
         text: '取消',
         style: 'cancel'
@@ -159,6 +159,7 @@ setAvatarLoadError(false);
           console.log(response);
          if(response.code==0){
             loginChanged();
+            navigation.goBack();
             Toast.show({
               content: '更新成功',
               duration: 2,

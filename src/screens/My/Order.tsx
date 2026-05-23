@@ -7,6 +7,9 @@ import { px } from '../../utils/scaleUtils';
 import OrderItem from '../../components/My/OrderItem'
 import request from '../../api/request';
 import Storage from '../../utils/storage';
+import useAuthStore from '../../utils/zustand';
+
+
 
 const ORDER_STATUS_MAP = {
   all: '',
@@ -25,6 +28,8 @@ const TabContent = ({
   hasMore,
   loading,
   refreshCurrentTab,
+  refreshTab,
+  refreshAllTabs,
 }) => {
   const onEndReachedCalledDuringMomentum = useRef(false);
   //const data = Array.from({ length: 30 }).map((_, i) => `${title} - 订单 ${i + 1}`);
@@ -72,7 +77,7 @@ ListFooterComponent={() => {
         alignItems:'center',
         paddingVertical:px(16)
       }}>
-        <Text>加载中...</Text>
+        <Text style={styles.smadestitle}>加载中...</Text>
       </View>
     )
   }
@@ -84,7 +89,7 @@ ListFooterComponent={() => {
         alignItems:'center',
         paddingVertical:px(16)
       }}>
-        <Text>我是有底线的～</Text>
+        <Text style={styles.smadestitle}>我是有底线的～</Text>
       </View>
     )
   }
@@ -96,7 +101,7 @@ ListFooterComponent={() => {
         alignItems:'center',
         paddingVertical:px(30)
       }}>
-        <Text>暂无订单</Text>
+        <Text style={styles.smadestitle}>暂无订单</Text>
       </View>
     )
   }
@@ -108,22 +113,30 @@ onEndReachedThreshold={0.2}
       renderItem={({ item }) => (
         <OrderItem item={item} 
         navigation={navigation}    
-        refreshCurrentTab={refreshCurrentTab}></OrderItem>
+        refreshCurrentTab={refreshCurrentTab}
+        refreshTab={refreshTab}
+        refreshAllTabs={refreshAllTabs}
+        ></OrderItem>
       )}
     />
   );
 };
 export default function Order({navigation,route}) {
+
+  const orderListRefreshKey =
+  useAuthStore(
+    state => state.orderListRefreshKey
+  );
    const { e } = route.params || {};
   console.log(e);
-const TAB_INDEX_MAP = {
-  1: 0, // 全部
-  2: 1, // 待付款
-  3: 2, // 待服务
-  4: 4, // 待收货
-  5: 5, // 待评论
-  6: 6, // 已完成
-};
+  const TAB_INDEX_MAP = {
+    1: 0, // 全部
+    2: 1, // 待付款
+    3: 2, // 待服务
+    4: 4, // 待收货
+    5: 5, // 待评论
+    6: 6, // 已完成
+  };
 
 const getTabIndexByE = (e) => {
   return TAB_INDEX_MAP[e] ?? 0;
@@ -217,7 +230,11 @@ const renderScene = ({ route }) => {
       refreshCurrentTab={() => {
         getorderlist(route.key, 1, true);
       }}
+  // 指定tab刷新
+  refreshTab={refreshTab}
 
+  // 全部tab刷新
+  refreshAllTabs={refreshAllTabs}
     />
 
   );
@@ -421,6 +438,29 @@ const getorderlist = async (
   }
 
 };
+// 刷新指定tab
+const refreshTab = (tabKey) => {
+
+  if (!tabKey) return;
+
+  getorderlist(tabKey, 1, true);
+
+};
+// 刷新全部tab
+const refreshAllTabs = async () => {
+
+  const keys = routes.map(item => item.key);
+
+  // 并发刷新
+  await Promise.all(
+    keys.map(key => getorderlist(key, 1, true))
+  );
+
+};
+useEffect(() => {
+  refreshAllTabs();
+}, [orderListRefreshKey])
+
 useEffect(() => {
 
   const currentKey = routes[index].key;
@@ -461,6 +501,13 @@ useEffect(() => {
 }
 
 const styles = StyleSheet.create({
+      smadestitle:{
+        fontFamily: 'MiSans-Regular',
+        fontSize:px(13),
+        color:'#AAAAAA',
+        fontWeight:400,
+        lineHeight:px(17),
+    },
     desnum:{
    fontFamily: 'MiSans-Regular',
     fontSize: px(12),

@@ -47,6 +47,9 @@ import Cashout from './screens/My/Cashout';
 import OrderInfo from './screens/My/OrderInfo';
 import Comment from './screens/My/Comment';
 import Invite from './screens/My/Invite';
+import Refund from './screens/My/Refund';
+import Aftersales from './screens/My/Aftersales';
+import SafeOrderInfo from './screens/My/SafeOrderInfo';
 import OneChat from './screens/News/OneChat';
 import ShopIndex from './screens/Shop/ShopIndex';
 import ShopOrder from './screens/Shop/ShopOrder';
@@ -65,8 +68,14 @@ import ShopEditEmployee from './screens/Shop/ShopEditEmployee';
 import ShopNotice from './screens/Shop/ShopNotice';
 import ShopPreview from './screens/Shop/ShopPreview';
 import ShopEdit from './screens/Shop/ShopEdit';
+import ShopSale from './screens/Shop/ShopSale';
+import ShopSaleInfo from './screens/Shop/ShopSaleInfo';
 import UserAgree from './screens/Policy/UserAgree';
 import PrivacyAgree from './screens/Policy/PrivacyAgree';
+
+
+
+
 
 
 
@@ -575,6 +584,12 @@ const openWeChat = async () => {
 <Stack.Screen name="ShopEdit" component={ShopEdit}/>
 <Stack.Screen name="Preze" component={Preze}/>
 <Stack.Screen name="Invite" component={Invite}/>
+<Stack.Screen name="Refund" component={Refund}/>
+<Stack.Screen name="Aftersales" component={Aftersales}/>
+<Stack.Screen name="SafeOrderInfo" component={SafeOrderInfo}/>
+<Stack.Screen name="ShopSale" component={ShopSale}/>
+<Stack.Screen name="ShopSaleInfo" component={ShopSaleInfo}/>
+
 
 
 

@@ -80,19 +80,19 @@ const handleImageError = (uri) => {
             setPreviewVisible(true);
           }}
             >
-<FastImage
-  source={
-    errorMap[item.uri]
-      ? require('../../../assets/images/home/imgfail.png')
-      : {
-          uri: item.uri,
-          priority: FastImage.priority.normal,
-        }
-  }
-  style={styles.image}
-  resizeMode={FastImage.resizeMode.cover}
-  onError={() => handleImageError(item.uri)}
-/>
+        <FastImage
+          source={
+            errorMap[item.uri]
+              ? require('../../../assets/images/home/imgfail.png')
+              : {
+                  uri: item.uri,
+                  priority: FastImage.priority.normal,
+                }
+          }
+          style={styles.image}
+          resizeMode={FastImage.resizeMode.cover}
+          onError={() => handleImageError(item.uri)}
+        />
             </TouchableOpacity>
 
             {/* 删除 */}

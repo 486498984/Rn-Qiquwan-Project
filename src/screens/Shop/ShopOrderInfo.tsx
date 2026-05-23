@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View,TouchableOpacity,Image,ScrollView,Platform,
 
  } from 'react-native'
-import React,{useState} from 'react'
+import React,{useState,useEffect,} from 'react'
 import { px } from '../../utils/scaleUtils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
@@ -10,7 +10,48 @@ import {
   Radio,
 } from '@ant-design/react-native'
 import CustomModal from '../../components/My/CustomModal';
+import request from '../../api/request';
+import { IMG_URL } from '../../api/config';
+import SafeFastImage from '../../components/Home/SafeFastImage'
+import Clipboard from '@react-native-clipboard/clipboard';
+import {
+Toast, Modal as Modalitem,
+} from '@ant-design/react-native'
+import useAuthStore from '../../utils/zustand';
+import ImagePreviewer from '../../components/Shop/ImagePreviewer';
 
+
+
+const ORDER_STATUS_MAP = {
+  WAIT_SERVICE: {
+    title: '待服务',
+    desc: '请及时安排打手...',
+    image: require('../../../assets/images/my/clock.png'),
+  },
+
+  IN_SERVICE: {
+    title: '服务中',
+    desc: '订单进行中...',
+    image: require('../../../assets/images/my/newso.png'),
+  },
+
+  WAIT_CONFIRM: {
+    title: '待确认',
+    desc: '3天后自动确认',
+    image: require('../../../assets/images/my/clock.png'),
+  },
+
+  FINISHED: {
+    title: '已完成',
+    desc: '订单已完成',
+    image: require('../../../assets/images/my/finish.png'),
+  },
+    CANCELED: {
+    title: '已取消',
+    desc: '订单已取消',
+    image: require('../../../assets/images/my/cannelo.png'),
+  },
+};
 const imgMap = {
   0: require('../../../assets/images/my/clock.png'),
   1: require('../../../assets/images/my/newso.png'),
@@ -21,19 +62,38 @@ export default function ShopOrderInfo({navigation,route}) {
           const insets = useSafeAreaInsets();
           const bottomSafeHeight = insets.bottom; // 底部安全区高度（数值）
  const { e } = route.params || {};
+const [orderInfo, setOrderInfo] = useState(null);
  const [type, setType] = useState(0); //订单类型
  const [refund, setRefund] = useState(0); //退款原因
   const [refundsubmode, setRefundsubmode] = useState(1); //退款原因选择   
  const [refundmode, setRefundmode] = useState(1); //退款原因选择    
   const [refundmodal, setRefundmodal] = useState(false); //退款原因弹窗
    const [cannelstatus, setCannelstatus] = useState(false); //取消订单弹窗开关
+    const [goods, setGoods] = useState({}); //商品详情
+     const [addons, setAddons] = useState(""); //增值服务
+     const [starttime, setStarttime] = useState("-"); //开始时间
+const [endtime, setEndtime] = useState("-"); //结束时间
+const [processList, setProcessList] = useState([]);
+const [previewVisiblecon, setPreviewVisiblecon] = useState(false);
+const [headimgviewcon, setHeadimgviewcon] = useState([]); // 图片数组
+const [currentIndexcon, setCurrentIndexcon] = useState(0);
+const [paytime, setPaytime] = useState("-"); //支付时间
+const [currentStatus, setCurrentStatus] = useState("-"); //支付时间
+
+
+
+const orderRefreshKey =
+  useAuthStore(
+    state => state.orderRefreshKey
+  );
+
  const handleback = () => {  //返回上一页
    navigation.goBack();
-     };
+     }; 
      const handlegocom = () => {  //点击右边按钮
     if(e==5){  //写评价
         navigation.navigate('Comment')
-    }else if(e==2){ //申请退款
+    }else if(orderInfo.orderStatus === 'WAIT_CONFIRM'){ //申请退款
 setRefundmodal(true)
     }
     };
@@ -48,6 +108,152 @@ setRefundmodal(true)
 setRefundsubmode(refundmode)
 setRefundmodal(false)
    };
+   useEffect(() => {
+     if(e){
+    console.log(e);
+    getorderinfo(e)
+     }
+   }, [e,orderRefreshKey])
+   const getorderinfo = async(e) => { 
+         try {
+           const response = await request({
+             url: '/store/order/detail',
+             method: 'GET',
+             data:{},
+             query: {
+              orderId:e.id,
+              storeId:e.storeId
+              }
+           });
+           console.log(response);
+          if(response.data!==undefined&&response.code==0){
+          setCurrentStatus(getStatus(response.data.order))
+          setOrderInfo(response.data.order)
+          let goods=JSON.parse(response.data.order.goodsSnapshot)
+          setGoods(goods)
+        const addonTitles = goods.addons
+          ?.map(item => `${item.title}x${item.quantity}`)
+          ?.join('，') || ''; 
+          setAddons(addonTitles)
+          console.log(addonTitles);
+          if(response.data.logs!==null){
+       const list = response.data.logs || [];
+
+if (list.length > 0) {
+
+  // 开始时间
+  const startTime =
+    list.find(item => item.nodeType === 'START')
+      ?.updatedAt || '-';
+
+  // 结束时间
+  const endTime =
+    list.find(item => item.nodeType === 'END')
+      ?.updatedAt || '-';
+
+  setStarttime(startTime);
+  setEndtime(endTime);
+
+  // 提取 PROCESS
+  const processData = list.filter(
+    item => item.nodeType === 'PROCESS'
+  );
+ console.log(processData);
+ 
+  setProcessList(processData);
+
+} else {
+  setStarttime('-');
+  setEndtime('-');
+  setProcessList([]);
+}
+          }
+   
+  let paytype=response.data.order.paymentType
+          if(response.data.order.paymentSnapshot!==null&&response.data.order.paymentSnapshot!==""){
+          if(paytype=='WECHAT'){
+          let payinfo=JSON.parse(response.data.order.paymentSnapshot)
+          const date = new Date(payinfo.success_time);
+const pad = (n) => n.toString().padStart(2, "0");
+const formatted = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ` +
+                  `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+                  setPaytime(formatted)
+          }else{
+            let payinfo=JSON.parse(response.data.order.paymentSnapshot)
+           setPaytime(payinfo.gmt_payment)
+          } 
+          }
+         
+          }
+         } catch (error) {
+           console.error(error);
+         }
+    }; 
+
+   const getStatus = (e) => {
+    console.log(e.orderStatus);
+  // 其他状态使用 STATUS_CONFIG
+  return ORDER_STATUS_MAP[e.orderStatus];
+  }  
+
+// const currentStatus =
+//   ORDER_STATUS_MAP[e.orderStatus];
+
+  const handleCopyOrderNo = (e) => {
+ console.log(e);
+ 
+
+ if(e==1){
+    if (!orderInfo?.orderNo) {
+      Toast.show({
+           content: '订单号不存在',
+           duration: 2,
+           position: 'center',
+           mask: false,
+         })
+    return;
+  }
+  Clipboard.setString(orderInfo.orderNo);
+  Toast.show({
+           content: '订单号已复制',
+           duration: 2,
+           position: 'center',
+           mask: false,
+         })
+ }else{
+      if (!orderInfo?.userId) {
+      Toast.show({
+           content: '用户id不存在',
+           duration: 2,
+           position: 'center',
+           mask: false,
+         })
+    return;
+  }
+Clipboard.setString(String(`1258${orderInfo.userId}`));
+  Toast.show({
+           content: '用户id已复制',
+           duration: 2,
+           position: 'center',
+           mask: false,
+         })
+ }
+
+};
+
+
+    if (!orderInfo) {
+  return (
+    <View style={{
+      flex:1,
+      justifyContent:'center',
+      alignItems:'center',
+    }}>
+      <Text>加载中...</Text>
+    </View>
+  );
+};
+
   return (
     <View style={styles.container}>
       <View style={{width: px(393),height: px(98),backgroundColor: '#fff',
@@ -70,37 +276,25 @@ contentContainerStyle={{paddingBottom:px(110)}} showsVerticalScrollIndicator={fa
     justifyContent: 'space-between',
 }}>
     <View style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}>
-<Image source={imgMap[e]}
-style={{width:px(32),height:px(32)}}></Image>
-        {e === 0 ? (
-        <Text style={styles.toptitle}>待服务</Text>
-        ) : e === 1 ? (
-            <Text style={styles.toptitle}>服务中</Text>
-        ) : e === 2 ? (
-            <Text style={styles.toptitle}>待确认</Text>
-        ) : e === 3 ? (
-        <Text style={styles.toptitle}>已完成</Text>
-        ) : null
-        }
+<Image
+  source={currentStatus?.image}
+  style={{width:px(32),height:px(32)}}
+/>
+<Text style={styles.toptitle}>
+  {currentStatus?.title}
+</Text>
  
     </View>
-  {e === 0 ? (
-  <Text style={styles.righttx}>请及时安排打手...</Text>
-) : e === 1 ? (
-    <Text style={styles.righttx}>订单进行中...</Text>
-) : e === 2 ? (
- <Text style={styles.righttx}>3天后自动确认</Text>
-) : e === 3 ? (
- <Text style={styles.righttx}>订单已完成</Text>
-) : null
-}
+<Text style={styles.righttx}>
+  {currentStatus?.desc}
+</Text>
 </View>
 <View style={{width: '100%',backgroundColor: '#fff',borderRadius: px(14),
     paddingHorizontal:px(8),paddingVertical:px(16),marginTop: px(16),
 }}>
 <View style={{flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',}}>
  <Text style={styles.clubname}>一个大啦</Text>
-    {(e==0||e==1||e==2) &&
+    {(orderInfo.orderStatus === 'WAIT_SERVICE'||orderInfo.orderStatus === 'IN_SERVICE'||orderInfo.orderStatus === 'WAIT_CONFIRM') &&
        <TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}>
       {/* <Image source={require('../../../assets/images/my/kefu.png')} 
     style={{width:px(16),height:px(16)}}></Image> */}
@@ -110,36 +304,170 @@ style={{width:px(32),height:px(32)}}></Image>
 
 </View>
 <View style={{flexDirection: 'row',alignItems: 'center',marginTop: px(16),}}>
-<Image source={require('../../../assets/images/home/shop1.png')} 
-    style={{width:px(93),height:px(93)}}></Image>
+   <SafeFastImage 
+   source={{uri:IMG_URL+goods.goods.coverImage.split(',')[0]}}
+                    style={{width:px(93),height:px(93),borderRadius: px(8),}}/>
     <View style={{height: px(93),flexDirection: 'column',
         justifyContent: 'space-between',marginLeft: px(8),}}>
-<Text style={styles.shopname}>绝密航天清图国服在榜单三大师/单局保底850W</Text>
+<Text style={styles.shopname}>{goods?.goods?.title}</Text>
 <View style={{flexDirection: 'column',gap:px(0)}}>
-<Text style={styles.shopnames} >带出暗心燃料(魔王双护),暗星燃料x1,保底888w暗星燃料x1,保底888w</Text>
-
-<Text style={styles.shopnames}>数量：1</Text>
-
+<Text style={styles.shopnames} >{goods?.sku?.title}</Text>
+{addons!==""&&
+<Text style={styles.shopnames} >{addons}</Text>
+}
+<Text style={styles.shopnames}>数量：{orderInfo?.quantity}</Text>
+ 
 </View>
     </View>
 </View>
 </View>
 
+
+{orderInfo.orderStatus === 'IN_SERVICE'&&
+<View style={{width: '100%',backgroundColor: '#fff',borderRadius: px(14),
+    paddingHorizontal:px(8),paddingVertical:px(16),marginTop: px(16),gap:px(16)}}>
+<View style={{width: '100%',flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',}}>
+    <Text style={styles.shoppricetx}>上传进度</Text>
+</View>
+<TouchableOpacity style={{width: px(345),height: px(47),backgroundColor: '#F2F3F5',
+    borderRadius: px(8),borderWidth: px(1),borderColor: '#FF9500',
+    flexDirection: 'row',alignItems: 'center',justifyContent: 'center',
+}} onPress={()=>navigation.navigate('ShopScreenshot',{e})}>
+<Image source={require('../../../assets/images/my/addshop.png')} 
+    style={{width:px(18),height:px(18)}}></Image>
+</TouchableOpacity>
+</View>
+}
+
+
+{
+processList.length > 0 &&
+processList.map((item,index)=>{
+
+  // 图片数组
+  const imageList = item.images
+    ? item.images.split(',')
+    : [];
+
+  return(
+    <View
+      key={index}
+      style={{
+        width: '100%',
+        backgroundColor: '#fff',
+        borderRadius: px(14),
+        paddingHorizontal:px(8),
+        paddingVertical:px(16),
+        marginTop: px(16),
+        gap:px(16)
+      }}
+    >
+
+      {/* 标题 */}
+      <View style={{
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}>
+        <Text style={styles.shoppricetx}>
+          上传记录
+        </Text>
+      </View>
+
+      {/* 时间 */}
+      <View style={{
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}>
+        <Text style={styles.shopdesnames}>
+          上传时间
+        </Text>
+
+        <Text style={styles.yingfu}>
+          {item.updatedAt || '-'}
+        </Text>
+      </View>
+
+      {/* 图片 */}
+      <View
+        style={{
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap:px(8),
+        }}
+      >
+
+  {
+  imageList.map((img, index2) => (
+    <TouchableOpacity
+      key={index2}
+      onPress={() => {
+        const previewArray = imageList.map(i => ({ uri: IMG_URL +i })); 
+        setHeadimgviewcon(previewArray);
+        console.log(previewArray);
+        setCurrentIndexcon(index2);
+        setPreviewVisiblecon(true);
+      }}
+    >
+      <SafeFastImage
+        source={{ uri: IMG_URL + img }}
+        style={{
+          width:px(80),
+          height:px(80),
+          borderRadius:px(8),
+        }}
+      />
+    </TouchableOpacity>
+  ))
+}
+
+      </View>
+
+      {/* 描述 */}
+      {
+        item.content !== '' &&
+        <View style={{
+          backgroundColor: '#F7F8FC',
+          padding:px(8),
+          borderRadius: px(10),
+        }}>
+          <Text style={styles.bottomdes}>
+            {item.content}
+          </Text>
+        </View>
+      }
+<ImagePreviewer
+  visible={previewVisiblecon}
+  images={headimgviewcon}
+  index={currentIndexcon}
+  onClose={() => setPreviewVisiblecon(false)}
+  enableLongPressSave={false}
+/>
+    </View>
+  )
+})
+}
+
+
+
 <View style={{width: '100%',backgroundColor: '#fff',borderRadius: px(14),
     paddingHorizontal:px(8),paddingVertical:px(16),marginTop: px(16),gap:px(16)}}>
 <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',}}>
     <Text style={styles.shoppricetx}>商品总价</Text>
-      <Text style={styles.shopprice}>￥138</Text>
+      <Text style={styles.shopprice}>￥{orderInfo?.totalAmount/100}</Text>
 </View>
 <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',}}>
     <Text style={styles.shopdesnames}>优惠</Text>
-      <Text style={styles.shopprice}>￥10</Text>
+      <Text style={styles.shopprice}>￥{orderInfo?.discountAmount/100}</Text>
 </View>
 <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
     justifyContent: 'flex-end',}}>
 <View style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}>
           <Text style={styles.yingfu}>应付款</Text>
-      <Text style={styles.shopprice}>￥128</Text>
+      <Text style={styles.shopprice}>￥{orderInfo?.payAmount/100}</Text>
 </View>
 </View>
 </View>
@@ -154,25 +482,27 @@ style={{width:px(32),height:px(32)}}></Image>
     <Text style={styles.shopdesnames}>订单编号</Text>
      <View style={{flexDirection: 'row',gap:px(3),alignItems: 'center',
      }}>
-     <Text style={styles.yingfu}>219739012479102</Text>
-      <Text style={styles.yingfu}>复制</Text>
+     <Text style={styles.yingfu}>{orderInfo?.orderNo}</Text>
+        <TouchableOpacity onPress={()=>handleCopyOrderNo(1)}>
+         <Text style={[styles.yingfu,{fontSize:px(14),lineHeight:px(19)}]}>复制</Text>
+         </TouchableOpacity>
 </View>
 </View>
 <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
     justifyContent: 'space-between',}}>
     <Text style={styles.shopdesnames}>支付方式</Text>
-      <Text style={styles.yingfu}>微信支付</Text>
+ <Text style={styles.yingfu}>{orderInfo?.paymentType=="WECHAT"?'微信支付':'支付宝'}</Text>
 </View>
 <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
     justifyContent: 'space-between',}}>
     <Text style={styles.shopdesnames}>下单时间</Text>
-      <Text style={styles.yingfu}>2024-05-10 16:22</Text>
+      <Text style={styles.yingfu}>{orderInfo?.createdAt}</Text>
 </View>
  
     <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
         justifyContent: 'space-between',}}>
         <Text style={styles.shopdesnames}>支付时间</Text>
-        <Text style={styles.yingfu}>2024-05-10 16:22</Text>
+        <Text style={styles.yingfu}>{paytime}</Text>
     </View>
 </View>
 
@@ -181,76 +511,32 @@ style={{width:px(32),height:px(32)}}></Image>
 <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',}}>
     <Text style={styles.shoppricetx}>客户信息</Text>
 </View>
-<View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
+{/* <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
     justifyContent: 'space-between',}}>
     <Text style={styles.shopdesnames}>用户ID</Text>
      <View style={{flexDirection: 'row',gap:px(3),alignItems: 'center',
      }}>
-     <Text style={styles.yingfu}>53496798</Text>
-      <Text style={styles.yingfu}>复制</Text>
+     <Text style={styles.yingfu}>1258{orderInfo?.userId}</Text>
+        <TouchableOpacity onPress={()=>handleCopyOrderNo(2)}>
+         <Text style={[styles.yingfu,{fontSize:px(14),lineHeight:px(19)}]}>复制</Text>
+         </TouchableOpacity>
 </View>
-</View>
+</View> */}
 <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
     justifyContent: 'space-between',}}>
     <Text style={styles.shopdesnames}>用户名</Text>
-      <Text style={styles.yingfu}>伊戈达拉到特勤</Text>
+      <Text style={styles.yingfu}>{orderInfo?.userNickName}</Text>
 </View>
 <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
     justifyContent: 'space-between',}}>
     <Text style={styles.shopdesnames}>账号</Text>
-      <Text style={styles.yingfu}>199****8345</Text>
+      <Text style={styles.yingfu}>{orderInfo?.userPhone}</Text>
 </View>
 </View>
 
 
 
-{e>0&&
-<View style={{width: '100%',backgroundColor: '#fff',borderRadius: px(14),
-    paddingHorizontal:px(8),paddingVertical:px(16),marginTop: px(16),gap:px(16)}}>
-<View style={{width: '100%',flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',}}>
-    <Text style={styles.shoppricetx}>上传截图</Text>
-</View>
-<View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
-    justifyContent: 'space-between',}}>
-    <Text style={styles.shopdesnames}>上传时间</Text>
-      <Text style={styles.yingfu}>2024-05-10 16:22</Text>
-</View>
-<View style={{flexDirection: 'row',alignItems: 'center',flexWrap: 'wrap',
-    gap:px(8),
-}}>
-<Image source={require('../../../assets/images/home/shop1.png')} 
-    style={{width:px(80),height:px(80)}}></Image>
-    <Image source={require('../../../assets/images/home/shop1.png')} 
-    style={{width:px(80),height:px(80)}}></Image>
-       <Image source={require('../../../assets/images/home/shop1.png')} 
-    style={{width:px(80),height:px(80)}}></Image>
-       <Image source={require('../../../assets/images/home/shop1.png')} 
-    style={{width:px(80),height:px(80)}}></Image>
-</View>
-<View style={{backgroundColor: '#F7F8FC',padding:px(8),borderRadius: px(10),}}>
-<Text style={styles.bottomdes}>开始游戏已确认账号相关信息准确无误开始游戏已确认账号相关信息准确无误开始游戏已确认账号相关信息准确无误。</Text>
-</View>
-
-</View>
-}
-{e==1&&
-<View style={{width: '100%',backgroundColor: '#fff',borderRadius: px(14),
-    paddingHorizontal:px(8),paddingVertical:px(16),marginTop: px(16),gap:px(16)}}>
-<View style={{width: '100%',flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',}}>
-    <Text style={styles.shoppricetx}>上传截图</Text>
-</View>
-<TouchableOpacity style={{width: px(345),height: px(47),backgroundColor: '#F2F3F5',
-    borderRadius: px(8),borderWidth: px(1),borderColor: '#FF9500',
-    flexDirection: 'row',alignItems: 'center',justifyContent: 'center',
-}} onPress={()=>navigation.navigate('ShopScreenshot',{e})}>
-<Image source={require('../../../assets/images/my/addshop.png')} 
-    style={{width:px(18),height:px(18)}}></Image>
-</TouchableOpacity>
-</View>
-}
-
-
-{e>0&&
+{starttime!=="-"&&endtime!=="-"&&
 <View style={{width: '100%',backgroundColor: '#fff',borderRadius: px(14),
     paddingHorizontal:px(8),paddingVertical:px(16),marginTop: px(16),gap:px(16)}}>
 <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',}}>
@@ -261,22 +547,25 @@ style={{width:px(32),height:px(32)}}></Image>
     <Text style={styles.shopdesnames}>接单时间</Text>
      <View style={{flexDirection: 'row',gap:px(3),alignItems: 'center',
      }}>
-     <Text style={styles.yingfu}>2024-05-10 16:22</Text>
+     <Text style={styles.yingfu}>{starttime}</Text>
       {/* <Text style={styles.yingfu}>复制</Text> */}
 </View>
 </View>
 <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
     justifyContent: 'space-between',}}>
     <Text style={styles.shopdesnames}>完成时间</Text>
-      <Text style={styles.yingfu}>2024-05-10 16:22</Text>
-</View>
-<View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
+      <Text style={styles.yingfu}>{endtime}</Text>
+</View> 
+{/* <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
     justifyContent: 'space-between',}}>
     <Text style={styles.shopdesnames}>操作人</Text>
       <Text style={styles.yingfu}>运营刘先生</Text>
+</View> */}
 </View>
-</View>
+
 }
+
+
 
 </ScrollView>
 
@@ -289,7 +578,7 @@ style={{width:px(32),height:px(32)}}></Image>
 <View style={{flexDirection: 'row',alignItems: 'center',marginTop: px(8),
     gap:px(21)
 }}>
-{e==0&&
+{orderInfo.orderStatus === 'WAIT_SERVICE'&&
  <TouchableOpacity onPress={()=>setCannelstatus(true)}>
 <View style={styles.cannelbox}>
 <Text style={styles.canneltx}>取消订单</Text>
@@ -316,7 +605,7 @@ style={{width:px(32),height:px(32)}}></Image>
               colors={['#FEC525', '#FC9026']} // 渐变颜色
               start={{ x: 1, y: 0 }}   
               end={{ x: 0, y: 0 }}
-              style={[styles.payBox,{width:(e==1)? px(242):px(170),}]}
+              style={[styles.payBox,{width:(orderInfo.orderStatus === 'IN_SERVICE')? px(242):px(170),}]}
               >
               <View style={{flexDirection: 'row',alignItems: 'center',}}>
                   {e === 0 ? (

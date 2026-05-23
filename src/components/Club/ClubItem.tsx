@@ -7,7 +7,7 @@ import SafeFastImage from '../../components/Home/SafeFastImage'
 import {IMG_URL } from '../../api/config';
 import { Toast } from '@ant-design/react-native';
 
-const  ClubItem =({navigation,status,item})=> {
+const  ClubItem =({navigation,status,item,})=> {
     const handlegohome = () => { 
     navigation.navigate('ClubHome',{storeinfo:item})
      };
@@ -91,7 +91,7 @@ const  ClubItem =({navigation,status,item})=> {
 </View> */}
  </View>
  </TouchableOpacity>
-
+ 
 {JSON.parse(item.GoodsJSON).length>3&&
 <View style={{flexDirection: 'row',alignItems: 'center',
     marginTop: px(6),gap:px(3)}}

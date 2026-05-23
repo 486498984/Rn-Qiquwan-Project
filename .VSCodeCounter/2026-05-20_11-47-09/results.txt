@@ -1,0 +1,64 @@
+Date : 2026-05-20 11:47:09
+Directory : /Users/mac/Desktop/QiquwanProject/android
+Total : 18 files,  509 codes, 177 comments, 102 blanks, all 788 lines
+
+Languages
++------------+------------+------------+------------+------------+------------+
+| language   | files      | code       | comment    | blank      | total      |
++------------+------------+------------+------------+------------+------------+
+| Java       |          4 |        195 |         20 |         37 |        252 |
+| XML        |          7 |        128 |         31 |         16 |        175 |
+| Groovy     |          3 |        103 |         61 |         15 |        179 |
+| Batch      |          1 |         41 |         36 |         23 |        100 |
+| JSON       |          1 |         29 |          0 |          0 |         29 |
+| Properties |          2 |         13 |         29 |         11 |         53 |
++------------+------------+------------+------------+------------+------------+
+
+Directories
++-----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                                            | files      | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                                               |         18 |        509 |        177 |        102 |        788 |
+| . (Files)                                                                                                       |          5 |        114 |         65 |         36 |        215 |
+| app                                                                                                             |         12 |        388 |        112 |         65 |        565 |
+| app (Files)                                                                                                     |          1 |         65 |         61 |         12 |        138 |
+| app/src                                                                                                         |         11 |        323 |         51 |         53 |        427 |
+| app/src/main                                                                                                    |         11 |        323 |         51 |         53 |        427 |
+| app/src/main (Files)                                                                                            |          1 |         77 |          2 |          7 |         86 |
+| app/src/main/java                                                                                               |          4 |        195 |         20 |         37 |        252 |
+| app/src/main/java/com                                                                                           |          4 |        195 |         20 |         37 |        252 |
+| app/src/main/java/com/qiquwan                                                                                   |          4 |        195 |         20 |         37 |        252 |
+| app/src/main/java/com/qiquwan/games                                                                             |          4 |        195 |         20 |         37 |        252 |
+| app/src/main/java/com/qiquwan/games/alionepass                                                                  |          2 |        159 |         16 |         30 |        205 |
+| app/src/main/java/com/qiquwan/games/wxapi                                                                       |          2 |         36 |          4 |          7 |         47 |
+| app/src/main/res                                                                                                |          6 |         51 |         29 |          9 |         89 |
+| app/src/main/res/drawable                                                                                       |          3 |         29 |         27 |          5 |         61 |
+| app/src/main/res/values                                                                                         |          3 |         22 |          2 |          4 |         28 |
+| gradle                                                                                                          |          1 |          7 |          0 |          1 |          8 |
+| gradle/wrapper                                                                                                  |          1 |          7 |          0 |          1 |          8 |
++-----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| filename                                                                                                        | language   | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| /Users/mac/Desktop/QiquwanProject/android/app/build.gradle                                                      | Groovy     |         65 |         61 |         12 |        138 |
+| /Users/mac/Desktop/QiquwanProject/android/app/src/main/AndroidManifest.xml                                      | XML        |         77 |          2 |          7 |         86 |
+| /Users/mac/Desktop/QiquwanProject/android/app/src/main/java/com/qiquwan/games/alionepass/AliOnePassModule.java  | Java       |        140 |         16 |         25 |        181 |
+| /Users/mac/Desktop/QiquwanProject/android/app/src/main/java/com/qiquwan/games/alionepass/AliOnePassPackage.java | Java       |         19 |          0 |          5 |         24 |
+| /Users/mac/Desktop/QiquwanProject/android/app/src/main/java/com/qiquwan/games/wxapi/WXEntryActivity.java        | Java       |         24 |          2 |          5 |         31 |
+| /Users/mac/Desktop/QiquwanProject/android/app/src/main/java/com/qiquwan/games/wxapi/WXPayEntryActivity.java     | Java       |         12 |          2 |          2 |         16 |
+| /Users/mac/Desktop/QiquwanProject/android/app/src/main/res/drawable/bootsplash.xml                              | XML        |          8 |          2 |          0 |         10 |
+| /Users/mac/Desktop/QiquwanProject/android/app/src/main/res/drawable/login_btn_bg.xml                            | XML        |          9 |          2 |          2 |         13 |
+| /Users/mac/Desktop/QiquwanProject/android/app/src/main/res/drawable/rn_edit_text_material.xml                   | XML        |         12 |         23 |          3 |         38 |
+| /Users/mac/Desktop/QiquwanProject/android/app/src/main/res/values/colors.xml                                    | XML        |          3 |          0 |          1 |          4 |
+| /Users/mac/Desktop/QiquwanProject/android/app/src/main/res/values/strings.xml                                   | XML        |          3 |          0 |          1 |          4 |
+| /Users/mac/Desktop/QiquwanProject/android/app/src/main/res/values/styles.xml                                    | XML        |         16 |          2 |          2 |         20 |
+| /Users/mac/Desktop/QiquwanProject/android/build.gradle                                                          | Groovy     |         32 |          0 |          2 |         34 |
+| /Users/mac/Desktop/QiquwanProject/android/gradle.properties                                                     | Properties |          6 |         29 |         10 |         45 |
+| /Users/mac/Desktop/QiquwanProject/android/gradle/wrapper/gradle-wrapper.properties                              | Properties |          7 |          0 |          1 |          8 |
+| /Users/mac/Desktop/QiquwanProject/android/gradlew.bat                                                           | Batch      |         41 |         36 |         23 |        100 |
+| /Users/mac/Desktop/QiquwanProject/android/link-assets-manifest.json                                             | JSON       |         29 |          0 |          0 |         29 |
+| /Users/mac/Desktop/QiquwanProject/android/settings.gradle                                                       | Groovy     |          6 |          0 |          1 |          7 |
+| Total                                                                                                           |            |        509 |        177 |        102 |        788 |
++-----------------------------------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+

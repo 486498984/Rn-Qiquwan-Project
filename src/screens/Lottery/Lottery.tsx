@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View,Image,ScrollView,TouchableOpacity,
   RefreshControl,
  } from 'react-native'
-import React,{useEffect,useState,} from 'react'
+import React,{useEffect,useState,useCallback} from 'react'
 import { px } from '../../utils/scaleUtils';
 import request from '../../api/request';
 import Wheel from "./components/Wheel";
@@ -12,7 +12,7 @@ import CustomModal from '../../components/My/CustomModal';
 import Storage from '../../utils/storage';
 import {  Toast } from '@ant-design/react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
+import { useFocusEffect } from '@react-navigation/native';
 
 
   const prizes = [
@@ -34,6 +34,15 @@ export default function Lottery({navigation}) {
     const [prizenum, setPrizenum] = useState(0);
      const [listnum, setListnum] = useState(0); //已得到奖品
           const [prizeifo, setPrizeifo] = useState({}); //弹窗详情
+
+   useFocusEffect(
+     useCallback(() => {
+     getprizelist();
+    getusernumber(); //获取抽奖次数
+    getprize(); //获取抽奖列表
+     }, [])
+   );
+ 
   useEffect(() => { 
     getprizelist();
     getusernumber(); //获取抽奖次数

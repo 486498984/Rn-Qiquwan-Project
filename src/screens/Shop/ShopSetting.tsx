@@ -204,8 +204,9 @@ useEffect(() => {
         console.log('items:', res.items);
       });
       }
-    let opentimes=JSON.parse(res.openHours)
-    if(opentimes!==null&&opentimes!==""&&opentimes.start!==undefined){
+   
+    if(res.openHours!==null&&res.openHours!==""&&res.openHours.start!==undefined){
+       let opentimes=JSON.parse(res.openHours)
     setOnetimevalue(opentimes.start)
     setTwotimevalue(opentimes.end)
     setWeekRange(opentimes.week)
@@ -384,7 +385,7 @@ console.log(result);
       url: '/store/update-app',
       method: 'PUT',
       data:{
-      id: 1,
+      id: storeinfo.id,
     storeName: shopname,
     storeLogo: finlogo,
     storeDesc: shopinfotx,
@@ -1152,14 +1153,14 @@ const normalizeTimeRange = (start, end) => {
 }
 
 const styles = StyleSheet.create({
-                xiadantx:{
+    xiadantx:{
       fontFamily: 'MiSans-Regular',
         fontSize:px(15),
         color:'#FFFFFF',
         //fontWeight:500,
         lineHeight:px(20),
     },
-            payBox:{
+    payBox:{
       //marginTop: px(8),
   width: px(170),
   height: px(38),

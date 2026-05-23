@@ -1,37 +1,240 @@
 import { StyleSheet, Text, View,Image,TouchableOpacity } from 'react-native'
-import React from 'react'
+import React,{useState,useEffect} from 'react'
 import { px } from '../../utils/scaleUtils';
 import LinearGradient from 'react-native-linear-gradient';
+import { IMG_URL } from '../../api/config';
+import SafeFastImage from '../../components/Home/SafeFastImage'
+import request from '../../api/request';
+import Storage from '../../utils/storage';
+import {
+  Toast, Modal as Modalitem,
+} from '@ant-design/react-native'
 
-const OrderItem=({item,navigation})=> {
-
-
+const STATUS_UI = {
+  WAIT_SERVICE: {
+    label: '待服务',
+    rightText: '待服务',
+    actions: ['contact', 'cancel', 'accept'],
+    gradientText: '接单',
+  },
+  IN_SERVICE: {
+    label: '服务中',
+    rightText: '服务中',
+    actions: ['contact', 'complete','upload'],
+    gradientText: '完成',
+    uploadText:'上传进度'
+  },
+  WAIT_CONFIRM: {
+    label: '待确认',
+    rightText: '等待用户确认',
+    actions: ['contact'],
+  },
+  FINISHED: {
+    label: '已完成',
+    rightText: '已完成',
+    actions: [],
+  },
+  CANCELED: {
+    label: '已取消',
+    rightText: '已取消',
+    actions: [],
+  },
+    CLOSED: {
+    label: '已取消',
+    rightText: '已取消',
+    actions: [],
+  },
+};
+const OrderItem=({item,navigation,refreshAllTabs})=> {
+ const [addons, setAddons] = useState(""); //增值服务
+ const [goods, setGoods] = useState(JSON.parse(item.goodsSnapshot)); //商品详情
     const handlegoinfo = (e) => { //进入详情
     console.log(e);
-    navigation.navigate('ShopOrderInfo',{e})
+    navigation.navigate('ShopOrderInfo',{e:item})
     };
-    const cannelorder = (e) => {  //取消订单
-    console.log(e);
+    useEffect(() => {
+      if(item){
+       const goods=JSON.parse(item.goodsSnapshot)
+        console.log(goods.addons);
+    const addonTitles = goods.addons
+      ?.map(item => `${item.title}x${item.quantity}`)
+      ?.join('，') || '';
+      setAddons(addonTitles)
+      console.log(addonTitles);
+      }
+    
+    }, [item])
+     console.log(JSON.parse(item.goodsSnapshot));
+     //const skulist=JSON.parse(item.skuList)
+     const status = item.orderStatus;
+     const ui = STATUS_UI[status] || STATUS_UI.WAIT_SERVICE;
+     const handlecanner = async() => {  //取消订单
+       console.log(22131);
+          Modalitem.alert('提示', '是否取消？', [
+           { text: '取消', onPress: () => console.log('cancel'), style: 'cancel' },
+           { text: '确定', onPress: () => handlesubcanner(),
+            style: { color: '#FC9026' },
+            },   
+         ])
+      };
+    const handlesubcanner = async() => {  //取消订单
+    console.log(123,item);
+      const user = await Storage.get("userinfo");
+           try {
+             const response = await request({
+               url: '/order/refund',
+               method: 'POST',
+               data:{
+                orderId: item.id,
+                userId: item.userId,
+                refundReason: `俱乐部主动退款${user.user.userId}`
+               },
+               query: {
+
+                }
+             });
+             console.log(response);
+            if(response.data!==undefined&&response.code==0){
+            refreshAllTabs();
+            Toast.success({
+           content: '退款成功',
+           duration: 2,
+           position: 'center',
+           mask: false,
+           })
+            refreshAllTabs()
+            }else{
+            Toast.fail({
+           content: '退款失败，请联系平台客服处理',
+           duration: 2,
+           position: 'center',
+           mask: false,
+           })
+            }
+           } catch (error) {
+             console.error(error);
+           }
 
      };
+     const handleaccept = () => {  //接单
+     console.log(ui.gradientText);
+       Modalitem.alert('提示', '是否接单？', [
+           { text: '取消', onPress: () => console.log('cancel'), style: 'cancel' },
+           { text: '确定', onPress: () => handlesubaccept(),
+            style: { color: '#FC9026' },
+            },   
+         ])
+
+      };
+      const handlesubaccept = async() => { 
+              const user = await Storage.get("userinfo");
+           try {
+             const response = await request({
+               url: '/store/order/start',
+               method: 'POST',
+               data:{
+                orderId: item.id,
+                storeId: item.storeId,
+                playerId: user.user.userId
+               },
+               query: {
+
+                }
+             });
+             console.log(response);
+            if(response.data!==undefined&&response.code==0){
+            refreshAllTabs();
+            Toast.success({
+           content: '接单成功',
+           duration: 2,
+           position: 'center',
+           mask: false,
+           })
+            refreshAllTabs()
+            }else{
+            Toast.fail({
+           content: '接单失败，请稍后再试～',
+           duration: 2,
+           position: 'center',
+           mask: false,
+           })
+            }
+           } catch (error) {
+             console.error(error);
+           }
+       };
+      const handlefinish = () => {  //完成订单
+       Modalitem.alert('提示', '是否完成订单？', [
+           { text: '取消', onPress: () => console.log('cancel'), style: 'cancel' },
+           { text: '确定', onPress: () => handlesubfinish(),
+            style: { color: '#FC9026' },
+            },   
+         ])
+
+       };
+       const handlesubfinish = async() => {  //提交完成订单
+           try {
+             const response = await request({
+               url: '/store/order/finish',
+               method: 'POST',
+               data:{
+                orderId: item.id,
+                storeId: item.storeId,
+               },
+               query: {
+
+                }
+             });
+             console.log(response);
+            if(response.data!==undefined&&response.code==0){
+            refreshAllTabs();
+            Toast.success({
+           content: '订单确认成功，请等待用户确认',
+           duration: 2,
+           position: 'center',
+           mask: false,
+           })
+            refreshAllTabs()
+            }else{
+            Toast.fail({
+           content: '订单确认失败，请稍后再试～',
+           duration: 2,
+           position: 'center',
+           mask: false,
+           })
+            }
+           } catch (error) {
+             console.error(error);
+           }
+
+        };
+       const handleupload = () => {  //上传进度
+       navigation.navigate('ShopScreenshot',{e:item})
+
+        };
   return (
     <View style={styles.container}>
-        {item.type==0&&
-        <TouchableOpacity style={{width: px(361),height: px(206),
+        <TouchableOpacity style={{width: px(361),
         backgroundColor: '#fff',borderRadius: px(14),padding:px(8)}}
-        onPress={()=>handlegoinfo(0)} activeOpacity={1}>
+        onPress={()=>handlegoinfo(item)} activeOpacity={1}>
 <View style={{width: '100%',flexDirection: 'row',
     alignItems: 'center',justifyContent: 'space-between',}}>
-  
-<Text style={styles.clubname}>一个大啦</Text>
-     
-<Text style={styles.waittime}>待服务</Text>
+<Text style={styles.clubname}>{item.userNickName}</Text>
+<Text style={[styles.waittime,{color:ui.label=='已取消'?'#AAAAAA':'#FF9500'}]}>
+  {ui.label}
+</Text>
 </View>
 <View style={{flexDirection: 'row',alignItems: 'center',marginTop: px(8),}}>
   <View style={styles.shopimgbox}>
-       <Image source={require('../../../assets/images/home/shop1.png')} 
-                    style={{width:px(120),height:px(120),}}></Image>
-{item.types==1&&
+    <View>
+   <SafeFastImage 
+   source={{uri:IMG_URL+goods.goods.coverImage.split(',')[0]}}
+                    style={{width:px(120),height:px(120),}}/>
+            <Image source={require('../../../assets/images/home/shopboder.png')}  
+            style={{width:px(120),height:px(120),position: 'absolute',}}></Image>
+    </View>
+    
+{/* {item.types==1&&
     <Image source={require('../../../assets/images/home/type/protect.png')} 
     style={{width:px(57),height:px(23),position: 'absolute',
     bottom:0,left:0
@@ -54,245 +257,88 @@ const OrderItem=({item,navigation})=> {
     style={{width:px(57),height:px(23),position: 'absolute',
     bottom:0,left:0
     }}></Image>
-}
+} */}
 </View>
 <View style={{flexDirection: 'column',justifyContent: 'space-between',
     height: px(120),marginLeft: px(3),}}>
-<Text style={styles.ordername}>绝密航天清图国服在榜单三大师/单局保底850W</Text>
-<View style={{gap:px(6)}}>
-<Text style={styles.ordertime}>下单时间：2024-05-10 16:22</Text>
-<Text style={styles.ordertime}>订单编号：219739012479102</Text>
+<Text style={styles.ordername}>{goods?.goods?.title}</Text>
+<View style={{gap:px(4)}}>
+    <Text style={styles.ordertime}>{goods?.sku?.title}</Text>
+    {addons!==""&&
+    <Text style={styles.ordertime}>{addons}</Text>
+    }
+<Text style={styles.ordertime}>下单时间：{item.createdAt}</Text>
+<Text style={styles.ordertime}>订单编号：{item.orderNo}</Text>
 <View style={{width: px(222),flexDirection: 'row',alignItems: 'center',
     justifyContent: 'space-between',
 }}>
-<Text style={styles.ordertime}>数量：1</Text>
-<Text style={styles.orderprice}>￥138</Text>
+<Text style={styles.ordertime}>数量：{item.quantity}</Text>
+<Text style={styles.orderprice}>￥{item.payAmount/100}</Text>
 </View>
 </View>
 
 </View>
 </View>
-<View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
-    justifyContent: 'flex-end',marginTop: px(13),gap:px(6)}}>
-          <TouchableOpacity style={styles.cannelbox} onPress={()=>
-    cannelorder(item)}>
-<Text style={styles.canneltext}>联系客户</Text>
-  </TouchableOpacity>
-  <TouchableOpacity style={styles.cannelbox} onPress={()=>
-    cannelorder(item)}>
-<Text style={styles.canneltext}>取消订单</Text>
-  </TouchableOpacity>
-  <TouchableOpacity>
-     <LinearGradient
-          colors={['#FEC525', '#FC9026']}
-          start={{ x: 1, y: 0 }}
-          end={{ x: 0, y: 0 }}
-          style={[styles.gradientBox]}
-        >
-          <Text style={styles.logintext}>
-            接单
-          </Text>
-        </LinearGradient>
-  </TouchableOpacity>
-</View>
-     </TouchableOpacity>
-        }
-         {item.type==1&&
-        <TouchableOpacity style={{width: px(361),height: px(206),
-        backgroundColor: '#fff',borderRadius: px(14),padding:px(8)}}
-        onPress={()=>handlegoinfo(1)} activeOpacity={1}>
-<View style={{width: '100%',flexDirection: 'row',
-    alignItems: 'center',justifyContent: 'space-between',}}>
-<Text style={styles.clubname}>不渡</Text>
-<Text style={styles.waittime}>服务中</Text>
-</View>
-<View style={{flexDirection: 'row',alignItems: 'center',marginTop: px(8),}}>
-  <View style={styles.shopimgbox}>
-       <Image source={require('../../../assets/images/home/shop1.png')} 
-                    style={{width:px(120),height:px(120),}}></Image>
-{item.types==1&&
-    <Image source={require('../../../assets/images/home/type/protect.png')} 
-    style={{width:px(57),height:px(23),position: 'absolute',
-    bottom:0,left:0
-    }}></Image>
-}
-{item.types==2&&
-    <Image source={require('../../../assets/images/home/type/ace.png')} 
-    style={{width:px(57),height:px(23),position: 'absolute',
-    bottom:0,left:0
-    }}></Image>
-}
-{item.types==3&&
-    <Image source={require('../../../assets/images/home/type/task.png')} 
-    style={{width:px(57),height:px(23),position: 'absolute',
-    bottom:0,left:0
-    }}></Image>
-}
-{item.types==4&&
-    <Image source={require('../../../assets/images/home/type/knife.png')} 
-    style={{width:px(57),height:px(23),position: 'absolute',
-    bottom:0,left:0
-    }}></Image>
-}
-</View>
-<View style={{flexDirection: 'column',justifyContent: 'space-between',
-    height: px(120),marginLeft: px(3),}}>
-<Text style={styles.ordername}>绝密航天清图国服在榜单三大师/单局保底850W</Text>
-<View style={{gap:px(6)}}>
-<Text style={styles.ordertime}>下单时间：2024-05-10 16:22</Text>
-<Text style={styles.ordertime}>订单编号：219739012479102</Text>
-<View style={{width: px(222),flexDirection: 'row',alignItems: 'center',
-    justifyContent: 'space-between',
-}}>
-<Text style={styles.ordertime}>数量：1</Text>
-<Text style={styles.orderprice}>￥138</Text>
-</View>
-</View>
+<View style={{flexDirection:'row',justifyContent:'flex-end',gap:px(6),marginTop: px(13),}}>
 
-</View>
-</View>
-<View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
-    justifyContent: 'flex-end',marginTop: px(13),gap:px(6)}}>
-          <TouchableOpacity style={styles.cannelbox} onPress={()=>
-    cannelorder(item)}>
-<Text style={styles.canneltext}>联系客户</Text>
-  </TouchableOpacity>
-  <TouchableOpacity>
-     <LinearGradient
-          colors={['#FEC525', '#FC9026']}
-          start={{ x: 1, y: 0 }}
-          end={{ x: 0, y: 0 }}
-          style={[styles.gradientBox]}
-        >
-          <Text style={styles.logintext}>
-            完成
-          </Text>
-        </LinearGradient>
-  </TouchableOpacity>
-</View>
-     </TouchableOpacity>
-        }
-     {item.type==2&&
-        <TouchableOpacity style={{width: px(361),height: px(206),
-        backgroundColor: '#fff',borderRadius: px(14),padding:px(8)}}
-        onPress={()=>handlegoinfo(2)} activeOpacity={1}>
-<View style={{width: '100%',flexDirection: 'row',
-    alignItems: 'center',justifyContent: 'space-between',}}>
-<Text style={styles.clubname}>往旧</Text>
-<Text style={[styles.waittime,{color:'#AAAAAA'}]}>等待用户确认，剩余3天</Text>
-</View>
-<View style={{flexDirection: 'row',alignItems: 'center',marginTop: px(8),}}>
-  <View style={styles.shopimgbox}>
-       <Image source={require('../../../assets/images/home/shop1.png')} 
-                    style={{width:px(120),height:px(120),}}></Image>
-{item.types==1&&
-    <Image source={require('../../../assets/images/home/type/protect.png')} 
-    style={{width:px(57),height:px(23),position: 'absolute',
-    bottom:0,left:0
-    }}></Image>
-}
-{item.types==2&&
-    <Image source={require('../../../assets/images/home/type/ace.png')} 
-    style={{width:px(57),height:px(23),position: 'absolute',
-    bottom:0,left:0
-    }}></Image>
-}
-{item.types==3&&
-    <Image source={require('../../../assets/images/home/type/task.png')} 
-    style={{width:px(57),height:px(23),position: 'absolute',
-    bottom:0,left:0
-    }}></Image>
-}
-{item.types==4&&
-    <Image source={require('../../../assets/images/home/type/knife.png')} 
-    style={{width:px(57),height:px(23),position: 'absolute',
-    bottom:0,left:0
-    }}></Image>
-}
-</View>
-<View style={{flexDirection: 'column',justifyContent: 'space-between',
-    height: px(120),marginLeft: px(3),}}>
-<Text style={styles.ordername}>绝密航天清图国服在榜单三大师/单局保底850W</Text>
-<View style={{gap:px(6)}}>
-<Text style={styles.ordertime}>下单时间：2024-05-10 16:22</Text>
-<Text style={styles.ordertime}>订单编号：219739012479102</Text>
-<View style={{width: px(222),flexDirection: 'row',alignItems: 'center',
-    justifyContent: 'space-between',
-}}>
-<Text style={styles.ordertime}>数量：1</Text>
-<Text style={styles.orderprice}>￥138</Text>
-</View>
-</View>
+  {ui.actions?.includes('contact') && (
+    <TouchableOpacity style={styles.cannelbox}>
+      <Text style={styles.canneltext}>联系客户</Text>
+    </TouchableOpacity>
+  )}
 
-</View>
-</View>
-<View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
-    justifyContent: 'flex-end',marginTop: px(13),gap:px(6)}}>
-          <TouchableOpacity style={styles.cannelbox} onPress={()=>
-    cannelorder(item)}>
-<Text style={styles.canneltext}>联系客户</Text>
-  </TouchableOpacity>
+  {ui.actions?.includes('cancel') && (
+    <TouchableOpacity style={styles.cannelbox} onPress={()=>handlecanner()}>
+      <Text style={styles.canneltext}>取消订单</Text>
+    </TouchableOpacity>
+  )}
+
+  {ui.actions?.includes('accept') && (
+    <TouchableOpacity onPress={()=>handleaccept()}>
+      <LinearGradient
+        colors={['#FEC525', '#FC9026']}
+        start={{ x: 1, y: 0 }} end={{ x: 0, y: 0 }}
+        style={styles.gradientBox}
+      >
+        <Text style={styles.logintext}>
+          {ui.gradientText}
+        </Text>
+      </LinearGradient>
+    </TouchableOpacity>
+  )}
+
+  {ui.actions?.includes('upload') && (
+    <TouchableOpacity onPress={()=>handleupload()}>
+      <LinearGradient
+        colors={['#FEC525', '#FC9026']}
+         start={{ x: 1, y: 0 }} end={{ x: 0, y: 0 }}
+        style={styles.gradientBox}
+      >
+        <Text style={styles.logintext}>
+          {ui.uploadText}
+        </Text>
+      </LinearGradient>
+    </TouchableOpacity>
+  )}
+
+  {ui.actions?.includes('complete') && (
+    <TouchableOpacity onPress={()=>handlefinish()}>
+      <LinearGradient
+        colors={['#FEC525', '#FC9026']}
+         start={{ x: 1, y: 0 }} end={{ x: 0, y: 0 }}
+        style={styles.gradientBox}
+      >
+        <Text style={styles.logintext}>
+          {ui.gradientText}
+        </Text>
+      </LinearGradient>
+    </TouchableOpacity>
+  )}
 
 </View>
      </TouchableOpacity>
-        }
-    {item.type==3&&
-        <TouchableOpacity style={{width: px(361),paddingVertical:px(8),
-        backgroundColor: '#fff',borderRadius: px(14),padding:px(8)}}
-        onPress={()=>handlegoinfo(3)} activeOpacity={1}>
-<View style={{width: '100%',flexDirection: 'row',
-    alignItems: 'center',justifyContent: 'space-between',}}>
-<Text style={styles.clubname}>测试用户</Text>
-<Text style={[styles.waittime,{color:'#AAAAAA'}]}>已完成</Text>
-</View>
-<View style={{flexDirection: 'row',alignItems: 'center',marginTop: px(8),}}>
-  <View style={styles.shopimgbox}>
-       <Image source={require('../../../assets/images/home/shop1.png')} 
-                    style={{width:px(120),height:px(120),}}></Image>
-{item.types==1&&
-    <Image source={require('../../../assets/images/home/type/protect.png')} 
-    style={{width:px(57),height:px(23),position: 'absolute',
-    bottom:0,left:0
-    }}></Image>
-}
-{item.types==2&&
-    <Image source={require('../../../assets/images/home/type/ace.png')} 
-    style={{width:px(57),height:px(23),position: 'absolute',
-    bottom:0,left:0
-    }}></Image>
-}
-{item.types==3&&
-    <Image source={require('../../../assets/images/home/type/task.png')} 
-    style={{width:px(57),height:px(23),position: 'absolute',
-    bottom:0,left:0
-    }}></Image>
-}
-{item.types==4&&
-    <Image source={require('../../../assets/images/home/type/knife.png')} 
-    style={{width:px(57),height:px(23),position: 'absolute',
-    bottom:0,left:0
-    }}></Image>
-}
-</View>
-<View style={{flexDirection: 'column',justifyContent: 'space-between',
-    height: px(120),marginLeft: px(3),}}>
-<Text style={styles.ordername}>绝密航天清图国服在榜单三大师/单局保底850W</Text>
-<View style={{gap:px(6)}}>
-<Text style={styles.ordertime}>下单时间：2024-05-10 16:22</Text>
-<Text style={styles.ordertime}>订单编号：219739012479102</Text>
-<View style={{width: px(222),flexDirection: 'row',alignItems: 'center',
-    justifyContent: 'space-between',
-}}>
-<Text style={styles.ordertime}>数量：1</Text>
-<Text style={styles.orderprice}>￥138</Text>
-</View>
-</View>
+      
 
-</View>
-</View>
-
-     </TouchableOpacity>
-        }
 
 
     </View>
@@ -317,7 +363,7 @@ const styles = StyleSheet.create({
   fontFamily: 'MiSans-Regular',
         fontSize:px(14),
         lineHeight:px(18),
-        color:'#1A1A1A',
+        color:'rgba(170, 170, 170,0.8)',
         fontWeight:400,
     },
     cannelbox:{

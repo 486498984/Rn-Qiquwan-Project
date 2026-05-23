@@ -8,6 +8,9 @@ import request from '../../api/request';
 import { Toast,  Modal as Modalitem, } from '@ant-design/react-native'
 import { pay } from '@react-native-hero/alipay';
 import Storage from '../../utils/storage';
+ import * as WeChat from 'react-native-wechat-lib';
+import TextRadioModal from '../../components/Shop/TextRadioModal';
+import useAuthStore from '../../utils/zustand';
 
 
 
@@ -36,32 +39,87 @@ const STATUS_CONFIG = {
   },
   WAIT_SERVICE: {
     label: '待服务',
-    rightText: '客服 / 申请退款',
+    leftText:'',
+    rightText: '申请退款',
   },
   IN_SERVICE: {
     label: '服务中',
-    rightText: '客服 / 查看截图',
+    leftText:'申请售后',
+    rightText: '查看进度',
   },
   WAIT_CONFIRM: {
     label: '待收货',
-    rightText: '申请售后 / 确认完成',
+    leftText:'申请售后',
+    rightText: '确认完成',
   },
-  WAIT_COMMENT: {
-    label: '待评价',
-    rightText: '申请售后 / 前往评论',
-  },
+  // WAIT_COMMENT: {
+  //   label: '待评价',
+  //   rightText: '前往评论',
+  // },
   FINISHED: {
     label: '已完成',
-    rightText: '删除订单',
+    rightText: '申请售后',
   },
 }
+const mapOptions = [
+  { label: '买多了/买错了', value: 0 },
+  { label: '长时间未安排打手', value: 1 },
+  { label: '客服态度不好', value: 2 },
+  { label: '其他', value: 3 }, 
+];
+const OrderItem = ({ item, navigation,refreshCurrentTab,refreshTab,refreshAllTabs }) => {
+    const [visiblemap, setVisiblemap] = useState(false) //商品地图弹窗开关
+const [maplist, setMaplist] = useState(mapOptions); //地图列表
+    const [shopmap, setShopmap] = useState(0); //商品地图
+        const [addons, setAddons] = useState(""); //增值服务
+           const [status, setStatus] = useState(""); //增值服务
+  //const status = STATUS_CONFIG[item.orderStatus] || STATUS_CONFIG.CREATED
 
-const OrderItem = ({ item, navigation,refreshCurrentTab }) => {
-
-  const status = STATUS_CONFIG[item.orderStatus] || STATUS_CONFIG.CREATED
-
+     const triggerListOrderRefresh =
+    useAuthStore(
+        state => state.triggerListOrderRefresh
+    );
+  
 const [countdown, setCountdown] = useState('29:59')
+useEffect(() => {
+  if(item){
+    setStatus(getStatus());
+   const goods=JSON.parse(item.goodsSnapshot)
+    console.log(goods.addons);
+const addonTitles = goods.addons
+  ?.map(item => `${item.title}x${item.quantity}`)
+  ?.join('，') || '';
+  setAddons(addonTitles)
+  console.log(addonTitles);
+  
+  }
 
+}, [item])
+// 动态判断状态
+const getStatus = () => {
+  console.log(item);
+  
+  // 待评价优先判断
+  if(item.orderStatus === 'FINISHED' && item.displayStatus == "WAIT_COMMENT") {
+    return {
+      label: '待评价',
+      leftText: '申请售后',
+      rightText: '前往评论',
+    };
+  }
+
+  // 已完成
+  if(item.orderStatus === 'FINISHED' && item.displayStatus !== "WAIT_COMMENT") {
+    return {
+      label: '已完成',
+      leftText: '',
+      rightText: '申请售后',
+    };
+  }
+
+  // 其他状态使用 STATUS_CONFIG
+  return STATUS_CONFIG[item.orderStatus] || STATUS_CONFIG.CREATED;
+}
 useEffect(() => {
 
   // 只处理待付款
@@ -91,7 +149,7 @@ useEffect(() => {
       if (!expired) {
 
         expired = true
-
+        triggerListOrderRefresh();
         refreshCurrentTab?.()
       }
 
@@ -124,7 +182,9 @@ useEffect(() => {
   const typeIcon = TYPE_ICON[item.types]
 
   const goDetail = () => {
-    navigation.navigate('OrderInfo', { id: item.id })
+    console.log(item);
+    
+    navigation.navigate('OrderInfo', { id: item.id ,refreshAllTabs: refreshAllTabs,})
   }
   const handlegostore = () => {  //跳转店铺
   navigation.navigate('ClubHome',{storeinfo:{id:item.storeId}})
@@ -141,22 +201,82 @@ useEffect(() => {
 
   return `${year}-${month}-${day} ${hour}:${minute}`;
 };
-const handlerightbutton = (e) => { 
-console.log(e);
-if(e=="再次购买"){
-    goshopinfo(JSON.parse(item.goodsSnapshot).goods)
-//navigation.navigate('Shopinfo',{shopinfo:JSON.parse(item.goodsSnapshot).goods})
-}else if(e=="继续支付"){
+  const handlerightbutton = (e) => { 
+    console.log(e);
+    if(e=="再次购买"){
+        goshopinfo(JSON.parse(item.goodsSnapshot).goods)
+    //navigation.navigate('Shopinfo',{shopinfo:JSON.parse(item.goodsSnapshot).goods})
+    }else if(e=="继续支付"){
     Continuepaying();
-}
- };
+    }else if(e=="申请退款"){
+    setVisiblemap(true)
+    }else if(e=="查看进度"){
+     navigation.navigate('OrderInfo', { id: item.id ,refreshAllTabs: refreshAllTabs,})
+    }else if(e=="确认完成"){
+     Confirmation();
+    }else if(e=="前往评论"){
+     navigation.navigate('Comment',{orderinfo:item});
+    }else if(e=="申请售后"){
+     navigation.navigate('Refund',{orderinfo:item});
+    }
+
+
+  };
+  const Confirmation = () => { 
+   Modalitem.alert('提示', '是否确认完成？', [
+      { text: '取消', onPress: () => console.log('cancel'), style: 'cancel' },
+      { text: '确定', onPress: () => complete(),
+       style: { color: '#FC9026' },
+       },   
+    ])
+
+   };
+   const complete = async() => { 
+      const user = await Storage.get("userinfo");
+             try {
+           const response = await request({
+             url: '/order/confirm',
+             method: 'POST',
+             data:{
+                orderId:item.id,
+                userId:user.user.userId,
+            },
+             query: {}
+           });
+           console.log(response);
+          if(response.data!==undefined&&response.code==0){
+            Toast.success({
+           content: '确认成功',
+           duration: 2,
+           position: 'center',
+           mask: false,
+         })
+         triggerListOrderRefresh();
+         refreshCurrentTab();
+         refreshTab('all');
+          }else{
+            Toast.fail({
+           content: '确认订单失败，请稍后重试',
+           duration: 2,
+           position: 'center',
+           mask: false,
+         })
+          }
+         } catch (error) {
+           console.error(error);
+         }
+
+    };
  const handleleftbotton = (e) => { 
     console.log(e);
     if(e=="取消支付"){
-   console.log(213123);
-   handlecannl()
-
+    console.log(213123);
+    handlecannl()
+    }else if(e=="申请售后"){
+    navigation.navigate('Refund',{orderinfo:item});
     }
+
+
   };
   const handlecannl = () => { 
    Modalitem.alert('提示', '是否取消？', [
@@ -187,7 +307,9 @@ if(e=="再次购买"){
            position: 'center',
            mask: false,
          })
+         triggerListOrderRefresh();
          refreshCurrentTab();
+         refreshTab('all');
           }else{
             Toast.show({
            content: '取消订单失败',
@@ -210,6 +332,21 @@ if(e=="再次购买"){
            });
            console.log(response);
           if(response.data!==undefined&&response.code==0){
+            console.log(item);
+              const res = response.data.payInfo
+            if(response.data.paymentType=="WECHAT"){ //微信支付
+        let payload={
+        partnerId: res.payParams.partnerid,
+        prepayId: res.prepayId,
+        nonceStr: res.payParams.noncestr,
+        timeStamp: res.payParams.timestamp,
+        package: res.payParams.package,
+        sign: res.payParams.sign,
+          }
+          handlewechatpay(payload)
+            }else{
+              handlePay(res.payInfo)
+            }
           //handlePay(response.data.payInfo.payInfo)
           }else{
               Toast.show({
@@ -224,6 +361,52 @@ if(e=="再次购买"){
          }
 
   };
+   const handlewechatpay = async(e) => { 
+      try {
+        // 检查微信是否安装
+        const isInstalled = await WeChat.isWXAppInstalled();
+        if (!isInstalled) {
+          Toast.show({
+          content: '请先安装微信',
+          duration: 2,
+          position: 'center',
+          mask: false,
+        })
+          return;
+        }
+  
+        // 调用支付
+        const result = await WeChat.pay(e);
+        console.log(result);
+        
+        if (result.errCode === 0) {
+          refreshAllTabs();
+          triggerListOrderRefresh();
+            Toast.show({
+            content: '您已完成支付，请等待商家服务',
+            duration: 2,
+            position: 'center',
+            mask: false,
+          })
+       
+        } else {
+         
+  
+        }
+  
+      } catch (error: any) {
+         refreshAllTabs();
+         //console.error('微信支付异常', error);
+           Toast.show({
+            content: '您已取消支付，请尽快完成支付',
+            duration: 2,
+            position: 'center',
+            mask: false,
+          })
+
+      }
+  
+    };
    const handlePay = async (e) => {
      try {
        // 👉 这里应该从后端获取
@@ -239,7 +422,8 @@ if(e=="再次购买"){
        const result = res?.data?.alipay_trade_app_pay_response;
  
        if (result?.code === '10000') {
-        refreshCurrentTab();
+        triggerListOrderRefresh();
+        refreshAllTabs();
            Toast.show({
            content: '您已完成支付，请等待商家服务',
            duration: 2,
@@ -251,7 +435,8 @@ if(e=="再次购买"){
          console.log('支付未完成');
        }
      } catch (err) {
-       console.log('支付失败:', err);
+       refreshAllTabs();
+       //console.log('支付失败:', err);
        if (err.code === 6001) {
          console.log('用户取消支付');
           Toast.show({
@@ -283,6 +468,45 @@ if(e=="再次购买"){
          }
 
   };
+  const handlereturn = async(e) => { 
+    setShopmap(0)
+  const user = await Storage.get("userinfo");
+  console.log(e,item.id,mapOptions[e].label);
+           try {
+             const response = await request({
+               url: '/order/refund',
+               method: 'POST',
+               data:{
+                orderId: item.id,
+                userId: user.user.userId,
+                refundReason: mapOptions[e].label
+               },
+               query: {
+
+                }
+             });
+             console.log(response);
+            if(response.data!==undefined&&response.code==0){
+            Toast.success({
+           content: '退款成功',
+           duration: 2,
+           position: 'center',
+           mask: false,
+           })
+           triggerListOrderRefresh();
+            refreshAllTabs()
+            }else{
+            Toast.fail({
+           content: '退款失败，请稍后再试',
+           duration: 2,
+           position: 'center',
+           mask: false,
+           })
+            }
+           } catch (error) {
+             console.error(error);
+           }
+   };
   return (
     <TouchableOpacity style={styles.container} onPress={goDetail} activeOpacity={1}>
 
@@ -324,9 +548,12 @@ if(e=="再次购买"){
           <Text numberOfLines={2} style={styles.title}>
            {JSON.parse(item.goodsSnapshot).goods.title}
           </Text>
-
+          
           <View style={styles.meta}>
-          <Text style={styles.text}>{item.goodsTitle}</Text>
+            <Text style={styles.text}>{item.goodsTitle}</Text>
+            {addons!==""&&
+          <Text style={styles.text}>{addons}</Text>
+            }
             <Text style={styles.text}>下单时间：{formatTime(item.createdAt)}</Text>
             {/* <Text style={styles.text}>订单号：{item.orderNo}</Text> */}
 
@@ -366,7 +593,17 @@ if(e=="再次购买"){
 
 
       </View>
-
+    <TextRadioModal
+      visible={visiblemap}
+      onClose={() => setVisiblemap(false)}
+      data={maplist}
+      value={shopmap}
+      onConfirm={(val) => {
+        setShopmap(val);
+        setVisiblemap(false);
+        handlereturn(val)
+      }}
+    />
     </TouchableOpacity>
   )
 }

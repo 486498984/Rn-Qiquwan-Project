@@ -1,15 +1,68 @@
 import { StyleSheet, Text, View,Animated,TouchableOpacity,Image, } from 'react-native'
-import React,{useRef,} from 'react'
+import React,{useRef,useEffect,useState} from 'react'
 import { px } from '../../utils/scaleUtils';
 import OrderItem from './components/OrderItem';
-
+import request from '../../api/request';
+import { Toast } from '@ant-design/react-native'
 
 export default function ShopPending({navigation,route}) {
-      const { type } = route.params || {}; //1为今日订单 2为全部订单
+      const { id } = route.params || {}; //1为今日订单 2为全部订单
     const [isDark, setIsDark] = React.useState(false);
+    const [type, setType] = React.useState(1);
+    const [withdmoney, setWithdmoney] = useState(0); //可提现金额
+    const [orderalllist, setOrderalllist] = useState([]); //订单列表
+   const [ordernum, setOrdernum] = useState(0); //订单数字
+  useEffect(() => {
+    if(id){
+      console.log(id);
+      getmoney(id);
+      getorderlist(id); 
+    }
+  }, [id])
+  const getorderlist = async(e) => { 
+              try {
+            const response = await request({
+              url: '/store/dashboard/pending-settle',
+              method: 'GET',
+              data: {
+              },
+              query: {storeId:e,
+              page:1,
+              pageSize:10,
+              },
+            }); 
+            console.log('storeauth',response);
+          if (response.data !== null && response.code == 0) {
+          setOrderalllist(response.data.list)
+          setOrdernum(response.data.totalCount)
+          } 
+          } catch (error) {
+            console.error(error);
+          }
+
+   };
+     const getmoney = async(e) => { 
+              try {
+            const response = await request({
+              url: '/store/dashboard/fund',
+              method: 'GET',
+              data: {
+              },
+              query: {storeId:e},
+            }); 
+            console.log('storeauth',response);
+          if (response.data !== null && response.code == 0) {
+          setWithdmoney(response.data.pendingAmount/100)
+          }
+          } catch (error) {
+            console.error(error);
+          }
+    
+      };
+
    const handleback = () => {  //返回上一页
    navigation.goBack();
-     };
+   };
 const scrollY = useRef(new Animated.Value(0)).current;
   const headerBackgroundColor = scrollY.interpolate({
     inputRange: [0, 150], // 0 到 150 像素滚动范围
@@ -79,16 +132,16 @@ const orderlist=[
         justifyContent: 'center',}}>
 <View style={{width: '50%',flexDirection: 'column',alignItems: 'center',}}>
     <Text style={styles.toptitle}>{type==1?'待入账':'已退款'}(元)</Text>
-      <Text style={styles.topprice}>1,124.41</Text>
+      <Text style={styles.topprice}>{withdmoney}</Text>
 </View>
 <View style={{width: px(1),height: px(36),backgroundColor: '#FFFFFF',}}></View>
 <View style={{width: '50%',flexDirection: 'column',alignItems: 'center',}}>
     <Text style={styles.toptitle}>{type==1?'待入账':'已退款'}订单</Text>
-     <Text style={styles.topprice}>14</Text>
+     <Text style={styles.topprice}>{ordernum}</Text>
 </View>
     </View>
     <View style={{gap:px(8),marginTop: px(26),}}>
-  {orderlist.map((item,index)=>
+      {orderalllist?.map((item,index)=>
        <View key={index}>
            <OrderItem item={item}></OrderItem>
        </View>

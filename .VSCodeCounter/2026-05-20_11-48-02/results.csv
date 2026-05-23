@@ -1,0 +1,113 @@
+"filename", "language", "JavaScript", "TypeScript JSX", "comment", "blank", "total"
+"/Users/mac/Desktop/QiquwanProject/src/App.tsx", "TypeScript JSX", 0, 554, 75, 31, 660
+"/Users/mac/Desktop/QiquwanProject/src/api/config.js", "JavaScript", 3, 0, 3, 0, 6
+"/Users/mac/Desktop/QiquwanProject/src/api/md5.js", "JavaScript", 204, 0, 1, 0, 205
+"/Users/mac/Desktop/QiquwanProject/src/api/request.js", "JavaScript", 77, 0, 18, 12, 107
+"/Users/mac/Desktop/QiquwanProject/src/api/uploadImage.js", "JavaScript", 56, 0, 7, 14, 77
+"/Users/mac/Desktop/QiquwanProject/src/components/Club/AutoImage.tsx", "TypeScript JSX", 0, 48, 10, 18, 76
+"/Users/mac/Desktop/QiquwanProject/src/components/Club/ClubItem.tsx", "TypeScript JSX", 0, 162, 30, 7, 199
+"/Users/mac/Desktop/QiquwanProject/src/components/Club/PullToRefreshDemo.tsx", "TypeScript JSX", 0, 89, 11, 21, 121
+"/Users/mac/Desktop/QiquwanProject/src/components/Club/StarRating.tsx", "TypeScript JSX", 0, 32, 6, 11, 49
+"/Users/mac/Desktop/QiquwanProject/src/components/Home/BottomSheet.tsx", "TypeScript JSX", 0, 105, 3, 14, 122
+"/Users/mac/Desktop/QiquwanProject/src/components/Home/PaymentLoadingModal.tsx", "TypeScript JSX", 0, 42, 0, 3, 45
+"/Users/mac/Desktop/QiquwanProject/src/components/Home/PrivacyModal.tsx", "TypeScript JSX", 0, 179, 15, 12, 206
+"/Users/mac/Desktop/QiquwanProject/src/components/Home/SafeFastImage.tsx", "TypeScript JSX", 0, 36, 2, 12, 50
+"/Users/mac/Desktop/QiquwanProject/src/components/Home/ShopItem.tsx", "TypeScript JSX", 0, 245, 18, 9, 272
+"/Users/mac/Desktop/QiquwanProject/src/components/Home/WebviewModal.tsx", "TypeScript JSX", 0, 58, 2, 1, 61
+"/Users/mac/Desktop/QiquwanProject/src/components/My/BottomModal.tsx", "TypeScript JSX", 0, 107, 5, 12, 124
+"/Users/mac/Desktop/QiquwanProject/src/components/My/CouponItem.tsx", "TypeScript JSX", 0, 231, 13, 71, 315
+"/Users/mac/Desktop/QiquwanProject/src/components/My/CustomModal.tsx", "TypeScript JSX", 0, 78, 9, 1, 88
+"/Users/mac/Desktop/QiquwanProject/src/components/My/OrderItem.tsx", "TypeScript JSX", 0, 552, 24, 77, 653
+"/Users/mac/Desktop/QiquwanProject/src/components/My/RewardOrder.tsx", "TypeScript JSX", 0, 96, 3, 4, 103
+"/Users/mac/Desktop/QiquwanProject/src/components/My/SelectModal.tsx", "TypeScript JSX", 0, 51, 2, 2, 55
+"/Users/mac/Desktop/QiquwanProject/src/components/My/StorePickerModal.tsx", "TypeScript JSX", 0, 193, 24, 29, 246
+"/Users/mac/Desktop/QiquwanProject/src/components/Shop/EditSelectModal.tsx", "TypeScript JSX", 0, 142, 0, 12, 154
+"/Users/mac/Desktop/QiquwanProject/src/components/Shop/GoodsItem.tsx", "TypeScript JSX", 0, 585, 23, 15, 623
+"/Users/mac/Desktop/QiquwanProject/src/components/Shop/ImagePreviewer.tsx", "TypeScript JSX", 0, 106, 6, 18, 130
+"/Users/mac/Desktop/QiquwanProject/src/components/Shop/ImageUploader.tsx", "TypeScript JSX", 0, 176, 8, 14, 198
+"/Users/mac/Desktop/QiquwanProject/src/components/Shop/ShopOrderItem.tsx", "TypeScript JSX", 0, 215, 29, 14, 258
+"/Users/mac/Desktop/QiquwanProject/src/components/Shop/TagInputModal.tsx", "TypeScript JSX", 0, 259, 13, 29, 301
+"/Users/mac/Desktop/QiquwanProject/src/components/Shop/TextCheckboxModal.tsx", "TypeScript JSX", 0, 162, 17, 20, 199
+"/Users/mac/Desktop/QiquwanProject/src/components/Shop/TextRadioModal.tsx", "TypeScript JSX", 0, 139, 6, 12, 157
+"/Users/mac/Desktop/QiquwanProject/src/screens/Club/Club.tsx", "TypeScript JSX", 0, 251, 28, 75, 354
+"/Users/mac/Desktop/QiquwanProject/src/screens/Club/ClubHome.tsx", "TypeScript JSX", 0, 701, 86, 48, 835
+"/Users/mac/Desktop/QiquwanProject/src/screens/Club/ClubInfo.tsx", "TypeScript JSX", 0, 249, 22, 11, 282
+"/Users/mac/Desktop/QiquwanProject/src/screens/Club/components/Content.tsx", "TypeScript JSX", 0, 70, 2, 11, 83
+"/Users/mac/Desktop/QiquwanProject/src/screens/Club/components/HotService.tsx", "TypeScript JSX", 0, 79, 2, 3, 84
+"/Users/mac/Desktop/QiquwanProject/src/screens/Club/components/Tabs.tsx", "TypeScript JSX", 0, 134, 20, 5, 159
+"/Users/mac/Desktop/QiquwanProject/src/screens/Home/Allcomments.tsx", "TypeScript JSX", 0, 224, 3, 26, 253
+"/Users/mac/Desktop/QiquwanProject/src/screens/Home/Home.tsx", "TypeScript JSX", 0, 515, 76, 50, 641
+"/Users/mac/Desktop/QiquwanProject/src/screens/Home/Shopinfo.tsx", "TypeScript JSX", 0, 1617, 77, 77, 1771
+"/Users/mac/Desktop/QiquwanProject/src/screens/Home/components/Comment.tsx", "TypeScript JSX", 0, 65, 1, 3, 69
+"/Users/mac/Desktop/QiquwanProject/src/screens/Home/components/Content.tsx", "TypeScript JSX", 0, 70, 2, 11, 83
+"/Users/mac/Desktop/QiquwanProject/src/screens/Home/components/HotServices.tsx", "TypeScript JSX", 0, 146, 7, 10, 163
+"/Users/mac/Desktop/QiquwanProject/src/screens/Home/components/StarClub.tsx", "TypeScript JSX", 0, 176, 8, 13, 197
+"/Users/mac/Desktop/QiquwanProject/src/screens/Home/components/Tabs.tsx", "TypeScript JSX", 0, 134, 20, 5, 159
+"/Users/mac/Desktop/QiquwanProject/src/screens/Lottery/Lottery.tsx", "TypeScript JSX", 0, 474, 18, 32, 524
+"/Users/mac/Desktop/QiquwanProject/src/screens/Lottery/Preze.tsx", "TypeScript JSX", 0, 124, 3, 5, 132
+"/Users/mac/Desktop/QiquwanProject/src/screens/Lottery/components/LotteryResultModal.tsx", "TypeScript JSX", 0, 177, 14, 17, 208
+"/Users/mac/Desktop/QiquwanProject/src/screens/Lottery/components/PrizeItem.tsx", "TypeScript JSX", 0, 105, 0, 5, 110
+"/Users/mac/Desktop/QiquwanProject/src/screens/Lottery/components/Wheel.tsx", "TypeScript JSX", 0, 280, 36, 75, 391
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Asset.tsx", "TypeScript JSX", 0, 224, 4, 21, 249
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Avtar.tsx", "TypeScript JSX", 0, 250, 14, 15, 279
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Cashout.tsx", "TypeScript JSX", 0, 273, 5, 15, 293
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Code.tsx", "TypeScript JSX", 0, 277, 8, 9, 294
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Collect.tsx", "TypeScript JSX", 0, 93, 1, 6, 100
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Comment.tsx", "TypeScript JSX", 0, 209, 6, 11, 226
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Confirm.tsx", "TypeScript JSX", 0, 350, 15, 23, 388
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Coupon.tsx", "TypeScript JSX", 0, 188, 38, 42, 268
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Details.tsx", "TypeScript JSX", 0, 159, 4, 15, 178
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Follow.tsx", "TypeScript JSX", 0, 71, 1, 4, 76
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Guarantee.tsx", "TypeScript JSX", 0, 55, 1, 7, 63
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Invite.tsx", "TypeScript JSX", 0, 303, 17, 16, 336
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/InviteOrder.tsx", "TypeScript JSX", 0, 70, 1, 5, 76
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Join.tsx", "TypeScript JSX", 0, 273, 6, 14, 293
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Login.tsx", "TypeScript JSX", 0, 270, 26, 14, 310
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/My.tsx", "TypeScript JSX", 0, 505, 29, 18, 552
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Name.tsx", "TypeScript JSX", 0, 179, 9, 10, 198
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Notice.tsx", "TypeScript JSX", 0, 90, 1, 6, 97
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Order.tsx", "TypeScript JSX", 0, 426, 19, 74, 519
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/OrderInfo.tsx", "TypeScript JSX", 0, 864, 39, 98, 1001
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Profile.tsx", "TypeScript JSX", 0, 214, 44, 12, 270
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Register.tsx", "TypeScript JSX", 0, 118, 3, 8, 129
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Setting.tsx", "TypeScript JSX", 0, 512, 12, 25, 549
+"/Users/mac/Desktop/QiquwanProject/src/screens/My/Withdraw.tsx", "TypeScript JSX", 0, 174, 4, 9, 187
+"/Users/mac/Desktop/QiquwanProject/src/screens/News/News.tsx", "TypeScript JSX", 0, 130, 16, 19, 165
+"/Users/mac/Desktop/QiquwanProject/src/screens/News/OneChat.tsx", "TypeScript JSX", 0, 1076, 99, 137, 1312
+"/Users/mac/Desktop/QiquwanProject/src/screens/News/components/MessageItem.tsx", "TypeScript JSX", 0, 421, 43, 40, 504
+"/Users/mac/Desktop/QiquwanProject/src/screens/News/components/NewItem.tsx", "TypeScript JSX", 0, 108, 7, 16, 131
+"/Users/mac/Desktop/QiquwanProject/src/screens/News/components/VoiceWave.tsx", "TypeScript JSX", 0, 142, 7, 17, 166
+"/Users/mac/Desktop/QiquwanProject/src/screens/Policy/PrivacyAgree.tsx", "TypeScript JSX", 0, 46, 2, 7, 55
+"/Users/mac/Desktop/QiquwanProject/src/screens/Policy/UserAgree.tsx", "TypeScript JSX", 0, 46, 2, 7, 55
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopAddEmployee.tsx", "TypeScript JSX", 0, 83, 1, 14, 98
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopCashItem.tsx", "TypeScript JSX", 0, 46, 1, 9, 56
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopCashout.tsx", "TypeScript JSX", 0, 505, 8, 21, 534
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopEdit.tsx", "TypeScript JSX", 0, 1892, 105, 88, 2085
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopEditEmployee.tsx", "TypeScript JSX", 0, 255, 11, 13, 279
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopEmployee.tsx", "TypeScript JSX", 0, 212, 3, 12, 227
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopEnter.tsx", "TypeScript JSX", 0, 1401, 137, 63, 1601
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopHomeOrder.tsx", "TypeScript JSX", 0, 449, 21, 69, 539
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopIndex.tsx", "TypeScript JSX", 0, 396, 15, 15, 426
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopManage.tsx", "TypeScript JSX", 0, 479, 2, 53, 534
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopNotice.tsx", "TypeScript JSX", 0, 284, 45, 14, 343
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopOrder.tsx", "TypeScript JSX", 0, 156, 1, 10, 167
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopOrderInfo.tsx", "TypeScript JSX", 0, 602, 37, 38, 677
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopPending.tsx", "TypeScript JSX", 0, 122, 1, 7, 130
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopPreview.tsx", "TypeScript JSX", 0, 1087, 59, 38, 1184
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopScreenshot.tsx", "TypeScript JSX", 0, 194, 13, 14, 221
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/ShopSetting.tsx", "TypeScript JSX", 0, 1081, 92, 77, 1250
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/components/AccountItem.tsx", "TypeScript JSX", 0, 71, 1, 6, 78
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/components/AddonModal.tsx", "TypeScript JSX", 0, 171, 7, 16, 194
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/components/CashItem.tsx", "TypeScript JSX", 0, 88, 3, 5, 96
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/components/EmployeeItem.tsx", "TypeScript JSX", 0, 118, 1, 8, 127
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/components/OrderItem.tsx", "TypeScript JSX", 0, 109, 5, 3, 117
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/components/SkuModal.tsx", "TypeScript JSX", 0, 237, 14, 21, 272
+"/Users/mac/Desktop/QiquwanProject/src/screens/Shop/components/Switch.tsx", "TypeScript JSX", 0, 142, 11, 21, 174
+"/Users/mac/Desktop/QiquwanProject/src/store/imStore.js", "JavaScript", 15, 0, 1, 3, 19
+"/Users/mac/Desktop/QiquwanProject/src/utils/global.js", "JavaScript", 3, 0, 1, 0, 4
+"/Users/mac/Desktop/QiquwanProject/src/utils/im.js", "JavaScript", 11, 0, 2, 5, 18
+"/Users/mac/Desktop/QiquwanProject/src/utils/scaleUtils.js", "JavaScript", 6, 0, 7, 3, 16
+"/Users/mac/Desktop/QiquwanProject/src/utils/storage.js", "JavaScript", 64, 0, 39, 18, 121
+"/Users/mac/Desktop/QiquwanProject/src/utils/wukongim.js", "JavaScript", 61, 0, 17, 19, 97
+"/Users/mac/Desktop/QiquwanProject/src/utils/zustand.js", "JavaScript", 16, 0, 7, 4, 27
+"Total", "-", 516, 28529, 1959, 2384, 33388

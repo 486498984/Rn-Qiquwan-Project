@@ -155,12 +155,12 @@ export default function Setting({navigation}) {
   const handlesetting = (e) => { 
     console.log(e);
     if(userinfo==null){
-          Toast.show({
-            content: '请先完成登陆',
-            duration: 2,
-            position: 'center',
-            mask: false,
-          })
+    Toast.show({
+      content: '请先完成登陆',
+      duration: 2,
+      position: 'center',
+      mask: false,
+    })
     return;
     }
     if(e==1){
@@ -379,16 +379,16 @@ flexDirection: 'row',alignItems: 'center',justifyContent: 'center',
   }}></View>
      <TextInput
      allowFontScaling={false}
-            style={[styles.inputbox,{color:!editableinput?'#999':'#1A1A1A',}]}
-            onChangeText={onnumChangeText}
-            value={usernumber || ''}
-            placeholder="请输入证件号码"
-            keyboardType="number-pad"
-            placeholderTextColor="#AAAAAA"
-            maxLength={18}
-            selectionColor='#FC9026'
-            editable={editableinput}
-          />
+      style={[styles.inputbox,{color:!editableinput?'#999':'#1A1A1A',}]}
+      onChangeText={onnumChangeText}
+      value={usernumber || ''}
+      placeholder="请输入证件号码"
+      //keyboardType="number-pad"
+      placeholderTextColor="#AAAAAA"
+      maxLength={18}
+      selectionColor='#FC9026'
+      editable={editableinput}
+    />
 </View>
 <TouchableOpacity
   style={{ marginTop: px(32) }}

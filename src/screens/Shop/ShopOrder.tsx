@@ -48,13 +48,13 @@ export default function ShopOrder({navigation,route}) {
     text: <Text style={styles.tooltx}>全部</Text>,
   },
 ]
-useEffect(() => {
- if(type==1){
-setActionsse(actions)
- }else{
-setActionsse(actionst)
- }
-}, [type])
+  useEffect(() => {
+  if(type==1){
+  setActionsse(actions)
+  }else{
+  setActionsse(actionst)
+  }
+  }, [type])
  const [actionsse, setActionsse] = useState(actions);
  const [rttext, setRttext] = useState('全部'); //右上角文字
  const rotateAnim = useState(new Animated.Value(0))[0]
@@ -80,6 +80,12 @@ const rotate = rotateAnim.interpolate({
   console.log(e.text.props.children);
   setRttext(e.text.props.children)
   }
+  const a= {
+    orderNo:123,
+    expectedDate:'2026-5-28',
+    amount:100,
+    goodsTitle:'高级陪玩服务'
+  } 
   return (
     <View style={styles.container}>
          <View style={{width: px(393),height: px(98),backgroundColor: '#fff',
@@ -126,7 +132,7 @@ const rotate = rotateAnim.interpolate({
       <View style={{height: px(8),}}></View>
     {[0,1,2,3,4,5,6,7,8,9,10].map((item,index)=>
     <View key={index}>
-        <OrderItem></OrderItem>
+        <OrderItem item={a}></OrderItem>
     </View>
     )}
 

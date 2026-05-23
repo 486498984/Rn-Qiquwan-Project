@@ -3,27 +3,34 @@ import React from 'react'
 import { px } from '../../../utils/scaleUtils';
 
 const STATUS_MAP = {
-  pending: {
+  FROZEN: {
     text: '审核中',
     bg: '#FEF7E0',
     color: '#FF9500',
     pricolor:'#FF9500',
   },
-  success: {
+  PAID: {
     text: '已打款',
     bg: '#DEFFE5',
     color: '#3CF15F',
     pricolor:'#1A1A1A',
   },
-  fail: {
+  REJECTED: {
     text: '审核失败',
     bg: '#FCDEDE',
     color: '#DE5452',
     pricolor:'#DE5452',
   },
+    FAILED: {
+    text: '提现失败',
+    bg: '#FCDEDE',
+    color: '#DE5452',
+    pricolor:'#DE5452',
+  },
 };
-const CashItem=({item={status:'success'}})=> {
-const status = STATUS_MAP[item.status] || STATUS_MAP.pending;
+const CashItem=({data})=> {
+const status = STATUS_MAP[data.status] || STATUS_MAP.FROZEN;
+console.log(data);
 
 
 
@@ -43,11 +50,11 @@ const status = STATUS_MAP[item.status] || STATUS_MAP.pending;
     alignItems: 'flex-end',
  }}>
    <Text style={styles.time}>2026-10-12 10:39</Text>
-  <Text style={[styles.price,{color:status.pricolor}]}>-83.00</Text>
+  <Text style={[styles.price,{color:status.pricolor}]}>¥{data.amount/100}</Text>
  </View>
-<View style={{width: px(361),height: px(1),backgroundColor: 'rgba(118, 118, 118, 0.2)',
+{/* <View style={{width: px(361),height: px(1),backgroundColor: 'rgba(118, 118, 118, 0.2)',
     marginTop: px(12),
-}}></View>
+}}></View> */}
     </View>
   )
 }

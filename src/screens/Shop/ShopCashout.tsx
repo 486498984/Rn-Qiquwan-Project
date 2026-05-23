@@ -1,19 +1,22 @@
 import { StyleSheet, Text, View,TouchableOpacity,Image,Platform,TextInput,
 
  } from 'react-native'
-import React,{useState} from 'react'
+import React,{useState,useEffect,} from 'react'
 import { px } from '../../utils/scaleUtils';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import CustomModal from '../../components/My/CustomModal';
 import BottomModal from '../../components/My/BottomModal';
 import {
-  Radio,
+  Radio,Modal as Modalitem,
 } from '@ant-design/react-native'
+import request from '../../api/request';
+import { Toast } from '@ant-design/react-native'
 
 
 
-export default function ShopCashout({ navigation }) {
+export default function ShopCashout({ navigation,route }) {
+    const { id } = route.params || {}
     const [visible, setVisible] = useState(false);
     const [visiblemode, setVisiblemode] = useState(false) //zfb、银行卡
     const insets = useSafeAreaInsets();
@@ -29,26 +32,17 @@ export default function ShopCashout({ navigation }) {
       const [tixianmode, setTixianmode] = useState(1); //提现模式
       const [tixianzanmode, setTixianzanmode] = useState(1); //暂时提现模式
       const [yhkvisible, setYhkvisible] = useState(false); //银行卡弹窗开关
-            const onChangeText = (e) => { 
-                console.log(e);
-                setUsername(e)
-              };
-            const onChangeyhkText = (e) => {  //修改银行卡账户名
-                console.log(e);
-                setUsernameyhk(e)
-              };
-               const onnumChangeText = (e) => { //支付宝账号
-                console.log(e);
-                setUsernumber(e)
-              };
-                  const onnumChangeyhkText = (e) => { //银行卡账号
-                console.log(e);
-                setUsernumberyhk(e)
-              };
-              const userbranchChangeText = (e) => { 
-                console.log(e);
-                setUserbranch(e)
-              };
+const [withdmoney, setWithdmoney] = useState(0); //可提现金额
+const [fee, setFee] = useState(0);
+const [tempUsername, setTempUsername] = useState('');
+const [tempUsernumber, setTempUsernumber] = useState('');
+const [tempUsernameyhk, setTempUsernameyhk] = useState('');
+const [tempUsernumberyhk, setTempUsernumberyhk] = useState('');
+const [tempUserbranch, setTempUserbranch] = useState('');
+const [accountList, setAccountList] = useState([]); // 保存账户列表
+
+
+
   const onGroupChange = (e) => { 
   console.log(e);
   setTixianzanmode(e.target.value)
@@ -61,13 +55,462 @@ export default function ShopCashout({ navigation }) {
     setVisiblemode(false)
    };
    const handleopenmodal = () => { 
-    if( tixianmode==1){
+  if(tixianmode == 1){
+    setTempUsername(username || '');
+    setTempUsernumber(usernumber || '');
     setVisible(true);
-    }else{
-    setYhkvisible(true)
-    }
+  } else {
+    setTempUsernameyhk(usernameyhk || '');
+    setTempUsernumberyhk(usernumberyhk || '');
+    setTempUserbranch(userbranch || '');
+    setYhkvisible(true);
+  }
 
     };
+    useEffect(() => {
+      if(id){
+      getwithlist(id);
+      getmoney(id);
+      }
+    
+
+    }, [id])
+     const getmoney = async(e) => { 
+              try {
+            const response = await request({
+              url: '/store/dashboard/fund',
+              method: 'GET',
+              data: {
+              },
+              query: {storeId:e},
+            }); 
+            console.log('storeauth',response);
+          if (response.data !== null && response.code == 0) {
+          setWithdmoney(response.data.withdrawableAmount/100)
+                // 计算手续费
+      const calculatedFee = Math.max(1, Math.ceil(response.data.withdrawableAmount/100 * 0.01));
+      setFee(calculatedFee);
+          } 
+          } catch (error) {
+            console.error(error);
+          }
+    
+      };
+    const getwithlist = async(id) => { 
+    console.log(id);
+              try {
+            const response = await request({
+              url: '/withdraw/account/list',
+              method: 'GET',
+              data: {
+              },
+              query: {ownerId:id,
+                ownerType:'STORE'
+              },
+            }); 
+            console.log('storeauth',response);
+    if (response.data && response.data.length > 0) {
+       setAccountList(response.data); // 保存到账户列表
+      // 遍历账户列表，找默认账户
+      const alipayAccount = response.data.find(item => item.type === 'ALIPAY' && item.isDefault === 1);
+      const bankAccount = response.data.find(item => item.type === 'BANK' && item.isDefault === 1);
+      if (alipayAccount) {
+        setUsername(alipayAccount.accountName); // 支付宝姓名
+        setUsernumber(alipayAccount.account); // 支付宝账号
+      }
+      if (bankAccount) {
+        setUsernameyhk(bankAccount.accountName); // 银行卡姓名
+        setUsernumberyhk(bankAccount.account); // 银行卡账号
+        setUserbranch(bankAccount.bankName); // 支行名称
+      }
+      // 默认提现模式根据第一个账户类型
+      //if (alipayAccount) setTixianmode(1);
+      //else if (bankAccount) setTixianmode(2);
+    } else {
+      // 没有提现账户，输入框保持空
+      setUsername('');
+      setUsernumber('');
+      setUsernameyhk('');
+      setUsernumberyhk('');
+      setUserbranch('');
+    }
+          } catch (error) {
+            console.error(error);
+          }
+     };
+     const handleeditali = async() => {  //修改支付宝
+      setUsername(tempUsername);       // 同步回主状态
+      setUsernumber(tempUsernumber);
+      setVisible(false);
+              try {
+            const response = await request({
+              url: '/withdraw/account/update',
+              method: 'PUT',
+              data: {
+              id: 10,
+              ownerId: id,
+              ownerType: "STORE", 
+              account: "zhangsan_new@alipay.com",
+              type: "ALIPAY",
+              accountName: "付云",
+              bankName:"",
+              isDefault: 1
+              },
+              query: {},
+            }); 
+            console.log('storeauth',response);
+          if (response.data !== null && response.code == 0) {
+
+          } 
+          } catch (error) {
+            console.error(error);
+          }
+      };
+     const handleeditbank = async() => {  //修改银行卡
+      setUsernameyhk(tempUsernameyhk);
+      setUsernumberyhk(tempUsernumberyhk);
+      setUserbranch(tempUserbranch);
+      setYhkvisible(false);
+              try {
+            const response = await request({
+              url: '/withdraw/account/update',
+              method: 'PUT',
+              data: {
+              id: 10,
+              ownerId: id,
+              ownerType: "STORE", 
+              account: "zhangsan_new@alipay.com",
+              type: "BANK",
+              accountName: "付云",
+              bankName:"",
+              isDefault: 1
+              },
+              query: {},
+            }); 
+            console.log('storeauth',response);
+          if (response.data !== null && response.code == 0) {
+
+          } 
+          } catch (error) {
+            console.error(error);
+          }
+      };
+      const handleaddwith = async() => {  //新增提现账户
+              try {
+            const response = await request({
+              url: '/withdraw/account/add',
+              method: 'PUT',
+              data: {
+              ownerId: id,
+              ownerType: "STORE",
+              type: "ALIPAY", //选择ALIPAY还是BANK
+              account: "codeprojet@163.com",
+              accountName: "付云",
+              bankName:"",
+              isDefault: 1
+              },
+              query: {},
+            }); 
+            console.log('storeauth',response);
+          if (response.data !== null && response.code == 0) {
+
+          } 
+          } catch (error) {
+            console.error(error);
+          }
+
+       };
+       const syncWithdrawAccount = async () => {
+      try {
+        const response = await request({
+          url: '/withdraw/account/list',
+          method: 'GET',
+          query: {
+            ownerId: id,
+            ownerType: 'STORE',
+          },
+        });
+
+    const accounts = response.data || [];
+
+    // 查找支付宝和银行卡账户
+    const alipayAccount = accounts.find(a => a.type === 'ALIPAY');
+    const bankAccount = accounts.find(a => a.type === 'BANK');
+   console.log(alipayAccount,bankAccount);
+   
+    // 如果账户不存在，新增
+    if (!alipayAccount && tixianmode === 1) {
+      console.log(213222,tempUsernumber,tempUsername);
+      
+   const addResponse = await request({
+        url: '/withdraw/account/add',
+        method: 'POST',
+        data: {
+          ownerId: id,
+          ownerType: "STORE",
+          type: "ALIPAY",
+          account: tempUsernumber,
+          accountName: tempUsername,
+          //bankName: "",
+          isDefault: 1
+        },
+      });
+      if(addResponse.data&&addResponse.code==0){
+      setUsername(tempUsername);
+      setUsernumber(tempUsernumber);
+      setVisible(false);
+        Toast.success({
+            content: '添加成功',
+            duration: 2,
+            position: 'center',
+            mask: false,
+          })
+          getwithlist(id);
+      }else{
+       setVisible(false);
+        if(addResponse.data=="提现账户姓名必须与工作室主体名称一致"){
+   Toast.show({
+    content: '添加失败，提现账户名必须与主体一致',
+    duration: 2,
+    position: 'center',
+    mask: false,
+   })
+        }else{
+   Toast.fail({
+    content: '添加失败，请稍后再试',
+    duration: 2,
+    position: 'center',
+    mask: false,
+   })
+        }
+        getwithlist(id);
+  }
+        console.log('Add account response:', addResponse);
+    } else if (alipayAccount && tixianmode === 1) {
+      console.log(2113,tempUsernumber,tempUsername);
+      
+      // 编辑支付宝，使用列表中的id
+   const addResponse=   await request({
+        url: '/withdraw/account/update',
+        method: 'PUT',
+        data: {
+          id: alipayAccount.id,
+          ownerId: id,
+          ownerType: "STORE",
+          type: "ALIPAY",
+          account: tempUsernumber,
+          accountName: tempUsername,
+          //bankName: "",
+          isDefault: 1
+        },
+      });
+      console.log(addResponse);
+      
+     if(addResponse.data&&addResponse.code==0){
+      setUsername(tempUsername);
+      setUsernumber(tempUsernumber);
+      setVisible(false);
+        Toast.success({
+            content: '修改成功',
+            duration: 2,
+            position: 'center',
+            mask: false,
+          })
+          getwithlist(id);
+      }else{
+       setVisible(false);
+        if(addResponse.data=="提现账户姓名必须与工作室主体名称一致"){
+   Toast.show({
+    content: '修改失败，提现账户名必须与主体一致',
+    duration: 2,
+    position: 'center',
+    mask: false,
+   })
+        }else{
+   Toast.fail({
+    content: '修改失败，请稍后再试',
+    duration: 2,
+    position: 'center',
+    mask: false,
+   })
+        }
+        getwithlist(id);
+  }
+    }
+
+    if (!bankAccount && tixianmode === 2) {
+    const addResponse=  await request({
+        url: '/withdraw/account/add',
+        method: 'POST',
+        data: {
+          ownerId: id,
+          ownerType: "STORE",
+          type: "BANK",
+          account: tempUsernumberyhk,
+          accountName: tempUsernameyhk,
+          bankName: tempUserbranch,
+          isDefault: 1
+        },
+      });
+      if(addResponse.data&&addResponse.code==0){
+      setUsernameyhk(tempUsernameyhk);
+      setUsernumberyhk(tempUsernumberyhk);
+      setUserbranch(tempUserbranch);
+      setYhkvisible(false);
+        Toast.success({
+            content: '添加成功',
+            duration: 2,
+            position: 'center',
+            mask: false,
+          })
+          getwithlist(id);
+          setTixianmode(2)
+      }else{
+      setYhkvisible(false);
+    if(addResponse.data=="提现账户姓名必须与工作室主体名称一致"){
+    Toast.show({
+      content: '添加失败，提现账户名必须与主体一致',
+      duration: 2,
+      position: 'center',
+      mask: false,
+    })
+        }else{
+   Toast.fail({
+    content: '添加失败，请稍后再试',
+    duration: 2,
+    position: 'center',
+    mask: false,
+   })
+        }
+         setTixianmode(2)
+        getwithlist(id);
+  }
+
+
+
+    } else if (bankAccount && tixianmode === 2) {
+      // 编辑银行卡
+const addResponse=      await request({
+        url: '/withdraw/account/update',
+        method: 'PUT',
+        data: {
+          id: bankAccount.id,
+          ownerId: id,
+          ownerType: "STORE",
+          type: "BANK",
+          account: tempUsernumberyhk,
+          accountName: tempUsernameyhk,
+          bankName: tempUserbranch,
+          isDefault: 1
+        },
+      });
+      if(addResponse.data&&addResponse.code==0){
+      setUsernameyhk(tempUsernameyhk);
+      setUsernumberyhk(tempUsernumberyhk);
+      setUserbranch(tempUserbranch);
+      setYhkvisible(false);
+        Toast.success({
+            content: '修改成功',
+            duration: 2,
+            position: 'center',
+            mask: false,
+          })
+          getwithlist(id);
+           setTixianmode(2)
+      }else{
+      setYhkvisible(false);
+    if(addResponse.data=="提现账户姓名必须与工作室主体名称一致"){
+    Toast.show({
+      content: '修改失败，提现账户名必须与主体一致',
+      duration: 2,
+      position: 'center',
+      mask: false,
+    })
+        }else{
+   Toast.fail({
+    content: '修改失败，请稍后再试',
+    duration: 2,
+    position: 'center',
+    mask: false,
+   })
+        }
+        getwithlist(id);
+         setTixianmode(2)
+  }
+    }
+
+
+
+  } catch (error) {
+    console.error(error);
+    Toast.show('操作失败');
+    getwithlist(id);
+  }
+       };
+       const handlesubmit = () => { 
+        if(withdmoney<=0){
+         Toast.show({
+          content: '提现金额必须大于0.1元',
+          duration: 2,
+          position: 'center',
+          mask: false,
+        })
+          return
+        }
+           Modalitem.alert('提示', '是否提交？', [
+      { text: '取消', onPress: () => console.log('cancel'), style: 'cancel' },
+      { text: '确定', onPress: () => handlesubmits(),
+       style: { color: '#FC9026' },
+       },   
+      ])
+        }
+        const handlesubmits = async() => { 
+          // 获取当前选择账户
+          let selectedAccount;
+          if (tixianmode === 1) {
+            selectedAccount = accountList.find(a => a.type === 'ALIPAY');
+          } else {
+            selectedAccount = accountList.find(a => a.type === 'BANK');
+          }
+
+          if (!selectedAccount) {
+            Toast.show('请先添加提现账户');
+            return;
+          }
+          console.log('当前选择提现账户ID:', selectedAccount.id);
+                      try {
+                    const response = await request({
+                      url: '/withdraw/apply',
+                      method: 'POST',
+                      data: {
+                      ownerId: id,
+                      ownerType: "STORE",
+                      applyAmount: withdmoney*100,
+                      payeeAccountId: selectedAccount.id
+                      },
+                      query: {},
+                    }); 
+                    console.log('storeauth',response);
+                  if (response.data !== null && response.code == 0) {
+                    getmoney(id)
+                    Toast.success({
+                          content: '提交成功，请耐心等待审核',
+                          duration: 2,
+                          position: 'center',
+                          mask: false,
+                        })
+                  } else{
+                          Toast.fail({
+                            content: '提交失败，请稍后再试',
+                            duration: 2,
+                            position: 'center',
+                            mask: false,
+                          })
+                  }
+                  } catch (error) {
+                    console.error(error);
+                  }
+        }
   return (
     <View style={styles.container}>
       <View style={{width: px(393),height: px(98),backgroundColor: '#fff',
@@ -82,9 +525,9 @@ export default function ShopCashout({ navigation }) {
       style={{width:px(22),height:px(22)}}></Image>
       </TouchableOpacity>
       <Text style={styles.title}>提现</Text>
-            <TouchableOpacity   style={{  position: 'absolute',
+            <TouchableOpacity   style={{position: 'absolute',
             right: px(16),flexDirection: 'row',alignItems: 'center',height:px(35),
-            }} onPress={()=>navigation.navigate('ShopCashItem')}>
+            }} onPress={()=>navigation.navigate('ShopCashItem',{id:id,type:'STORE'})}>
               <Text style={styles.alltx}>提现记录</Text>
             </TouchableOpacity>
           </View>
@@ -118,7 +561,7 @@ export default function ShopCashout({ navigation }) {
     handleopenmodal()
   }}>
   {tixianmode==1?(
-<Text style={usernumber?styles.zfbisdes:styles.zfbdes}>{usernumber?usernumber:'需填写实名认证的本人支付宝账号'}</Text>
+<Text style={usernumber?styles.zfbisdes:styles.zfbdes}>{usernumber?usernumber:'提现账户名必须与工作室主体名称一致'}</Text>
   ):(
 <Text style={usernumberyhk?styles.zfbisdes:styles.zfbdes}>{usernumberyhk?usernumberyhk:'请填写银行卡信息'}</Text>
   )
@@ -135,9 +578,9 @@ export default function ShopCashout({ navigation }) {
     justifyContent: 'space-between',}}>
 <View style={{flexDirection: 'row',alignItems: 'center',gap:px(6)}}>
  <Text style={styles.titletop}>￥</Text>
-  <Text style={styles.titletop}>199.00</Text>
+  <Text style={styles.titletop}>{withdmoney}</Text>
 </View>
-  <Text style={styles.zfbdes}>可提现:199.00</Text>
+  <Text style={styles.zfbdes}>可提现:{withdmoney}</Text>
 </View>
 </View>
 
@@ -145,7 +588,7 @@ export default function ShopCashout({ navigation }) {
     marginTop: px(16),flexDirection: 'row',alignItems: 'center',
     justifyContent: 'space-between',}}>
  <Text style={styles.titletop}>手续费</Text>
-<Text style={styles.zfbdes}>￥0</Text>
+<Text style={styles.zfbdes}>￥{fee}</Text>
     </View>
 
 <View style={{width: '100%',backgroundColor: '#fff',padding:px(16),
@@ -154,7 +597,7 @@ export default function ShopCashout({ navigation }) {
 <View>
       <Text style={styles.zfbdes}>
         1、每日默认提现1次;{'\n'}
-2、提现会产生0%手续费，最低0元，向上取整;{'\n'}
+2、提现会产生1%手续费，最低1元，向上取整;{'\n'}
 3、支付宝提现2小时内到账;</Text>
 </View>
     </View>
@@ -164,7 +607,7 @@ export default function ShopCashout({ navigation }) {
     <View style={{paddingBottom: bottomSafeHeight+(Platform.OS=='ios'?0 :px(8)),alignItems: 'center',
         gap:px(3)
     }}>
- <TouchableOpacity>
+ <TouchableOpacity onPress={()=>handlesubmit()}>
  <LinearGradient
        colors={['#FEC525', '#FC9026']} // 渐变颜色
        start={{ x: 1, y: 0 }}   
@@ -189,19 +632,19 @@ export default function ShopCashout({ navigation }) {
 <View style={{width: px(291),height: px(60),backgroundColor: '#EEEEEE',
   borderRadius: px(30),marginTop: px(23),flexDirection: 'row',alignItems: 'center',
 }}>
-  <Text style={styles.nametx}>姓名</Text>
+  <Text style={styles.nametx}>账户名</Text>
   <View style={{width: px(1),height: px(19),backgroundColor: "#767676",
     marginLeft: px(8),
   }}></View>
      <TextInput
      allowFontScaling={false}
             style={styles.inputbox}
-            onChangeText={onChangeText}
-            value={username || ''}
-            placeholder="请输入姓名"
+            onChangeText={setTempUsername}
+            value={tempUsername}
+            placeholder="请输入账户名"
             //keyboardType="number-pad"
             placeholderTextColor="#AAAAAA"
-            maxLength={8}
+            //maxLength={8}
             selectionColor='#FC9026'
           />
 </View>
@@ -215,8 +658,8 @@ export default function ShopCashout({ navigation }) {
      <TextInput
      allowFontScaling={false}
             style={styles.inputbox}
-            onChangeText={onnumChangeText}
-            value={usernumber || ''}
+            onChangeText={setTempUsernumber}
+            value={tempUsernumber}
             placeholder="请输入支付宝账号"
             keyboardType="numbers-and-punctuation"
             placeholderTextColor="#AAAAAA"
@@ -227,10 +670,10 @@ export default function ShopCashout({ navigation }) {
 <TouchableOpacity
   style={{ marginTop: px(32) }}
   onPress={() => {
-    setVisible(false);
-  }}
-  activeOpacity={0.8}
->
+ syncWithdrawAccount()
+   }}
+   activeOpacity={0.8}
+   >
   {
       // 正常渐变按钮
       <LinearGradient
@@ -260,12 +703,12 @@ export default function ShopCashout({ navigation }) {
      <TextInput
      allowFontScaling={false}
             style={styles.inputbox}
-            onChangeText={onChangeyhkText}
-            value={usernameyhk || ''}
+            onChangeText={setTempUsernameyhk}
+            value={tempUsernameyhk}
             placeholder="请输入账户名称"
             //keyboardType="number-pad"
             placeholderTextColor="#AAAAAA"
-            maxLength={8}
+            //maxLength={8}
             selectionColor='#FC9026'
           />
 </View>
@@ -279,8 +722,8 @@ export default function ShopCashout({ navigation }) {
      <TextInput
      allowFontScaling={false}
             style={styles.inputbox}
-            onChangeText={onnumChangeyhkText}
-            value={usernumberyhk || ''} 
+            onChangeText={setTempUsernumberyhk}
+            value={tempUsernumberyhk} 
             placeholder="请输入银行卡号"
             keyboardType="numbers-and-punctuation"
             placeholderTextColor="#AAAAAA"
@@ -298,8 +741,8 @@ export default function ShopCashout({ navigation }) {
      <TextInput
      allowFontScaling={false}
             style={styles.inputbox}
-            onChangeText={userbranchChangeText}
-            value={userbranch || ''}
+            onChangeText={setTempUserbranch}
+            value={tempUserbranch}
             placeholder="请输入银行开户行"
             //keyboardType="numbers-and-punctuation"
             placeholderTextColor="#AAAAAA"
@@ -310,8 +753,8 @@ export default function ShopCashout({ navigation }) {
 <TouchableOpacity
   style={{ marginTop: px(32) }}
   onPress={() => {
-    setVisible(false);
-    setYhkvisible(false)
+ syncWithdrawAccount()
+
   }}
   activeOpacity={0.8}
 >

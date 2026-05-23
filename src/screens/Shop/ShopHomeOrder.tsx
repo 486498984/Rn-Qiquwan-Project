@@ -6,11 +6,26 @@ import React,{useState,useEffect,useCallback,useRef} from 'react'
 import { px } from '../../utils/scaleUtils';
 import { TabView, TabBar } from 'react-native-tab-view';
 import OrderItem from '../../components/Shop/ShopOrderItem'
+import request from '../../api/request';
 
+const TAB_STATUS_MAP = {
+  all: '',
+  pending: 'WAIT_SERVICE',
+  inService: 'IN_SERVICE',
+  isSubmit: 'WAIT_CONFIRM',
+  isFinish: 'FINISHED',
+};
 // Tab 内容示例
-const TabContent = ({ data,navigation }) => {
-  //const data = Array.from({ length: 30 }).map((_, i) => `${title} - 订单 ${i + 1}`);
-
+const TabContent = ({
+  data,
+  navigation,
+  onLoadMore,
+  loading,
+  hasMore,
+  onRefresh,
+  refreshing,
+  refreshAllTabs,
+}) => {
   return (
     <FlatList
       data={data}
@@ -29,37 +44,138 @@ const TabContent = ({ data,navigation }) => {
             index,
         })}
       renderItem={({ item }) => (
-        <OrderItem item={item} navigation={navigation}></OrderItem>
+        <OrderItem
+        item={item}
+        navigation={navigation}
+        refreshAllTabs={refreshAllTabs}
+      />
       )}
+      onEndReached={() => {
+      if (!loading && hasMore) {
+        onLoadMore();
+      }
+    }}
+    onEndReachedThreshold={0.2}
+    refreshing={refreshing}
+    onRefresh={onRefresh}
+    ListFooterComponent={() => {
+
+  if (loading) {
+
+    return (
+      <View
+        style={{
+          paddingVertical:px(16),
+          alignItems:'center',
+        }}
+      >
+        <Text style={styles.smadestitle}>加载中...</Text>
+      </View>
+    );
+  }
+  if (!hasMore && data.length > 0) {
+
+    return (
+      <View
+        style={{
+          paddingVertical:px(16),
+          alignItems:'center',
+        }}
+      >
+        <Text style={styles.smadestitle}>我是有底线的～</Text>
+      </View>
+    );
+  }
+    if ( data.length == 0) {
+
+    return (
+      <View
+        style={{
+          paddingVertical:px(16),
+          alignItems:'center',
+        }}
+      >
+        <Text style={styles.smadestitle}>暂无订单～</Text>
+      </View>
+    );
+
+  }
+  return null;
+}}
+
     />
   );
 };
 export default function ShopHomeOrder({navigation,route}) {
-     const { e } = route.params || {};
-    console.log(e);
-    const getTabIndexByE = (e) => {
-    switch (e) {
-      case 1:
-        return 1; // 全部
-      case 2:
-        return 2; // 待付款
-      case 3:
-        return 3; // 待服务
-      case 4:
-        return 4; // 待收货
-      default:
-        return 0;
-    }
-  };
-    const layout = useWindowDimensions();
-    const [index, setIndex] = useState(() => getTabIndexByE(e)); 
-    const [routes] = useState([
-      { key: 'all', title: '全部'},
-      { key: 'pending', title: '待服务'},
-      { key: 'inService', title: '服务中'},
-      { key: 'isSubmit', title: '待确认'},
-      { key: 'isFinish', title: '已完成'},
-    ]);
+     const { e,id } = route.params || {};
+     const layout = useWindowDimensions();
+     const getTabIndexByE = (e) => {
+
+  switch (e) {
+
+    case 1:
+      return 1;
+
+    case 2:
+      return 2;
+
+    case 3:
+      return 3;
+
+    case 4:
+      return 4;
+
+    default:
+      return 0;
+
+  }
+
+};
+     const [index, setIndex] = useState(getTabIndexByE(e));
+
+const [routes] = useState([ { key: 'all', title: '全部'}, 
+  { key: 'pending', title: '待服务'}, 
+  { key: 'inService', title: '服务中'}, 
+  { key: 'isSubmit', title: '待确认'}, 
+  { key: 'isFinish', title: '已完成'}, ]);
+const [orderMap, setOrderMap] = useState({
+  all: [],
+  pending: [],
+  inService: [],
+  isSubmit: [],
+  isFinish: [],
+});
+
+const [pageMap, setPageMap] = useState({
+  all: 1,
+  pending: 1,
+  inService: 1,
+  isSubmit: 1,
+  isFinish: 1,
+});
+
+const [hasMoreMap, setHasMoreMap] = useState({
+  all: true,
+  pending: true,
+  inService: true,
+  isSubmit: true,
+  isFinish: true,
+});
+
+const [loadingMap, setLoadingMap] = useState({
+  all: false,
+  pending: false,
+  inService: false,
+  isSubmit: false,
+  isFinish: false,
+});
+const [refreshingMap, setRefreshingMap] = useState({
+  all: false,
+  pending: false,
+  inService: false,
+  isSubmit: false,
+  isFinish: false,
+});
   const handleback = () => {  //返回上一页
    navigation.goBack();
   };
@@ -68,39 +184,33 @@ export default function ShopHomeOrder({navigation,route}) {
       console.log(e);
       setUsername(e)
     };
-      const renderScene = ({ route }) => {
-    switch (route.key) {
-      case 'all':
-        return <TabContent 
-        data={[{title:213,type:0,types:1},{title:213,type:1,types:2},
-        {title:213,type:2,types:4},{title:213,type:3,types:3},{title:213,type:4,types:2},
-        ]} navigation={navigation}
-        />;
-      case 'pending':
-        return <TabContent 
-      data={[{title:213,type:0,types:2},{title:213,type:0,types:3},
-        {title:213,type:0,types:4},
-        ]} navigation={navigation}
-        />;
-      case 'inService':
-        return <TabContent  
-        data={[{title:213,type:1,types:4},{title:213,type:1,types:1},
-        {title:213,type:1,types:2},
-        ]} navigation={navigation}/>;
-      case 'isSubmit':
-        return <TabContent 
-         data={[{title:213,type:2,types:2},{title:213,type:2,types:1},
-        {title:213,type:2,types:3},
-        ]} navigation={navigation}/>;
-      case 'isFinish':
-        return <TabContent 
-        data={[{title:213,type:3,types:3},{title:213,type:3,types:1},
-        {title:213,type:3,types:4},
-        ]} navigation={navigation}/>;
-      default:
-        return null;
-    }
-  };
+const renderScene = ({ route }) => {
+
+  return (
+
+    <TabContent
+      data={orderMap[route.key]}
+      navigation={navigation}
+      loading={loadingMap[route.key]}
+      hasMore={hasMoreMap[route.key]}
+      refreshAllTabs={refreshAllTabs}
+      onLoadMore={() => {
+
+        getorderlist(
+          route.key,
+          true
+        );
+
+      }}
+      refreshing={refreshingMap[route.key]}
+      onRefresh={() => {
+        refreshCurrentTab(route.key);
+      }}
+    />
+
+  );
+
+};
     const renderTabBar = useCallback(
       ({ navigationState, jumpTo }) => {
         const scrollRef = useRef(null);
@@ -197,6 +307,223 @@ export default function ShopHomeOrder({navigation,route}) {
       },
       []
     );
+     
+useEffect(() => {
+  if (!routes[index]) {
+    return;
+  }
+  const currentTab =
+    routes[index].key;
+   console.log(currentTab);
+   
+  getorderlist(currentTab);
+
+}, [index]);
+    
+const getorderlist = async (
+  tabKey,
+  isLoadMore = false
+) => {
+ console.log(tabKey);
+ 
+  // 防止重复请求
+  if (loadingMap[tabKey]) {
+    return;
+  }
+
+  // 没有更多了
+  if (
+    isLoadMore &&
+    !hasMoreMap[tabKey]
+  ) {
+    return;
+  }
+
+  try {
+
+    setLoadingMap(prev => ({
+      ...prev,
+      [tabKey]: true,
+    }));
+
+    const page = isLoadMore
+      ? pageMap[tabKey]
+      : 1;
+    console.log(TAB_STATUS_MAP[tabKey]);
+    
+    const response = await request({
+      url: '/store/order/list',
+      method: 'GET',
+      query: {
+        storeId: id,
+        orderStatus:
+          TAB_STATUS_MAP[tabKey],
+        page,
+        pageSize: 10,
+      },
+    });
+
+    if (
+      response.code === 0 &&
+      response.data
+    ) {
+
+      const list =
+        response.data.list || [];
+
+      // 是否还有更多
+      const hasMore =
+        list.length >= 10;
+
+      setHasMoreMap(prev => ({
+        ...prev,
+        [tabKey]: hasMore,
+      }));
+
+     setPageMap(prev => ({
+  ...prev,
+  [tabKey]: isLoadMore
+    ? page + 1
+    : 2,
+}));
+
+      setOrderMap(prev => ({
+        ...prev,
+        [tabKey]: isLoadMore
+          ? [...prev[tabKey], ...list]
+          : list,
+      }));
+
+    }
+
+  } catch (error) {
+
+    console.error(error);
+
+  } finally {
+
+    setLoadingMap(prev => ({
+      ...prev,
+      [tabKey]: false,
+    }));
+
+  }
+
+};
+const refreshCurrentTab = async (
+  tabKey
+) => {
+
+  try {
+
+    setRefreshingMap(prev => ({
+      ...prev,
+      [tabKey]: true,
+    }));
+
+    // 重置分页
+    setPageMap(prev => ({
+      ...prev,
+      [tabKey]: 1,
+    }));
+
+    // 重置更多状态
+    setHasMoreMap(prev => ({
+      ...prev,
+      [tabKey]: true,
+    }));
+
+    // 清空旧数据
+    setOrderMap(prev => ({
+      ...prev,
+      [tabKey]: [],
+    }));
+
+    // 重新请求第一页
+    await getorderlist(tabKey, false);
+
+  } finally {
+
+    setRefreshingMap(prev => ({
+      ...prev,
+      [tabKey]: false,
+    }));
+
+  }
+
+};
+// 刷新全部 tab
+const refreshAllTabs = async () => {
+
+  const tabKeys = routes.map(item => item.key);
+
+  try {
+
+    // 全部 tab 进入刷新状态
+    const refreshingState = {};
+
+    tabKeys.forEach(key => {
+      refreshingState[key] = true;
+    });
+
+    setRefreshingMap(prev => ({
+      ...prev,
+      ...refreshingState,
+    }));
+
+    // 重置分页
+    const resetPage = {};
+    const resetHasMore = {};
+    const resetOrder = {};
+
+    tabKeys.forEach(key => {
+      resetPage[key] = 1;
+      resetHasMore[key] = true;
+      resetOrder[key] = [];
+    });
+
+    setPageMap(prev => ({
+      ...prev,
+      ...resetPage,
+    }));
+
+    setHasMoreMap(prev => ({
+      ...prev,
+      ...resetHasMore,
+    }));
+
+    setOrderMap(prev => ({
+      ...prev,
+      ...resetOrder,
+    }));
+
+    // 并发请求全部 tab
+    await Promise.all(
+      tabKeys.map(key =>
+        getorderlist(key, false)
+      )
+    );
+
+  } catch (error) {
+
+    console.log(error);
+
+  } finally {
+
+    const refreshingState = {};
+
+    tabKeys.forEach(key => {
+      refreshingState[key] = false;
+    });
+
+    setRefreshingMap(prev => ({
+      ...prev,
+      ...refreshingState,
+    }));
+
+  }
+
+};
   return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
     <View style={styles.container}>
@@ -211,7 +538,7 @@ export default function ShopHomeOrder({navigation,route}) {
        <Image source={require('../../../assets/images/my/left.png')} 
        style={{width:px(22),height:px(22)}}></Image>
        </TouchableOpacity>
-       <Text style={styles.title}>订单(3)</Text>
+       <Text style={styles.title}>订单</Text>
            </View>
            <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
             justifyContent: 'center',marginBottom: px(8),
@@ -255,6 +582,13 @@ export default function ShopHomeOrder({navigation,route}) {
 }
 
 const styles = StyleSheet.create({
+        smadestitle:{
+        fontFamily: 'MiSans-Regular',
+        fontSize:px(13),
+        color:'#AAAAAA',
+        fontWeight:400,
+        lineHeight:px(17),
+    },
   inputbox:{
   //backgroundColor: 'red',
   //textAlignVertical: 'top', // Android 必须

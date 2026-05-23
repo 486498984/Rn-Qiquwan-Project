@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View,Image,StatusBar,TouchableOpacity,ScrollView,
-Platform,BackHandler,Animated,ActivityIndicator,DeviceEventEmitter,
+Platform,BackHandler,Animated,ActivityIndicator,DeviceEventEmitter,AppState,
  } from 'react-native'
 import React,{useState,useEffect,useRef,useMemo} from 'react'
 import { px } from '../../utils/scaleUtils';
@@ -19,7 +19,9 @@ import Storage from '../../utils/storage';
 import PaymentLoadingModal from '../../components/Home/PaymentLoadingModal'; // 引入组件
 import SafeFastImage from '../../components/Home/SafeFastImage'
  import * as WeChat from 'react-native-wechat-lib';
- 
+ import useAuthStore from '../../utils/zustand';
+
+
 
   const commnet=[{title:'东*******',content:'没毛病，很牛逼！！！'},
       {title:'西*******',content:'战绩可查，NB!'},
@@ -34,6 +36,11 @@ import SafeFastImage from '../../components/Home/SafeFastImage'
   ]
 
 export default function Shopinfo({navigation,route}) {
+
+    const triggerListOrderRefresh =
+    useAuthStore(
+        state => state.triggerListOrderRefresh
+    );
   const { shopinfo } = route.params || {};
   const insets = useSafeAreaInsets();
   const bottomSafeHeight = insets.bottom; // 底部安全区高度（数值）
@@ -66,6 +73,10 @@ export default function Shopinfo({navigation,route}) {
   const [loading, setLoading] = useState(false);//支付弹窗
   const [comments, setComments] = useState([]);//评论列表
   const [commentsall, setCommentsall] = useState(null);//评论详情
+
+
+
+
   const handleback = () => {  //返回上一页
     navigation.goBack();
   };
@@ -142,6 +153,31 @@ const getshopinfo = async (e) => {
     console.error(error);
   }
 };
+const getuserprofile = async() => { 
+  const user = await Storage.get("userinfo");
+           try {
+             const response = await request({
+               url: '/user/profile',
+               method: 'GET',
+               data:{},
+               query: { userId: user.user.userId }
+             });
+             console.log(response);
+            if(response.data!==undefined&&response.code==0){
+              if(response.data.profile.realName&&response.data.profile.idCardNum){
+               return true
+              }else{
+                   return false
+              }
+            }else{
+            return false
+            }
+           } catch (error) {
+            return false
+             console.error(error);
+           }
+
+ };
    const getstoreinfo = async(e) => { 
    try {
       const response = await request({
@@ -381,6 +417,15 @@ const handlecreatorder = async() => { //创建订单
     navigation.navigate('Login')
     return;
    }
+    const userprofile = await getuserprofile();
+     if (!userprofile) {
+    Toast.info({
+      content: '请先完成实名认证才可以下单',
+      mask: false
+    });
+    navigation.navigate('Setting')
+    return;
+  }
     // 查询店铺状态
   const storeData = await getstoreinfo(storeinfo?.id);
   console.log(storeData);
@@ -392,15 +437,15 @@ const handlecreatorder = async() => { //创建订单
     });
     return;
   }
-  const config = JSON.parse(storeData.openHours);
-    if (!isInTimeRange(config)) {
-    Toast.info({
-      content: '当前不在店铺营业时间，暂时无法下单',
-      mask: false
-    });
-    return;
-  }
-    setLoading(true)
+  // const config = JSON.parse(storeData.openHours);
+  //   if (!isInTimeRange(config)) {
+  //   Toast.info({
+  //     content: '当前不在店铺营业时间，暂时无法下单',
+  //     mask: false
+  //   });
+  //   return;
+  // }
+    //setLoading(true)
     console.log(selectedCoupon ? [selectedCoupon.userCouponId] : []);
     console.log(shopallinfo,shopallinfo?.skuList[chshoptype].id);
   try {
@@ -495,9 +540,10 @@ const handlecreatorder = async() => { //创建订单
       // 调用支付
       const result = await WeChat.pay(e);
       console.log(result);
-      
+
       if (result.errCode === 0) {
          setLoading(false)
+         triggerListOrderRefresh();
         // 支付成功
           goorder(3)
           Toast.show({
@@ -515,6 +561,7 @@ const handlecreatorder = async() => { //创建订单
 
     } catch (error: any) {
        setLoading(false)
+       triggerListOrderRefresh();
        //console.error('微信支付异常', error);
          Toast.show({
           content: '您已取消支付，请尽快完成支付',
@@ -543,6 +590,7 @@ const handlecreatorder = async() => { //创建订单
 
       if (result?.code === '10000') {
          goorder(3)
+         triggerListOrderRefresh();
           Toast.show({
           content: '您已完成支付，请等待商家服务',
           duration: 2,
@@ -557,6 +605,7 @@ const handlecreatorder = async() => { //创建订单
     } catch (err) {
       console.log('支付失败:', err);
       if (err.code === 6001) {
+        triggerListOrderRefresh();
          navigation.goBack();
         goorder(2)
         console.log('用户取消支付');
@@ -572,7 +621,7 @@ const handlecreatorder = async() => { //创建订单
   };
       const goorder = (e) => {  //跳转订单
         console.log(e);
-       navigation.navigate('Order',{e})
+       navigation.navigate('Order',{e:1})
       };
       const formatDateTime = (isoString) => {
       const date = new Date(isoString);
