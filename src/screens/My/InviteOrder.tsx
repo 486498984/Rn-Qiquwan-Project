@@ -143,7 +143,7 @@ const renderFooter = () => {
       <FlatList
         data={order}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => <RewardOrder item={item} />}
+        renderItem={({ item }) => <RewardOrder item={item}/>}
         contentContainerStyle={{ paddingHorizontal: px(16), paddingBottom: px(42) }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#999" />

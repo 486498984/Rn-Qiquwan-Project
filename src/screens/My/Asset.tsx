@@ -1,4 +1,6 @@
-import { StyleSheet, Text, View,Image,ScrollView,TouchableOpacity} from 'react-native'
+import { StyleSheet, Text, View,Image,ScrollView,TouchableOpacity,RefreshControl,
+
+} from 'react-native'
 import React,{useEffect,useState,useCallback,} from 'react'
 import { px } from '../../utils/scaleUtils';
 import LinearGradient from 'react-native-linear-gradient';
@@ -13,9 +15,12 @@ const orderlist1=[{type:1},{type:1},{type:1},{type:1},{type:1},{type:1}] //待�
 export default function Asset({ navigation }) {
     const [moneyinfo, setMoneyinfo] = useState({}); //资金明细
     const [userinfo, setUserinfo] = useState({}); //用户明细
+    const [pendding, setPendding] = useState([]); //待入账订单
+    const [refreshing, setRefreshing] = useState(false);
   useFocusEffect(
     useCallback(() => {
      getuserinfo();//获取资金明细
+      getpending();
     }, [])
    );
     const handleback = () => {  //返回上一页
@@ -24,6 +29,7 @@ export default function Asset({ navigation }) {
      useEffect(() => {
       getuserinfo();
       getuser();
+      getpending();
      }, [])
      const getuser = async() => { 
     const user = await Storage.get("userinfo");
@@ -64,6 +70,45 @@ export default function Asset({ navigation }) {
   }
 
     };
+ const getpending = async(isRefresh = false) => {
+
+  if (isRefresh) {
+    setRefreshing(true);
+  }
+
+  const user = await Storage.get("userinfo");
+
+  try {
+    const response = await request({
+      url: '/user/asset/pending-list',
+      method: 'GET',
+      data: {},
+      query: {
+        userId: user.user.userId,
+        page: 1,
+        pageSize: 6,
+      }
+    });
+
+    console.log(response);
+
+    if (response.code == 0) {
+      setPendding(response?.data?.list || []);
+    }
+
+  } catch (error) {
+    console.error('操作失败:', error);
+  } finally {
+    setRefreshing(false);
+  }
+};
+const onRefresh = async () => {
+  await Promise.all([
+    getuserinfo(),
+    getuser(),
+    getpending(true),
+  ]);
+};
   return (
     <View style={styles.container}>
 
@@ -85,8 +130,19 @@ export default function Asset({ navigation }) {
     </View>
 
 </View>
-<ScrollView style={{marginTop: px(100),}} showsVerticalScrollIndicator={false}
-contentContainerStyle={{paddingBottom:px(38)}}>
+<ScrollView
+  style={{marginTop: px(100)}}
+  showsVerticalScrollIndicator={false}
+  contentContainerStyle={{paddingBottom:px(38)}}
+  refreshControl={
+    <RefreshControl
+      refreshing={refreshing}
+      onRefresh={onRefresh}
+      //colors={['#FC9026']}
+      //tintColor={'#FC9026'}
+    />
+  }
+>
     <View style={{width: '100%',flexDirection: 'row',
         alignItems: 'center',justifyContent: 'space-between',
     }}>
@@ -221,11 +277,26 @@ contentContainerStyle={{paddingBottom:px(38)}}>
 <View style={{width: '100%',flexDirection:'row',justifyContent: 'flex-start',}}>
 <Text style={styles.ordertitle}>最近订单</Text>
 </View>
-    {orderlist1.map((item,index)=>
+
+{
+  pendding?.length > 0 ? (
+    <>
+      {pendding.map((item, index) => (
         <View key={index}>
-        <RewardOrder item={item}/>
+          <RewardOrder item={item} />
         </View>
-    )}
+      ))}
+
+      <View style={styles.footerBox}>
+        <Text style={styles.footerText}>没有更多了～</Text>
+      </View>
+    </>
+  ) : (
+    <View style={styles.emptyBox}>
+      <Text style={styles.footerText}>暂无内容～</Text>
+    </View>
+  )
+}
 
 
 
@@ -242,6 +313,35 @@ contentContainerStyle={{paddingBottom:px(38)}}>
 }
 
 const styles = StyleSheet.create({
+  footerBox:{
+  width:'100%',
+  alignItems:'center',
+  justifyContent:'center',
+  paddingVertical:px(20),
+},
+
+      footerText: {
+    textAlign:'center',
+     fontFamily: 'MiSans-Regular',
+        fontSize:px(13),
+        color:'#AAAAAA',
+        fontWeight:400,
+        lineHeight:px(17),
+  },
+
+emptyBox:{
+  width:'100%',
+  alignItems:'center',
+  justifyContent:'center',
+  paddingVertical:px(40),
+},
+
+emptyText:{
+  fontFamily: 'MiSans-Regular',
+  fontSize:px(14),
+  color:'#999',
+  lineHeight:px(20),
+},
     ordertitle:{
   fontFamily: 'MiSans-Medium',
     fontSize: px(17),

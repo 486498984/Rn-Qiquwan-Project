@@ -388,18 +388,20 @@ style={{width:px(65),height:px(65),borderRadius: px(4),}}/>
 <View style={{flexDirection: 'row',alignItems: 'center',
 justifyContent: 'space-between',width: px(290),height: px(65),}}>
 
- <View style={{}}>
+ <View style={{flexDirection: 'column',justifyContent: 'space-between',
+  height: px(65),
+ }}>
         <View style={{flexDirection: 'row',alignItems: 'flex-start',
     justifyContent: 'space-between',}}>
-        <View style={{flexDirection: 'row',alignItems: 'center',}}>
+        <View style={{flexDirection: 'row',alignItems: 'flex-start',}}>
 <Image source={require('../../../assets/images/club/champion.png')} 
       style={{width:px(24),height:px(24),}}></Image>
-<Text style={styles.clubname}>{storedata?.storeName}</Text>
+<Text style={styles.clubname} numberOfLines={2}>{storedata?.storeName}</Text>
         </View>
 
 </View>
 <View style={{flexDirection: 'row',alignItems: 'flex-start',
-   marginTop: px(12),}}>
+   marginTop: px(0),}}>
         <View style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}>
 <StarRating score={5}></StarRating>
 <Text style={styles.score}>5.0</Text>
@@ -548,18 +550,20 @@ style={{width:px(65),height:px(65),borderRadius: px(4),}}/>
 <View style={{flexDirection: 'row',alignItems: 'center',
 justifyContent: 'space-between',width: px(290),height: px(65),}}>
 
- <View style={{}}>
+ <View style={{flexDirection: 'column',justifyContent: 'space-between',
+  height: px(65),
+ }}>
         <View style={{flexDirection: 'row',alignItems: 'flex-start',
     justifyContent: 'space-between',}}>
-        <View style={{flexDirection: 'row',alignItems: 'center',}}>
+        <View style={{flexDirection: 'row',alignItems: 'flex-start',}}>
 <Image source={require('../../../assets/images/club/champion.png')} 
       style={{width:px(24),height:px(24),}}></Image>
-<Text style={styles.clubname}>{storedata?.storeName}</Text>
+<Text style={styles.clubname} numberOfLines={2}>{storedata?.storeName}</Text>
         </View>
 
 </View>
 <View style={{flexDirection: 'row',alignItems: 'flex-start',
-   marginTop: px(12),}}>
+   marginTop: px(0),}}>
         <View style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}>
 <StarRating score={5}></StarRating>
 <Text style={styles.score}>5.0</Text>
@@ -761,11 +765,12 @@ elevation: 8, // Android
     alignItems: 'center',
   },
         clubname:{
+          width: px(180),
  fontFamily: 'MiSans-Medium',
         fontSize:px(18),
         color:'#1A1A1A',
         //fontWeight:500,
-        lineHeight:px(24),
+        lineHeight:px(22),
     },
         score:{
  fontFamily: 'MiSans-Regular',

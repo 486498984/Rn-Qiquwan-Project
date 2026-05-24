@@ -671,7 +671,7 @@ const handleleftbutton = () => { //左边按钮
    console.log(orderinfo);
    if(orderinfo.settleStatus!=="FREEZED"&&orderinfo.settleStatus!=="NONE"){
      Toast.show({
-      content: '该订单不能发起售后，请联系平台客服处理',
+      content: '该订单已结算，请联系平台客服处理',
       duration: 2,
       position: 'center',
       mask: false,

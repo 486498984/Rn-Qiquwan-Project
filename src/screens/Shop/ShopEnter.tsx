@@ -479,7 +479,7 @@ const handlesubmit = async() => {  //保存
   })
   return
  }
-    if(shopinfotx==""){
+  if(shopinfotx==""){
    Toast.show({
     content: '请填写商品详情',
     duration: 2,
@@ -549,7 +549,7 @@ const response = await request({
     }); 
         console.log('address',response);
       if (response.data !== null && response.code == 0) {
-       Toast.success('保存成功')
+      Toast.success({content: '保存成功',mask:false,duration:2})
        handleback();
       }
       } catch (error) {

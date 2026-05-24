@@ -48,25 +48,25 @@ export default function Home({navigation}) {
   ]
  
 const unsubscribeRef = useRef(null);
-
+//const [hasInit, setHasInit] = useState(false)
 useEffect(() => {
+  console.log('privacyAgreed',privacyAgreed);
+  console.log('isOnline',isOnline);
+  
   if (!privacyAgreed) return;
   unsubscribeRef.current = addEventListener(state => {
-    const online =
-      state.isConnected === true &&
-      (state.isInternetReachable === true ||
-        state.isInternetReachable === null);;
+    // const online =
+    //   state.isConnected === true &&
+    //   (state.isInternetReachable === true ||
+    //   state.isInternetReachable === null);
+const online = !!state.isConnected
+      console.log(online);
+      
     setIsOnline(online);
     if (online) {
       console.log("有网，开始请求");
       gettabinfo();
       getHomeConfig();
-      // 👉 只请求当前 tab
-      //await gettabslist();
-      // const key = tablist[tabIndex]?.key;
-      // if (key && !dataMap[key]) {
-      //   fetchList(key, 1, false);
-      // }
       // ✅ 关键：请求一次后停止监听
       unsubscribeRef.current && unsubscribeRef.current();
     } 
@@ -76,10 +76,13 @@ useEffect(() => {
   };
 }, [privacyAgreed]);
 const gettabinfo = async () => {
+
+  
   const routes = await gettabslist(); // 👈 返回 routes
   const key = routes?.[tabIndex]?.key;
 
   if (key) {
+    console.log('fetchList1');
     fetchList(key, 1, false);
   }
 };
@@ -194,15 +197,26 @@ setBannerlist(newList)
              console.error(error);
            }
    };
-  useEffect(() => {
-  if (!isOnline) return;
 
+   const hasInit = useRef(false);
+  useEffect(() => {
+  // 未同意隐私协议
+  if (!privacyAgreed) {
+    return;
+  }
+
+  // 无网络
+  if (!isOnline) {
+    return;
+  }
+  if (hasInit.current) return;
   const key = tablist[tabIndex]?.key;
 
   if (key) { 
+console.log('fetchList2');
     fetchList(key, 1, false); // ✅ 每次切换都请求
   }
-}, [tabIndex]);
+}, [tabIndex, privacyAgreed, isOnline]);
 
 useEffect(() => {
   const list = dataMap[tablist[tabIndex].key]?.list
@@ -212,6 +226,8 @@ useEffect(() => {
     setShopnumber(list.length)
   }
 }, [dataMap, tabIndex])
+
+const firstLoadDone = useRef(false);
   // ✅ 请求数据（核心）
   const fetchList = async (categoryId, page = 1, isLoadMore = false) => {
 
@@ -224,7 +240,8 @@ useEffect(() => {
         loading: true,
       }
     }))
-
+    console.log('请求了商品接口！');
+    
     const res = await request({
       url: "/goods/list",
       method: "GET",
@@ -237,40 +254,29 @@ useEffect(() => {
 
     const newData = res?.data?.list || []
 
-setDataMap(prev => {
-  const old = prev[categoryId] || { list: [], page: 1 }
+    setDataMap(prev => {
+      const old = prev[categoryId] || { list: [], page: 1 }
 
-  const oldList = Array.isArray(old.list) ? old.list : []
-  const newList = Array.isArray(newData) ? newData : []
+      const oldList = Array.isArray(old.list) ? old.list : []
+      const newList = Array.isArray(newData) ? newData : []
 
-  const list = isLoadMore
-    ? [...oldList, ...newList]
-    : newList
+      const list = isLoadMore
+        ? [...oldList, ...newList]
+        : newList
 
-  return {
-    ...prev,
-    [categoryId]: {
-      list,
-      page,
-      hasMore: newList.length === 10,
-      loading: false,
-    }
-  }
-})
+      return {
+        ...prev,
+        [categoryId]: {
+          list,
+          page,
+          hasMore: newList.length === 10,
+          loading: false,
+        }
+      }
+    })
+    // ✅ 初始化完成后才允许 loadMore
+  firstLoadDone.current = true;
   };
-  // ✅ 当前tab数据
-  const current = dataMap[tabIndex] || {
-    list: [],
-    page: 1,
-    hasMore: true,
-    loading: false,
-  }
-  // ✅ 自动加载（切tab时）
-  // useEffect(() => {
-  //   if (!dataMap[tabIndex]) {
-  //     fetchList(tablist[tabIndex].key, 1, false)
-  //   }
-  // }, [tabIndex])
 
 
   // ✅ 渲染tab内容
@@ -289,14 +295,17 @@ setDataMap(prev => {
         data={data}
         navigation={navigation}
         loadMore={() => {
+           if (!firstLoadDone.current) return; // 🚨 首次禁止触底加载
           if (!data.hasMore || data.loading) return
+          console.log('fetchList3');
           fetchList(key, data.page + 1, true)
         }}
       />
     )
   }
-
+ 
 const handleScrollEnd = (event) => {
+  console.log('打印handleScrollEnd');
   const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
   if (
     layoutMeasurement.height + contentOffset.y >=
@@ -308,6 +317,7 @@ const handleScrollEnd = (event) => {
     if (!currentData?.hasMore || currentData?.loading) {
       return;
     }
+    console.log('fetchList4');
     fetchList(
       key,
       currentData.page + 1,
@@ -363,11 +373,11 @@ const gettabslist = async () => {
   navigation.navigate('Shopinfo',{shopinfo:e.goodsInfo})
   }else{
  Toast.show({
-  content: '该商品已下架，请稍后再试',
+  content: '该商品已下架，看看别的吧～',
   duration: 2,
   position: 'center',
   mask: false,
-})
+ })
   }
 
  }
@@ -526,23 +536,19 @@ const onRefresh = async () => {
     backgroundColor: '#fff',
     height:px(52)+ px(136)*shopnumber,
   }}>
-        <TabView
-          key={tablist.length}
-          navigationState={{ index: tabIndex, routes: tablist }}
-          onIndexChange={setTabIndex}
-          renderTabBar={() => null}   // 关闭默认TabBar
-          renderScene={renderScene}
-          initialLayout={{width}}
-          lazy
-          lazyPreloadDistance={1}
-        />
+  <TabView
+    key={tablist.length}
+    navigationState={{ index: tabIndex, routes: tablist }}
+    onIndexChange={setTabIndex}
+    renderTabBar={() => null}   // 关闭默认TabBar
+    renderScene={renderScene}
+    initialLayout={{width}}
+    lazy
+    lazyPreloadDistance={1}
+  />
   </View>
 
-
   </ScrollView>
-
-
-
 
     </View>
   )

@@ -96,7 +96,7 @@ import {
 import { useIMStore } from './store/imStore';
 //import { TUILogin } from '@tencentcloud/tui-core';
  import * as WeChat from 'react-native-wechat-lib';
-
+import { navigationRef } from './api/navigationService';
 
   const loginInfo =
   Platform.OS === 'ios'
@@ -521,7 +521,7 @@ const openWeChat = async () => {
     brand_primary: '#FF9500',     // 按钮背景颜色 <Button type="primary">
 
 }}>
-       <NavigationContainer>
+       <NavigationContainer ref={navigationRef}>
      <StatusBar
         hidden={false}               // 显示状态栏
         translucent={true}           // 让状态栏背景透明

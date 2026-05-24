@@ -12,7 +12,9 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { scheduleOnRN } from 'react-native-worklets';
 import { Toast } from '@ant-design/react-native';
 import request from '../../api/request';
-
+import {
+ Modal as Modalitem,
+} from '@ant-design/react-native'
 
 
  const Underline=()=>{
@@ -36,6 +38,14 @@ export default function Setting({navigation}) {
       navigation.goBack();
      };
      const logout = () => {
+
+         Modalitem.alert('提示', '确定要退出登录吗？', [
+      { text: '取消', onPress: () => console.log('cancel'), style: 'cancel' },
+      { text: '确定', onPress: () => logoutlogin(),
+       style: { color: '#FC9026' },
+       },
+    ])
+    return
   Alert.alert(
     '提示',
     '确定要退出登录吗？',
@@ -62,6 +72,13 @@ export default function Setting({navigation}) {
     }
   );
 };
+const logoutlogin = async() => { 
+          console.log('执行退出逻辑');
+           await Storage.remove('userinfo');
+           loginChanged();
+           handleback();
+
+ }
   useEffect(() => {
    console.log('isLogin:', isLogin);
    getloginstatus();//获取登陆状态

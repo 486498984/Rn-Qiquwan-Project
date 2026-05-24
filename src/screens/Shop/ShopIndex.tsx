@@ -187,14 +187,14 @@ justifyContent: 'space-between',
     }
     onError={() => setLogoError(true)}
     style={{
-        width: px(42),
-        height: px(42),
+        width: px(62),
+        height: px(62),
         borderRadius: px(4),
     }}
     /> 
-        <View style={{flexDirection: 'column',height: px(42),
+        <View style={{flexDirection: 'column',height: px(62),
             justifyContent: 'space-between',marginLeft: px(8),}}>
-<Text style={styles.clubname}>{storeinfo?.storeName}</Text>
+<Text style={styles.clubname} numberOfLines={2}>{storeinfo?.storeName}12</Text>
 <View style={{flexDirection: 'row',alignItems: 'flex-start',
    marginTop: px(2),}}>
         <View style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}>
@@ -467,11 +467,13 @@ const styles = StyleSheet.create({
         lineHeight:px(19),
     },
             clubname:{
+              //backgroundColor: 'red',
+              width: px(185),
  fontFamily: 'MiSans-Medium',
         fontSize:px(18),
         color:'#1A1A1A',
         //fontWeight:500,
-        lineHeight:px(24),
+        lineHeight:px(22),
     },
             score:{
  fontFamily: 'MiSans-Regular',

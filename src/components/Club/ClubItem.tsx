@@ -42,10 +42,10 @@ const  ClubItem =({navigation,status,item,})=> {
      <View style={{width: px(252),}}>
         <View style={{flexDirection: 'row',alignItems: 'flex-start',
     justifyContent: 'space-between',}}>
-        <View style={{flexDirection: 'row',alignItems: 'center',}}>
+        <View style={{flexDirection: 'row',alignItems: 'flex-start',}}>
 <Image source={require('../../../assets/images/club/champion.png')} 
       style={{width:px(24),height:px(24),}}></Image>
-<Text style={styles.clubname}>{item?.storeName}</Text>
+<Text style={styles.clubname} numberOfLines={2}>{item?.storeName}</Text>
         </View>
 <View style={{flexDirection: 'row',alignItems: 'center',}}>
     <Image   source={
@@ -65,7 +65,7 @@ const  ClubItem =({navigation,status,item,})=> {
         </View>
 <Text style={styles.score}>{item.followCount}关注</Text>
 </View>
-<Text style={styles.clubdes}>{item.storeDesc}</Text>
+<Text style={styles.clubdes} numberOfLines={2}>{item.storeDesc}</Text>
         </View>
 {/* <View style={{flexDirection: 'row',alignItems: 'center',
     justifyContent: 'space-between',}}>
@@ -184,12 +184,13 @@ yuandes:{
         lineHeight:px(17),
     },
     clubname:{
+        width: px(180),
         marginLeft: px(2),
- fontFamily: 'MiSans-Medium',
+        fontFamily: 'MiSans-Medium',
         fontSize:px(18),
         color:'#1A1A1A',
         //fontWeight:500,
-        lineHeight:px(24),
+        lineHeight:px(22),
     },
     shopbox:{
     marginTop: px(0),

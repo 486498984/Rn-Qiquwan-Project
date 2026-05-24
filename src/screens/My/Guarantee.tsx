@@ -4,7 +4,7 @@ import { px } from '../../utils/scaleUtils';
 import { IMG_URL } from '../../api/config';
 import { Toast } from '@ant-design/react-native';
 import FastImage from 'react-native-fast-image';
-
+import SafeFastImage from '../../components/Home/SafeFastImage'
 
 
 
@@ -13,7 +13,11 @@ export default function Guarantee({navigation}) {
 
 const uri = IMG_URL + 'protect.png';
   useEffect(() => {
-    Toast.loading('loading...')
+        Toast.loading({
+        content: '加载中',
+        mask: true,
+        duration: 5,
+      })
     Image.getSize(uri, (w, h) => {
       setRatio(w / h);
       Toast.removeAll()
@@ -21,7 +25,7 @@ const uri = IMG_URL + 'protect.png';
   }, []);
   const handleback = () => {  //返回上一页
    navigation.goBack();
-     };
+  };
   return (
     <View style={styles.container}>
    <View style={{width: px(393),height: px(98),backgroundColor: '#fff',
@@ -41,7 +45,7 @@ const uri = IMG_URL + 'protect.png';
 
        <ScrollView contentContainerStyle={{paddingHorizontal:px(16),paddingBottom:px(42)}}
        showsVerticalScrollIndicator={false}>
-         <FastImage source={{uri:IMG_URL+'protect.png'}} 
+         <SafeFastImage source={{uri:IMG_URL+'protect.png'}} 
          style={{width:'100%',aspectRatio: ratio,}} resizeMode='contain' />
         </ScrollView>      
     </View>
@@ -49,7 +53,7 @@ const uri = IMG_URL + 'protect.png';
 }
 
 const styles = StyleSheet.create({
-              title:{
+   title:{
   fontFamily: 'MiSans-Medium',
         fontSize:px(16),
         color:'#1A1A1A',

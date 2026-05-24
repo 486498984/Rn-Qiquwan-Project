@@ -449,10 +449,11 @@ const styles = StyleSheet.create({
   },
 
   bottomtext: {
-    fontFamily: 'MiSans-Regular',
-    fontSize: px(13),
-    color: '#767676',
-    fontWeight: '400',
-    lineHeight: px(17),
+    textAlign:'center',
+     fontFamily: 'MiSans-Regular',
+        fontSize:px(13),
+        color:'#AAAAAA',
+        fontWeight:400,
+        lineHeight:px(17),
   },
 }) 

@@ -780,10 +780,10 @@ paddingHorizontal:px(16),marginTop: px(16),
      </View>
     <View style={{flexDirection: 'column',marginLeft: px(6),
         justifyContent: 'space-between',height:px(75)}}>
- <View style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}>
+ <View style={{flexDirection: 'row',alignItems: 'flex-start',gap:px(3)}}>
 <Image source={require('../../../assets/images/club/champion.png')} 
       style={{width:px(17),height:px(17),}}></Image>
-<Text style={styles.clubname}>{storeinfo?.storeName}</Text>
+<Text style={styles.clubname} numberOfLines={2}>{storeinfo?.storeName}</Text>
 </View>
 <View style={{flexDirection: 'column',gap:px(2)}}>
   <View style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}>
@@ -1665,6 +1665,7 @@ elevation: 8, // Android
         lineHeight:px(15),
   },
               clubname:{
+                width: px(180),
  fontFamily: 'MiSans-Medium',
         fontSize:px(13),
         color:'#1A1A1A',

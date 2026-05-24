@@ -273,6 +273,16 @@ useEffect(() => {
     console.log(213123);
     handlecannl()
     }else if(e=="申请售后"){
+      console.log(item.settleStatus);
+      if(item.settleStatus!=='FREEZED'&&item.settleStatus!=='NONE'){
+          Toast.show({
+           content: '该订单已结算，请联系平台客服处理',
+           duration: 2,
+           position: 'center',
+           mask: false,
+         })
+        return
+      }
     navigation.navigate('Refund',{orderinfo:item});
     }
 

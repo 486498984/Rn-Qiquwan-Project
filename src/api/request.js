@@ -5,6 +5,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import useAuthStore from '../utils/zustand';
 import Storage from '../utils/storage';
 import { Toast } from '@ant-design/react-native'
+import { navigate } from './navigationService';
+
+
+
+
 //const loginChanged = useAuthStore(state => state.loginChanged);
 // 生成5位随机数
 function generateRandomFiveDigitNumber() {
@@ -84,12 +89,18 @@ export default async function request(obj) {
     if (result.code === 0) {
       return result;
     } else if (result.code === 402) {
-      //Toast.info({content:'当前账号已经在其他设备登陆',mask:false});
-      //await Storage.remove('userinfo');
+      await Storage.remove('userinfo');
       //useAuthStore.getState().loginChanged();
       //Alert.alert('提示', '登录已过期');
       // 跳转到登录页
-      // navigation.navigate('Login');
+      navigate('Login');
+      Toast.show({
+      content: '当前账号已经在其他设备登陆,请重新登陆～',
+      duration: 2,
+      position: 'center',
+      mask: false,
+    })
+       //navigation.navigate('Login');
       //throw new Error('登录已过期');
     } else if (result.code === 2000) {
       //Alert.alert('提示', '网络错误请重试');

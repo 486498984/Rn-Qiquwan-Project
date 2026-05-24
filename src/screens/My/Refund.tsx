@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image, ScrollView
   ,TextInput,KeyboardAvoidingView,Platform,
  } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef, } from 'react';
 import { px } from '../../utils/scaleUtils';
 import SafeFastImage from '../../components/Home/SafeFastImage'
 import { IMG_URL } from '../../api/config';
@@ -33,8 +33,16 @@ export default function Refund({ navigation, route }) {
   );
 
 // 在 Refund 组件内增加状态
-const [refundAmount, setRefundAmount] = useState(orderinfo?.payAmount/100 || 0); // 默认最大金额
-const [maxAmount, setMaxAmount] = useState(orderinfo?.payAmount/100 || 0);
+const [refundAmount, setRefundAmount] = useState(
+  String(orderinfo?.payAmount / 100 || '')
+);
+
+const [maxAmount, setMaxAmount] = useState(
+  Number(orderinfo?.payAmount / 100 || 0)
+);
+const scrollRef = useRef(null);
+
+
 
 // 输入金额时的处理函数
 const handleRefundAmountChange = (value) => {
@@ -156,7 +164,7 @@ const complete = () => {  //提交售后
   })
    return
   }
-     Modalitem.alert('提示', '售后只有1次提交机会，是否提交？', [
+     Modalitem.alert('提示', '是否提交？', [
       { text: '取消', onPress: () => console.log('cancel'), style: 'cancel' },
       { text: '确定', onPress: () => handleother(),
        style: { color: '#FC9026' },
@@ -168,6 +176,11 @@ const complete = () => {  //提交售后
 
   };
   const handleother = async() => { 
+    Toast.loading({
+    content: '提交中',
+    mask: true,
+    duration: 5,
+  })
   console.log(1222);
   const finlogo = await handleUploadAndFormat(shopphoto);
   console.log(finlogo);
@@ -189,6 +202,7 @@ if (finlogo) {
     });
     console.log(response);
     if(response.data!==undefined&&response.code==0){
+      Toast.removeAll()
       triggerListOrderRefresh();
        Toast.success({
         content: '提交成功',
@@ -198,6 +212,7 @@ if (finlogo) {
       })
       handleback();
     }else{
+    Toast.removeAll()
     Toast.fail({
     content: '提交售后失败，请稍后重试',
     duration: 2,
@@ -206,12 +221,18 @@ if (finlogo) {
   })
     }
     } catch (error) {
+      Toast.removeAll()
       console.error(error);
     }
 
 
   };
   const handlerefundmoney = async() => { 
+   Toast.loading({
+    content: '提交中',
+    mask: true,
+    duration: 5,
+  })
   const finlogo = await handleUploadAndFormat(shopphoto);
   console.log(finlogo,orderinfo.id,shopinfotx,refundAmount*100,);
   const data = {
@@ -234,6 +255,7 @@ if (finlogo) {
     });
     console.log(response);
     if(response.data!==undefined&&response.code==0){
+      Toast.removeAll()
       triggerListOrderRefresh();
        Toast.success({
         content: '提交成功',
@@ -243,6 +265,7 @@ if (finlogo) {
       })
       handleback();
     }else{
+    Toast.removeAll()
     Toast.fail({
     content: '提交售后失败，请稍后重试',
     duration: 2,
@@ -251,6 +274,7 @@ if (finlogo) {
   })
     }
     } catch (error) {
+      Toast.removeAll()
       console.error(error);
     }
 
@@ -316,34 +340,34 @@ if (finlogo) {
   };
 
   // 输入框失去焦点处理
-  const handleRefundAmountBlur = () => {
-    let amount = parseFloat(refundAmount);
+const handleRefundAmountBlur = () => {
+  const value = String(refundAmount).trim();
+  let amount = parseFloat(value);
 
-    // 如果不是有效数字，则重置为最大金额
-    if (isNaN(amount) || amount <= 0) {
-      setRefundAmount(maxAmount.toString());
-      return;
-    }
+  // 空值
+  if (!value) {
+    setRefundAmount(maxAmount.toString());
+    return;
+  }
 
-    // 判断“1.”的情况（可能是用户输入了 1. 或 1.0 之类）
-    if (refundAmount.trim() === "1." || refundAmount.trim() === "1.0") {
-      // 取消输入，自动改为最大金额
-      setRefundAmount(maxAmount.toString());
-      return;
-    }
+  // 非数字
+  if (isNaN(amount) || amount <= 0) {
+    setRefundAmount(maxAmount.toString());
+    return;
+  }
 
-    // 如果超过最大金额，也修正
-    if (amount > maxAmount) {
-      setRefundAmount(maxAmount.toString());
-    }
-  };
+  // 超过最大金额
+  if (amount > maxAmount) {
+    setRefundAmount(maxAmount.toString());
+    return;
+  }
+
+  // 去掉末尾无效0
+  setRefundAmount(String(amount));
+};
   return (
-    <View style={{ flex: 1, backgroundColor: '#F2F3F5' }}>
-         <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={0}
-      >
+
+    
     <View style={{ flex: 1, backgroundColor: '#F2F3F5' }}>
       <View style={{ width: px(393), height: px(98), backgroundColor: '#fff', flexDirection: 'row', alignItems: 'flex-end' }}>
         <View
@@ -370,7 +394,7 @@ if (finlogo) {
       </View>
 
       <ScrollView contentContainerStyle={{ paddingHorizontal: px(16), }}
-      showsVerticalScrollIndicator={false}>
+      showsVerticalScrollIndicator={false} ref={scrollRef}>
         <View style={{ flexDirection: 'column', alignItems: 'center', marginTop: px(16)
           
          }}>
@@ -473,11 +497,12 @@ source={{uri:IMG_URL+goodsinfo?.goods?.coverImage.split(',')[0]}}
       fontFamily: 'MiSans-Medium',
     }}
     keyboardType="numeric"
-    value={refundAmount.toString()}
+    value={refundAmount}
     onChangeText={handleRefundAmountChange}
     onBlur={handleRefundAmountBlur}
     placeholder="请输入退款金额"
     placeholderTextColor="#AAAAAA"
+    selectionColor='#FC9026'
     maxLength={10}
   />
   </View>
@@ -522,6 +547,14 @@ source={{uri:IMG_URL+goodsinfo?.goods?.coverImage.split(',')[0]}}
     selectionColor='#FC9026'
     textAlignVertical="top"  
     onFocus={() => {
+      if (Platform.OS === 'ios') {
+      setTimeout(() => {
+        scrollRef.current?.scrollTo({
+          y: px(300), // 距离顶部300
+          animated: true,
+        });
+      }, 100);
+    }
   // if (Platform.OS === 'ios') {
   //   scrollRef.current?.scrollToEnd({ animated: true });
   // }
@@ -564,10 +597,6 @@ source={{uri:IMG_URL+goodsinfo?.goods?.coverImage.split(',')[0]}}
 
 
 
-
-
-    </View>
-    </KeyboardAvoidingView>
 <View style={{position: 'absolute',bottom:0,width: '100%',backgroundColor: '#fff',
    flexDirection: 'row',justifyContent: 'center',
 }}>
@@ -598,8 +627,11 @@ source={{uri:IMG_URL+goodsinfo?.goods?.coverImage.split(',')[0]}}
               </TouchableOpacity>
 </View>
 </View>
-</View>  
-</View>
+</View> 
+    </View>
+
+ 
+
   );
 }
 

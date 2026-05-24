@@ -72,6 +72,7 @@ export default function My({navigation}) {
    getfollwlist() //获取关注数字
    //getclubpermission(user.user.userId)
    }else{
+   setBadge(bages)
    setLoginstatus(false)
    setUserinfo(null)
    }
