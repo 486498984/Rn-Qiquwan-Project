@@ -30,6 +30,7 @@ const TabContent = ({
   refreshCurrentTab,
   refreshTab,
   refreshAllTabs,
+  switchTab,
 }) => {
   const onEndReachedCalledDuringMomentum = useRef(false);
   //const data = Array.from({ length: 30 }).map((_, i) => `${title} - 订单 ${i + 1}`);
@@ -109,13 +110,14 @@ ListFooterComponent={() => {
   return null;
 
 }}
-onEndReachedThreshold={0.2}
+      onEndReachedThreshold={0.2}
       renderItem={({ item }) => (
         <OrderItem item={item} 
         navigation={navigation}    
         refreshCurrentTab={refreshCurrentTab}
         refreshTab={refreshTab}
         refreshAllTabs={refreshAllTabs}
+        switchTab={switchTab}
         ></OrderItem>
       )}
     />
@@ -235,6 +237,7 @@ const renderScene = ({ route }) => {
 
   // 全部tab刷新
   refreshAllTabs={refreshAllTabs}
+    switchTab={switchTab}
     />
 
   );
@@ -473,6 +476,24 @@ useEffect(() => {
   }
 
 }, [index]);
+
+
+const switchTab = (tabKey) => {
+
+  const targetIndex = routes.findIndex(
+    item => item.key === tabKey
+  );
+
+  if (targetIndex === -1) return;
+
+  setIndex(targetIndex);
+
+  // 没数据时自动请求
+  if (orderData[tabKey].list.length === 0) {
+    getorderlist(tabKey, 1, true);
+  }
+};
+
   return (
     <View style={{ flex: 1 }}>
            <View style={{width: px(393),height: px(98),backgroundColor: '#fff',

@@ -40,50 +40,51 @@ const STATUS_CONFIG = {
     icon:0,
   },
 
-  CREATED: {
-    label: '待付款',
-    leftText:'取消支付',
-    rightText: '继续支付',
-    topDesc:'29分钟后自动取消',
-    showCustomer:false,
-    icon:1,
-  },
-
-  WAIT_SERVICE: {
-    label: '待服务',
+  STORE_DONE: {
+    label: '商家已处理',
     leftText:'',
-    rightText: '申请退款',
-    topDesc:'俱乐部安排打手中...',
-    showCustomer:true,
-    icon:2,
-  },
-
-  IN_SERVICE: {
-    label: '服务中',
-    leftText:'',
-    rightText: '查看截图',
-    topDesc:'打手正在服务中...',
-    showCustomer:true,
-    icon:3,
-  },
-
-  WAIT_CONFIRM: {
-    label: '待收货',
-    leftText:'申请售后',
-    rightText: '确认完成',
-    topDesc:'7天后自动收货',
-    showCustomer:false,
-    icon:4,
-  },
-
-  WAIT_COMMENT: {
-    label: '售后中',
-    leftText:'',
-    rightText: '取消售后',
-    topDesc:'请耐心等待俱乐部处理',
+    rightText: '',
+    topDesc:'平台正在审核中',
     showCustomer:false,
     icon:5,
   },
+  WAIT_PLATFORM: {
+    label: '商家已处理',
+    leftText:'',
+    rightText: '',
+    topDesc:'平台正在审核中',
+    showCustomer:false,
+    icon:5,
+  },
+
+
+
+  WAIT_STORE: {
+    label: '商家处理中',
+    leftText:'',
+    rightText: '取消售后',
+    topDesc:'请耐心等待商家处理',
+    showCustomer:false,
+    icon:5,
+  },
+
+  NOFINISHED: {
+    label: '已完成',
+    leftText:'',
+    rightText: '',
+    topDesc:'如有疑问可联系平台客服处理',
+    showCustomer:false,
+    icon:6,
+  },
+  SHOPNOFINISHED: {
+    label: '已完成',
+    leftText:'',
+    rightText: '',
+    topDesc:'如有疑问可联系平台客服处理',
+    showCustomer:false,
+    icon:6,
+  },
+
 
   FINISHED: {
     label: '已完成',
@@ -154,7 +155,7 @@ const [imglist, setImglist] = useState([]); //图片列表
       console.log(stringToArray(id.evidence));
       setImglist(stringToArray(id.evidence))
       
-    setCurrentStatus(getStatus(id))  
+    setCurrentStatus(getStatus(id))
     setCurrentConfig(STATUS_CONFIG[getStatus(id)] || STATUS_CONFIG.CREATED)
       //getStatus(id)
     }  
@@ -242,14 +243,31 @@ const formatted = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.
     
   // 售后中
   if(e.status === "WAIT_STORE" ) {
-    return 'WAIT_COMMENT'
+    return 'WAIT_STORE'
+  }
+    // 商家已处理，等待平台处理
+  if(e.status === "STORE_DONE" ) {
+    return 'STORE_DONE'
+  }
+    // 商家已处理，等待平台处理
+  if(e.status === "WAIT_PLATFORM" ) {
+    return 'WAIT_PLATFORM'
   }
 
-  // 已完成
-  if(e.status === 'CLOSED' ) {
+
+  // 已完成 同意
+  if(e.status === 'CLOSED'&&e.result== "AGREE") {
     return 'FINISHED'
   }
+  // 已完成 同意
+  if(e.status === 'CLOSED'&&e.result!== "AGREE") {
+    if(e.platformRemark==""){
+    return 'NOFINISHED'
+    }else{
+    return 'SHOPNOFINISHED'
+    }
 
+  }
     // 已取消
   if(e.status === "CANCELED" ) {
     return 'CLOSED'
@@ -766,11 +784,14 @@ style={{width:px(32),height:px(32)}}></Image>
 
 <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',}}>
     <Text style={styles.shopdesnames}>处理结果</Text>
-      <Text style={styles.yingfu}>{refundStatusMap[id.result]}</Text>
+      <Text style={styles.yingfu}>{currentStatus==='NOFINISHED'?'商家':'平台'}{refundStatusMap[id.result]}</Text>
 </View>
 <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',}}>
     <Text style={styles.shopdesnames}>回复结果</Text>
-      <Text style={styles.yingfu}>{id.storeRemark}</Text>
+      <Text style={styles.yingfu}>  
+        {id?.platformRemark?.trim()
+    ? id.platformRemark
+    : id?.storeRemark}</Text>
 </View>
 
 <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',}}>
@@ -873,6 +894,34 @@ source={{uri:IMG_URL+goodsinfo?.goods?.coverImage.split(',')[0]}}
     <Text style={styles.shopdesnames}>支付方式</Text>
       <Text style={styles.yingfu}>{orderinfo?.paymentType=="WECHAT"?'微信支付':'支付宝'}</Text>
 </View>
+
+<View
+  style={{
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  }}
+>
+  <Text style={styles.shopdesnames}>订单备注</Text>
+
+  <Text style={styles.yingfu}>
+    {(() => {
+      try {
+        const remarkObj = orderinfo?.remark
+          ? JSON.parse(orderinfo.remark)
+          : null;
+
+        return remarkObj?.user?.trim()
+          ? remarkObj.user
+          : '-';
+       } catch (e) {
+        return '-';
+      }
+    })()}
+  </Text>
+</View>
+
 <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
     justifyContent: 'space-between',}}>
     <Text style={styles.shopdesnames}>下单时间</Text>
@@ -1057,7 +1106,7 @@ processList.map((item,index)=>{
 
 </ScrollView>
 
-    {currentStatus !== 'FINISHED'&&
+    {currentConfig.rightText !== ''&&currentConfig.leftText !== ''&&
 <View style={{position: 'absolute',bottom:0,width: '100%',backgroundColor: '#fff',
    flexDirection: 'row',justifyContent: 'center',
 }}>

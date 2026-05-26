@@ -86,7 +86,7 @@ export default function ShopSale({ navigation,route }) {
           <TouchableOpacity onPress={handleback} style={{ position: 'absolute', left: px(16) }}>
             <Image source={require('../../../assets/images/my/left.png')} style={{ width: px(22), height: px(22) }} />
           </TouchableOpacity>
-          <Text style={styles.title}>售后</Text>
+          <Text style={styles.title}>售后订单</Text>
         </View>
       </View>
 

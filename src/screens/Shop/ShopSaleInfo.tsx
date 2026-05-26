@@ -125,6 +125,9 @@ const [imglist, setImglist] = useState([]); //图片列表
 //const [imglist, setImglist] = useState([]); // 图片列表
   const [previewVisible, setPreviewVisible] = useState(false); // 预览弹窗显示控制
   const [currentIndex, setCurrentIndex] = useState(0); // 当前预览图片索引
+  const [isstaus, setIsstaus] = useState(true); // 重新渲染页面
+
+
 
   useEffect(() => {
     if(id){
@@ -137,7 +140,7 @@ const [imglist, setImglist] = useState([]); //图片列表
     setCurrentConfig(STATUS_CONFIG[getStatus(id)] || STATUS_CONFIG.CREATED)
       //getStatus(id)
     }  
-  }, [id,orderListRefreshKey])
+  }, [id,orderListRefreshKey,isstaus])
 
     // 点击图片预览
   const handlePreview = (index) => {
@@ -258,47 +261,82 @@ const handlegocom = () => {
 
   switch(currentStatus){
 
-    case 'CREATED':
-      // 去支付
+    case 'WAIT_STORE':
+      // 待处理
       console.log(213);
-      Continuepaying()
+      //同意售后
+            Modalitem.alert('提示', '售后同意后不能撤回，是否同意售后？', [
+            { text: '取消', onPress: () => console.log('cancel'), style: 'cancel' },
+            { text: '确定', onPress: () => handleargee(),
+             style: { color: '#FC9026' },
+             },   
+          ])
       break;
 
-    case 'WAIT_SERVICE':
-      // 申请退款
-      setVisiblemap(true);
+    case 'STORE_DONE':
+      // 已处理
+      
       break;
-
-    case 'IN_SERVICE':
+     // 等待平台审核
+    case 'WAIT_PLATFORM':
       // 查看截图
       break;
 
-    case 'WAIT_CONFIRM':
-      // 确认完成
-      Confirmation()
+    case 'CLOSED':
+      // 处理完成
+   
       break;
-
-    case 'WAIT_COMMENT':
-        handlesagee()
+ // 已取消售后
+    case 'CANCELED':
+   
       //navigation.navigate('Comment',{orderinfo});
       break;
-
-    case 'FINISHED':
-      // 删除订单
-      handlerefund()
-      break;
-
-    case 'CLOSED':
-    case 'CANCELED':
-      // 再次购买
-      handleagainbuy()
-      break;
-
     default:
       break;
   }
 
  };
+ const handleargee = async() => { 
+        const user = await Storage.get("userinfo");
+             try {
+           const response = await request({
+             url: '/store/after_sale/handle',
+             method: 'POST',
+             data:{
+              storeId: id.storeId,
+              afterSaleId:id.id,
+              action: "AGREE",
+              refundAmount: id.applyAmount,
+              refundReason: "同意退款",
+              storeRemark: `已核实，同意退款处理${user.user.userId}`
+            },
+             query: {}
+           });
+           console.log(response);
+          if(response.data!==undefined&&response.code==0){
+            Toast.show({
+           content: '同意售后成功',
+           duration: 2,
+           position: 'center',
+           mask: false,
+         })
+         setIsstaus(!isstaus)
+         triggerListOrderRefresh()
+          }else{
+            setIsstaus(!isstaus)
+          triggerListOrderRefresh()
+            Toast.show({ 
+           content: '同意售后失败,请稍后再试',
+           duration: 2,
+           position: 'center',
+           mask: false,
+         })
+          }
+         } catch (error) {
+           console.error(error);
+         }
+
+  };
  const handlesagee = () => { 
    Modalitem.alert('提示', '是否取消售后？', [
       { text: '取消', onPress: () => console.log('cancel'), style: 'cancel' },
@@ -417,150 +455,6 @@ const handlegocom = () => {
              console.error(error);
            }
    };
- const Continuepaying = async() => { 
-         try {
-           const response = await request({
-             url: '/order/repay',
-             method: 'POST',
-             data:{orderId:orderinfo.id},
-             query: {}
-           });
-           console.log(response);
-          if(response.data!==undefined&&response.code==0){
-            //console.log(item);
-              const res = response.data.payInfo
-            if(response.data.paymentType=="WECHAT"){ //微信支付
-        let payload={
-        partnerId: res.payParams.partnerid,
-        prepayId: res.prepayId,
-        nonceStr: res.payParams.noncestr,
-        timeStamp: res.payParams.timestamp,
-        package: res.payParams.package,
-        sign: res.payParams.sign,
-          }
-          handlewechatpay(payload)
-            }else{
-              handlePay(res.payInfo)
-            }
-          //handlePay(response.data.payInfo.payInfo)
-          }else{
-              Toast.show({
-           content: '订单已过期，无法付款',
-           duration: 2,
-           position: 'center',
-           mask: false,
-         })
-          }
-         } catch (error) {
-           console.error(error);
-         }
-
-  };
-   const handlewechatpay = async(e) => { 
-      try {
-        // 检查微信是否安装
-        const isInstalled = await WeChat.isWXAppInstalled();
-        if (!isInstalled) {
-          Toast.show({
-          content: '请先安装微信',
-          duration: 2,
-          position: 'center',
-          mask: false,
-        })
-          return;
-        }
-  
-        // 调用支付
-        const result = await WeChat.pay(e);
-        console.log(result);
-        
-        if (result.errCode === 0) {
-          getorderinfo(id)
-          refreshAllTabs && refreshAllTabs();
-          //refreshCurrentTab();
-            Toast.show({
-            content: '您已完成支付，请等待商家服务',
-            duration: 2,
-            position: 'center',
-            mask: false,
-          })
-       
-        } else {
-         
-  
-        }
-  
-      } catch (error: any) {
-         //refreshCurrentTab();
-         //console.error('微信支付异常', error);
-           Toast.show({
-            content: '您已取消支付，请尽快完成支付',
-            duration: 2,
-            position: 'center',
-            mask: false,
-          })
-
-      }
-  
-    };
-   const handlePay = async (e) => {
-     try {
-       // 👉 这里应该从后端获取
-       const orderString = e;
- 
-       const res = await pay({
-         orderString,
-         appScheme: 'alipay2021006140652743',
-       });
- 
-       console.log('支付返回:', res);
- 
-       const result = res?.data?.alipay_trade_app_pay_response;
- 
-       if (result?.code === '10000') {
-       // refreshCurrentTab();
-       getorderinfo(id)
-       refreshAllTabs && refreshAllTabs();
-           Toast.show({
-           content: '您已完成支付，请等待商家服务',
-           duration: 2,
-           position: 'center',
-           mask: false,
-         })
-         console.log('支付成功');
-       } else {
-         console.log('支付未完成');
-       }
-     } catch (err) {
-       //refreshCurrentTab();
-       //console.log('支付失败:', err);
-       if (err.code === 6001) {
-         console.log('用户取消支付');
-          Toast.show({
-           content: '您已取消支付，请尽快完成支付',
-           duration: 2,
-           position: 'center',
-           mask: false,
-         })
-       }
-     }
-   };
-  const handleagainbuy = () => {
-    navigation.navigate('Refund',{orderinfo:orderinfo});
-    //navigation.navigate('Shopinfo',{shopinfo:goodsinfo.goods})
-  };
-    const handlerefundmode = (e) => { 
-    setRefundmode(e)
-     };
-  const onGroupChange = (e) => {  //退款原因切换
-  console.log(e);
-  setRefundmode(e.target.value)
-  };
-  const handlechoosere = () => {  //退款弹窗确定
-setRefundsubmode(refundmode)
-setRefundmodal(false)
-   };
-
 const handleCopyOrderNo = () => {
 
   if (!orderinfo?.orderNo) {
@@ -582,41 +476,49 @@ const handleCopyOrderNo = () => {
          })
 };
 const handleleftbutton = () => { //左边按钮
+
   switch(currentStatus){
 
-    case 'CREATED':
-      // 去支付
-      handlecannel()
+    case 'WAIT_STORE':
+      //等待处理
+        Modalitem.prompt(
+          '提示',
+          '请输入拒绝理由',
+          
+          (inputValue) => {
+            // 如果输入为空
+            if (!inputValue || inputValue.trim() === '') {
+              Toast.info('请输入拒绝理由', 1); // 显示提示
+              return false; // 阻止 Modal 关闭
+            }
+            // 输入有效
+            handlenoagree(inputValue)
+            console.log('输入内容:', inputValue);
+            // 在这里执行确认操作，例如提交接口
+          },
+          'default', // 类型：default / secure-text / login-password
+          '', // 默认值
+          ['必填，添加备注信息'], // placeholder
+        );
       break;
 
-    case 'WAIT_SERVICE':
-      // 申请退款
+    case 'STORE_DONE':
+      // 已处理
       setRefundmodal(true);
       break;
 
-    case 'IN_SERVICE':
-      // 查看截图
-      break;
-
-    case 'WAIT_CONFIRM':
-      // 确认完成
-      break;
-
-    case 'WAIT_COMMENT':
-      console.log(211);
-      handlerefund()
-
-      break;
-
-    case 'FINISHED':
-      // 删除订单
-      handlerefund()
+    case 'WAIT_PLATFORM':
+      // 等待平台审核
       break;
 
     case 'CLOSED':
+      // 处理完成
+      break;
+
     case 'CANCELED':
-      // 再次购买
-      //handleagainbuy()
+     //用户取消售后
+      handlerefund()
+
       break;
 
     default:
@@ -624,6 +526,43 @@ const handleleftbutton = () => { //左边按钮
   }
 
  };
+   const handlenoagree = async(e) => { 
+        const user = await Storage.get("userinfo");
+             try {
+           const response = await request({
+             url: '/store/after_sale/handle',
+             method: 'POST',
+             data:{
+              storeId: orderinfo.storeId,
+              afterSaleId: orderinfo.id,
+              action: "REJECT",
+              storeRemark: `${e}${user.user.userId}`
+            },
+             query: {}
+           });
+           console.log(response);
+          if(response.data!==undefined&&response.code==0){
+            Toast.show({
+           content: '拒绝售后成功',
+           duration: 2,
+           position: 'center',
+           mask: false,
+         })
+         triggerListOrderRefresh()
+          }else{
+          triggerListOrderRefresh()
+            Toast.show({
+           content: '拒绝售后失败,请稍后再试',
+           duration: 2,
+           position: 'center',
+           mask: false,
+         })
+          }
+         } catch (error) {
+           console.error(error);
+         }
+
+   };
  const handlerefund = () => { 
    console.log(orderinfo);
    if(orderinfo.settleStatus!=="FREEZED"&&orderinfo.settleStatus!=="NONE"){

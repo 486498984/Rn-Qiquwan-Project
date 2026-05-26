@@ -342,6 +342,39 @@ const gettabslist = async () => {
            }
        }
        };
+  const handlegokefu = async() => { 
+  const user = await Storage.get("userinfo");
+      console.log(user);
+      if(user==null){ //未登陆的情况
+      Toast.info({content:'请先完成登陆',mask:false});
+      return
+      }
+
+             try {
+             const response = await request({
+               url: '/customer/get',
+               method: 'GET',
+               data:{},
+               query: {
+                //userId:user.user.userId,
+                storeId:storedata.id
+              }
+             });
+             console.log(response);
+            if(response.data!==undefined&&response.code==0){
+
+            }else{
+            Toast.show({
+                content: response.data,
+                duration: 2,
+                position: 'center',
+                mask: false,
+              })
+            }
+           } catch (error) {
+             console.error(error);
+           }
+  };
   return (
     <View style={styles.container}>
      <View style={styles.top}>
@@ -676,7 +709,7 @@ paddingBottom:bottomSafeHeight+px(16)
 }}>
 <Text style={mode==1?styles.bottomtx:styles.nobottomtx}>首页</Text>
 </TouchableOpacity>
-<View style={{width: px(1),height: px(9),
+<View style={{width: px(1),height: px(9),marginBottom : bottomSafeHeight+px(16),
     backgroundColor: 'rgba(118, 118, 118,0.2)',}}></View>
 
 <TouchableOpacity onPress={()=>handleChangeMode(2)} style={{paddingHorizontal:px(21),
@@ -686,11 +719,11 @@ paddingBottom:bottomSafeHeight+px(16)
 </TouchableOpacity>
 
 
-<View style={{width: px(1),height: px(9),
+<View style={{width: px(1),height: px(9),marginBottom : bottomSafeHeight+px(16),
     backgroundColor: 'rgba(118, 118, 118,0.2)',}}></View>
 <TouchableOpacity style={{paddingHorizontal:px(21),
 paddingBottom:bottomSafeHeight+px(16)
-}}>
+}} onPress={()=>handlegokefu()}>
 <Text style={styles.nobottomtx}>客服</Text>
 </TouchableOpacity>
     </View>

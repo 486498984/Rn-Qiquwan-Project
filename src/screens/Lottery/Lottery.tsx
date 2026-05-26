@@ -109,10 +109,10 @@ export default function Lottery({navigation}) {
     console.log(response);
     if (response.data && response.code == 0&&response.data.list!==null) {
       console.log(response.data.list);
-       const len = response.data.list.length;
+       const len = response.data.total;
       // 这里做上限处理
-      const showNum = len > 99 ? '99+' : len;
-      setListnum(showNum);
+      //const showNum = len > 99 ? '99+' : len;
+      setListnum(len);
       }
       } catch (error) {
         console.error(error);
@@ -173,6 +173,9 @@ export default function Lottery({navigation}) {
     setResultIndex(1);
     }else if(response.data.prize.type=="SERVICE"){
     setResultIndex(2);
+    }else if(response.data.prize.type=="NONE"){
+    //setResultIndex(2);
+    Toast.info({content:'未中奖，谢谢参与！',mask:false});
     }
 
     setSpinning(true);

@@ -129,12 +129,28 @@ const getStatus = () => {
   // 待评价优先判断
   if(item.status === "WAIT_STORE") { //等待审核
     return {
-      label: '售后中',
+      label: '商家处理中',
       leftText: '取消售后',
       rightText: '查看详情',
     };
   }
+  // 待评价优先判断
+  if(item.status === "STORE_DONE") { //等待平台审核
+    return {
+      label: '平台审核中',
+      leftText: '',
+      rightText: '查看详情',
+    };
+  }
 
+  // 待评价优先判断
+  if(item.status === "WAIT_PLATFORM") { //等待平台审核
+    return {
+      label: '平台审核中',
+      leftText: '',
+      rightText: '查看详情',
+    };
+  }
   // 已完成
   if(item.status === 'CLOSED') {
     return {

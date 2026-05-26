@@ -15,7 +15,7 @@ import { IMG_URL } from '../../api/config';
 import { Toast } from '@ant-design/react-native'
 import * as WeChat from 'react-native-wechat-lib';
 import  {uploadImage}  from '../../api/uploadImage';
-
+import AuditStatusCard from './components/AuditStatusCard';
 
   // 星期数据
 const weekData = [
@@ -97,6 +97,7 @@ export default function ShopSetting({navigation,route}) {
   const [shoplogo, setShoplogo] = useState<any[]>([]); //logo图
   const [businessimg, setBusinessimg] = useState([]); //营业执照图
   const [shopphoto, setShopphoto] = useState([]); //店铺相册
+  const [legalPersonPhoto, setLegalPersonPhoto] = useState([]); //法人身份证照片
   const [visibletype, setVisibletype] = useState(false) //主营类型弹窗开关
   const [storevalues, setStorevalues] = useState<(number | string)[]>([]); //主营类型
   const [shopinfotx, setShopinfotx] = useState(null); //商品详情
@@ -121,6 +122,9 @@ export default function ShopSetting({navigation,route}) {
 const [weekRange, setWeekRange] = useState(['1', '7']);
 const [weekExtend, setWeekExtend] = useState(null);
 const [visibleWeek, setVisibleWeek] = useState(false);
+const [storenewinfo, setStorenewinfo] = useState({}); //获取到的最新店铺信息
+
+
 
 useEffect(() => {
   const init = async () => {
@@ -169,7 +173,7 @@ useEffect(() => {
   const getstoreinfo = async(e) => {  //获取店铺信息
     try {
       const response = await request({
-        url: '/store/detail',
+        url: '/store/detail/verify',
         method: 'GET',
         data:{},
         query: {id:e.id}
@@ -177,9 +181,11 @@ useEffect(() => {
       console.log(response);
     if(response.data!==undefined&&response.code==0){
       let res=response.data
+      setStorenewinfo(res);
       setShopname(res.storeName)
       setShoplogo(getImageArray(res.storeLogo, IMG_URL)) //俱乐部logo
       setShopphoto(getImageArray(res.storePhoto, IMG_URL)) //俱乐部相册
+      setLegalPersonPhoto(getImageArray(res.legalPersonPhoto, IMG_URL)) //法人身份证照
       setBusinessimg(getImageArray(res.licensePhoto, IMG_URL)) //营业执照
       console.log(res.address);
       setShopinfotx(res.storeDesc)
@@ -342,7 +348,8 @@ const handlesubmit = async() => {  //提交
   console.log(weekMap[weekRange?.[1]]);
   console.log(weekRange,onetimevalue,twotimevalue);
   console.log(companyadress);
-  
+  console.log(legalPersonPhoto);
+
   if(shopname==""){
   Toast.show({ content: '请输入俱乐部名称' });
   return
@@ -359,6 +366,10 @@ const handlesubmit = async() => {  //提交
   Toast.show({ content: '请输入俱乐部介绍' });
   return
   }
+  if(legalPersonPhoto.length==1){
+  Toast.show({ content: '请输入完整的身份证正反面照片' });
+  return
+  }
   // if(companycode.length!==18){
   // Toast.show({ content: "统一社会信用代码必须为18位" });
   // return
@@ -366,6 +377,7 @@ const handlesubmit = async() => {  //提交
   
   const finlogo = await handleUploadAndFormat(shoplogo);
   const finphoto = await handleUploadAndFormat(shopphoto);
+  const legalPhoto = await handleUploadAndFormat(legalPersonPhoto);
   const finbusin = await handleUploadAndFormat(businessimg);
   console.log(finlogo);
   console.log(finphoto);
@@ -377,9 +389,10 @@ const handlesubmit = async() => {  //提交
 console.log(result);
   const opentime={start:onetimevalue,end:twotimevalue,week:weekRange}
   //return;
-  handleformal(finlogo,finphoto,finbusin,opentime,result)
+  handleformal(finlogo,finphoto,finbusin,opentime,result,legalPhoto,)
 };
- const handleformal = async(finlogo,finphoto,finbusin,opentime,result) => { 
+ const handleformal = async(finlogo,finphoto,finbusin,opentime,result,
+  legalPhoto) => { 
        try {
     const response = await request({
       url: '/store/update-app',
@@ -395,7 +408,7 @@ console.log(result);
     licenseName: company,
     licenseCode: companycode,
     legalPerson: companyname,
-    legalPersonPhoto: "",
+    legalPersonPhoto: legalPhoto,
     contactName: connectname,
     contactPhone: connectphone,
     province: regionvalue[0],
@@ -555,9 +568,17 @@ const normalizeTimeRange = (start, end) => {
                       </View>
                     </View>
 
+
+
+
 <ScrollView contentContainerStyle={{paddingTop:px(16),paddingBottom:px(155),flexGrow: 1}} 
  ref={scrollRef} keyboardShouldPersistTaps="handled">
 <View style={{width: '100%',backgroundColor: '#fff',paddingHorizontal:px(16),}}>
+  <AuditStatusCard
+  status={storenewinfo?.verifyStatus}
+  reason={storenewinfo?.verifyRemark}
+  submitTime={storenewinfo?.updatedAt}
+/>
 <TouchableOpacity style={{width: '100%',height: px(51),
     flexDirection: 'column',justifyContent: 'center',
 }}   onPress={() => {
@@ -834,6 +855,21 @@ const normalizeTimeRange = (start, end) => {
 </View>
 </View>
 </TouchableOpacity>
+<Line/>
+
+  <View style={{width: '100%',paddingTop:px(16),
+  flexDirection: 'column',justifyContent: 'center',
+  }}>
+  <View style={{flexDirection: 'column',paddingBottom:px(16)}}>
+  <Text style={styles.lefttitle}>法人身份证正反面照片</Text>
+    <ImageUploader
+      max={2}
+      value={legalPersonPhoto}
+      onChange={setLegalPersonPhoto}
+      />
+    </View>
+    </View>
+
 <Line/>
 <TouchableOpacity style={{width: '100%',height: px(51),
     flexDirection: 'column',justifyContent: 'center',

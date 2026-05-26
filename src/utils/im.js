@@ -3,7 +3,7 @@ import TIMUploadPlugin from 'tim-upload-plugin';
 import NetInfo from '@react-native-community/netinfo';
 
 const options = {
-  SDKAppID: '1600134998',
+  SDKAppID: '1600137039',
 };
 
 const chat = TencentCloudChat.create(options);

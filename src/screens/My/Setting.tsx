@@ -254,13 +254,13 @@ const handleCertification = async() => {  //身份认证
           })
      setVisible(false);
             }else{
-toastApi.fail({
-    content: '认证失败,请确保填写信息正确',
-    duration: 2,
-    position: 'center',
-    mask: false,
-    });
-            }
+              toastApi.fail({
+        content: response.data,
+        duration: 2,
+        position: 'center',
+        mask: false,
+        });
+        }
            } catch (error) {
              console.error(error);
            }

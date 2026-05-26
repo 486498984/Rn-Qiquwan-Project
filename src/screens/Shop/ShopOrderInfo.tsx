@@ -78,7 +78,7 @@ const [previewVisiblecon, setPreviewVisiblecon] = useState(false);
 const [headimgviewcon, setHeadimgviewcon] = useState([]); // 图片数组
 const [currentIndexcon, setCurrentIndexcon] = useState(0);
 const [paytime, setPaytime] = useState("-"); //支付时间
-const [currentStatus, setCurrentStatus] = useState("-"); //支付时间
+const [currentStatus, setCurrentStatus] = useState("-"); //订单状态
 
 
 
@@ -94,7 +94,7 @@ const orderRefreshKey =
     if(e==5){  //写评价
         navigation.navigate('Comment')
     }else if(orderInfo.orderStatus === 'WAIT_CONFIRM'){ //申请退款
-setRefundmodal(true)
+     setRefundmodal(true)
     }
     };
     const handlerefundmode = (e) => { 
@@ -190,7 +190,7 @@ const formatted = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.
          }
     }; 
 
-   const getStatus = (e) => {
+   const getStatus = (e) => { //设置订单状态
     console.log(e.orderStatus);
   // 其他状态使用 STATUS_CONFIG
   return ORDER_STATUS_MAP[e.orderStatus];
@@ -293,7 +293,7 @@ contentContainerStyle={{paddingBottom:px(110)}} showsVerticalScrollIndicator={fa
     paddingHorizontal:px(8),paddingVertical:px(16),marginTop: px(16),
 }}>
 <View style={{flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',}}>
- <Text style={styles.clubname}>一个大啦</Text>
+ <Text style={styles.clubname}>{orderInfo?.userNickName}</Text>
     {(orderInfo.orderStatus === 'WAIT_SERVICE'||orderInfo.orderStatus === 'IN_SERVICE'||orderInfo.orderStatus === 'WAIT_CONFIRM') &&
        <TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}>
       {/* <Image source={require('../../../assets/images/my/kefu.png')} 
@@ -493,6 +493,61 @@ processList.map((item,index)=>{
     <Text style={styles.shopdesnames}>支付方式</Text>
  <Text style={styles.yingfu}>{orderInfo?.paymentType=="WECHAT"?'微信支付':'支付宝'}</Text>
 </View>
+
+<View
+  style={{
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  }}
+>
+  <Text style={styles.shopdesnames}>订单备注</Text>
+
+  <Text style={styles.yingfu}>
+    {(() => {
+      try {
+        const remarkObj = orderInfo?.remark
+          ? JSON.parse(orderInfo.remark)
+          : null;
+
+        return remarkObj?.user?.trim()
+          ? remarkObj.user
+          : '-';
+       } catch (e) {
+        return '-';
+      }
+    })()}
+  </Text>
+</View>
+
+<View
+  style={{
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  }}
+>
+  <Text style={styles.shopdesnames}>商家备注</Text>
+
+  <Text style={styles.yingfu}>
+    {(() => {
+      try {
+        const remarkObj = orderInfo?.remark
+          ? JSON.parse(orderInfo.remark)
+          : null;
+
+        return remarkObj?.store?.trim()
+          ? remarkObj.store
+          : '-';
+       } catch (e) {
+        return '-';
+      }
+    })()}
+  </Text>
+</View>
+
 <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
     justifyContent: 'space-between',}}>
     <Text style={styles.shopdesnames}>下单时间</Text>

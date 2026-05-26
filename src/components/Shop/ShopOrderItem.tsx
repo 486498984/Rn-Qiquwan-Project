@@ -10,6 +10,8 @@ import {
   Toast, Modal as Modalitem,
 } from '@ant-design/react-native'
 
+
+
 const STATUS_UI = {
   WAIT_SERVICE: {
     label: '待服务',
@@ -208,10 +210,68 @@ const OrderItem=({item,navigation,refreshAllTabs})=> {
            }
 
         };
-       const handleupload = () => {  //上传进度
-       navigation.navigate('ShopScreenshot',{e:item})
+  const handleupload = () => {  //上传进度
+  navigation.navigate('ShopScreenshot',{e:item})
+  };
+  const handleaddremake = async() => {  //添加备注
+    console.log(213,item);
+        Modalitem.prompt(
+          '提示',
+          '请输入备注',
+          
+          (inputValue) => {
+            // 如果输入为空
+            if (!inputValue || inputValue.trim() === '') {
+              Toast.info('请输入备注', 1); // 显示提示
+              return false; // 阻止 Modal 关闭
+            }
+            // 输入有效
+            handlenoagree(inputValue)
+            console.log('输入内容:', inputValue);
+            // 在这里执行确认操作，例如提交接口
+          },
+          'default', // 类型：default / secure-text / login-password
+          '', // 默认值
+          ['添加备注信息'], // placeholder
+        );
+    //refreshAllTabs()
+    return
 
-        };
+
+    };
+    const handlenoagree = async(e) => { 
+      console.log(item.remark);
+      let remark=JSON.parse(item.remark)
+      console.log(remark);
+      remark.store=e
+      console.log(remark);
+               try {
+             const response = await request({
+               url: '/store/order/remark',
+               method: 'PUT',
+               data:{
+                orderId: item.id,
+                remark: JSON.stringify(remark),
+               },
+               query: {
+
+                }
+             });
+             console.log(response);
+            if(response.data!==undefined&&response.code==0){
+            Toast.success({
+           content: '添加成功',
+           duration: 2,
+           position: 'center',
+           mask: false,
+           })
+            refreshAllTabs()
+            }
+           } catch (error) {
+             console.error(error);
+           }
+
+     };
   return (
     <View style={styles.container}>
         <TouchableOpacity style={{width: px(361),
@@ -219,7 +279,12 @@ const OrderItem=({item,navigation,refreshAllTabs})=> {
         onPress={()=>handlegoinfo(item)} activeOpacity={1}>
 <View style={{width: '100%',flexDirection: 'row',
     alignItems: 'center',justifyContent: 'space-between',}}>
+      <TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',}}>
 <Text style={styles.clubname}>{item.userNickName}</Text>
+        <Image source={require('../../../assets/images/my/right.png')} 
+        style={{width:px(19),height:px(19)}}></Image>
+</TouchableOpacity>
+
 <Text style={[styles.waittime,{color:ui.label=='已取消'?'#AAAAAA':'#FF9500'}]}>
   {ui.label}
 </Text>
@@ -260,13 +325,15 @@ const OrderItem=({item,navigation,refreshAllTabs})=> {
 } */}
 </View>
 <View style={{flexDirection: 'column',justifyContent: 'space-between',
-    height: px(120),marginLeft: px(3),}}>
+    marginLeft: px(3),}}>
 <Text style={styles.ordername}>{goods?.goods?.title}</Text>
 <View style={{gap:px(4)}}>
-    <Text style={styles.ordertime}>{goods?.sku?.title}</Text>
-    {addons!==""&&
-    <Text style={styles.ordertime}>{addons}</Text>
-    }
+<Text style={[styles.ordername,{color:'#767676'}]}>备注：{JSON.parse(item.remark).store==""?'-':JSON.parse(item.remark).store}</Text>
+<Text style={styles.ordertime}>{goods?.sku?.title}</Text>
+{addons!==""&&
+<Text style={styles.ordertime}>{addons}</Text>
+}
+
 <Text style={styles.ordertime}>下单时间：{item.createdAt}</Text>
 <Text style={styles.ordertime}>订单编号：{item.orderNo}</Text>
 <View style={{width: px(222),flexDirection: 'row',alignItems: 'center',
@@ -281,11 +348,15 @@ const OrderItem=({item,navigation,refreshAllTabs})=> {
 </View>
 <View style={{flexDirection:'row',justifyContent:'flex-end',gap:px(6),marginTop: px(13),}}>
 
-  {ui.actions?.includes('contact') && (
+
+    <TouchableOpacity style={styles.cannelbox} onPress={()=>handleaddremake()}>
+      <Text style={styles.canneltext}>添加备注</Text>
+    </TouchableOpacity>
+  {/* {ui.actions?.includes('contact') && (
     <TouchableOpacity style={styles.cannelbox}>
       <Text style={styles.canneltext}>联系客户</Text>
     </TouchableOpacity>
-  )}
+  )} */}
 
   {ui.actions?.includes('cancel') && (
     <TouchableOpacity style={styles.cannelbox} onPress={()=>handlecanner()}>

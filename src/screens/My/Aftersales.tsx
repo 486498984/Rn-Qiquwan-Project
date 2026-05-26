@@ -6,7 +6,7 @@ import { px } from '../../utils/scaleUtils';
 import request from '../../api/request';
 import Storage from '../../utils/storage';
 import OrderItem from '../../components/My/AftersalesItem';
-   import useAuthStore from '../../utils/zustand';
+import useAuthStore from '../../utils/zustand';
 
 
 
@@ -81,7 +81,7 @@ export default function Aftersales({ navigation }) {
           <TouchableOpacity onPress={handleback} style={{ position: 'absolute', left: px(16) }}>
             <Image source={require('../../../assets/images/my/left.png')} style={{ width: px(22), height: px(22) }} />
           </TouchableOpacity>
-          <Text style={styles.title}>售后</Text>
+          <Text style={styles.title}>售后订单</Text>
         </View>
       </View>
 

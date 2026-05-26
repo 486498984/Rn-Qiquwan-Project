@@ -192,7 +192,7 @@ const getStatus = () => {
     }else if(e=="申请售后"){
      navigation.navigate('Refund',{orderinfo:orderinfo});
     }else if(e=="同意售后"){
-     console.log(2131);
+     console.log(2131232131);
         Modalitem.alert('提示', '售后同意后不能撤回，是否同意售后？', [
       { text: '取消', onPress: () => console.log('cancel'), style: 'cancel' },
       { text: '确定', onPress: () => handleargee(),

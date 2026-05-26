@@ -138,88 +138,6 @@ const [accountList, setAccountList] = useState([]); // 保存账户列表
             console.error(error);
           }
      };
-     const handleeditali = async() => {  //修改支付宝
-      setUsername(tempUsername);       // 同步回主状态
-      setUsernumber(tempUsernumber);
-      setVisible(false);
-              try {
-            const response = await request({
-              url: '/withdraw/account/update',
-              method: 'PUT',
-              data: {
-              id: 10,
-              ownerId: id,
-              ownerType: "STORE", 
-              account: "zhangsan_new@alipay.com",
-              type: "ALIPAY",
-              accountName: "付云",
-              bankName:"",
-              isDefault: 1
-              },
-              query: {},
-            }); 
-            console.log('storeauth',response);
-          if (response.data !== null && response.code == 0) {
-
-          } 
-          } catch (error) {
-            console.error(error);
-          }
-      };
-     const handleeditbank = async() => {  //修改银行卡
-      setUsernameyhk(tempUsernameyhk);
-      setUsernumberyhk(tempUsernumberyhk);
-      setUserbranch(tempUserbranch);
-      setYhkvisible(false);
-              try {
-            const response = await request({
-              url: '/withdraw/account/update',
-              method: 'PUT',
-              data: {
-              id: 10,
-              ownerId: id,
-              ownerType: "STORE", 
-              account: "zhangsan_new@alipay.com",
-              type: "BANK",
-              accountName: "付云",
-              bankName:"",
-              isDefault: 1
-              },
-              query: {},
-            }); 
-            console.log('storeauth',response);
-          if (response.data !== null && response.code == 0) {
-
-          } 
-          } catch (error) {
-            console.error(error);
-          }
-      };
-      const handleaddwith = async() => {  //新增提现账户
-              try {
-            const response = await request({
-              url: '/withdraw/account/add',
-              method: 'PUT',
-              data: {
-              ownerId: id,
-              ownerType: "STORE",
-              type: "ALIPAY", //选择ALIPAY还是BANK
-              account: "codeprojet@163.com",
-              accountName: "付云",
-              bankName:"",
-              isDefault: 1
-              },
-              query: {},
-            }); 
-            console.log('storeauth',response);
-          if (response.data !== null && response.code == 0) {
-
-          } 
-          } catch (error) {
-            console.error(error);
-          }
-
-       };
        const syncWithdrawAccount = async () => {
       try {
         const response = await request({
@@ -268,23 +186,14 @@ const [accountList, setAccountList] = useState([]); // 保存账户列表
           getwithlist(id);
       }else{
        setVisible(false);
-        if(addResponse.data=="提现账户姓名必须与工作室主体名称一致"){
-   Toast.show({
-    content: '添加失败，提现账户名必须与主体一致',
-    duration: 2,
-    position: 'center',
-    mask: false,
-   })
-        }else{
-   Toast.fail({
-    content: '添加失败，请稍后再试',
-    duration: 2,
-    position: 'center',
-    mask: false,
-   })
+        Toast.fail({
+          content: addResponse.data,
+          duration: 2,
+          position: 'center',
+          mask: false,
+        })
+              getwithlist(id);
         }
-        getwithlist(id);
-  }
         console.log('Add account response:', addResponse);
     } else if (alipayAccount && tixianmode === 1) {
       console.log(2113,tempUsernumber,tempUsername);
@@ -319,21 +228,12 @@ const [accountList, setAccountList] = useState([]); // 保存账户列表
           getwithlist(id);
       }else{
        setVisible(false);
-        if(addResponse.data=="提现账户姓名必须与工作室主体名称一致"){
-   Toast.show({
-    content: '修改失败，提现账户名必须与主体一致',
-    duration: 2,
-    position: 'center',
-    mask: false,
-   })
-        }else{
-   Toast.fail({
-    content: '修改失败，请稍后再试',
-    duration: 2,
-    position: 'center',
-    mask: false,
-   })
-        }
+      Toast.fail({
+        content: addResponse.data,
+        duration: 2,
+        position: 'center',
+        mask: false,
+      })
         getwithlist(id);
   }
     }
@@ -367,30 +267,18 @@ const [accountList, setAccountList] = useState([]); // 保存账户列表
           setTixianmode(2)
       }else{
       setYhkvisible(false);
-    if(addResponse.data=="提现账户姓名必须与工作室主体名称一致"){
-    Toast.show({
-      content: '添加失败，提现账户名必须与主体一致',
-      duration: 2,
-      position: 'center',
-      mask: false,
-    })
-        }else{
-   Toast.fail({
-    content: '添加失败，请稍后再试',
-    duration: 2,
-    position: 'center',
-    mask: false,
-   })
-        }
-         setTixianmode(2)
+      Toast.fail({
+        content: addResponse.data,
+        duration: 2,
+        position: 'center',
+        mask: false,
+      })
+        setTixianmode(2)
         getwithlist(id);
   }
-
-
-
     } else if (bankAccount && tixianmode === 2) {
       // 编辑银行卡
-const addResponse=      await request({
+     const addResponse= await request({
         url: '/withdraw/account/update',
         method: 'PUT',
         data: {
@@ -419,33 +307,22 @@ const addResponse=      await request({
            setTixianmode(2)
       }else{
       setYhkvisible(false);
-    if(addResponse.data=="提现账户姓名必须与工作室主体名称一致"){
-    Toast.show({
-      content: '修改失败，提现账户名必须与主体一致',
-      duration: 2,
-      position: 'center',
-      mask: false,
-    })
-        }else{
-   Toast.fail({
-    content: '修改失败，请稍后再试',
-    duration: 2,
-    position: 'center',
-    mask: false,
-   })
-        }
+      Toast.fail({
+        content: addResponse.data,
+        duration: 2,
+        position: 'center',
+        mask: false,
+       })
         getwithlist(id);
-         setTixianmode(2)
-  }
-    }
+        setTixianmode(2)
+      }
+        }
 
-
-
-  } catch (error) {
-    console.error(error);
-    Toast.show('操作失败');
-    getwithlist(id);
-  }
+      } catch (error) {
+        console.error(error);
+        Toast.show('操作失败');
+        getwithlist(id);
+      }
        };
        const handlesubmit = () => { 
         if(withdmoney<=0){
@@ -457,26 +334,39 @@ const addResponse=      await request({
         })
           return
         }
+
+        // 获取当前选择账户
+      let selectedAccount;
+      if (tixianmode === 1) {
+        selectedAccount = accountList.find(a => a.type === 'ALIPAY');
+      } else {
+        selectedAccount = accountList.find(a => a.type === 'BANK');
+      }
+
+      if (!selectedAccount) {
+        Toast.show('请先添加提现账户');
+        return;
+      }
            Modalitem.alert('提示', '是否提交？', [
       { text: '取消', onPress: () => console.log('cancel'), style: 'cancel' },
-      { text: '确定', onPress: () => handlesubmits(),
+      { text: '确定', onPress: () => handlesubmits(selectedAccount),
        style: { color: '#FC9026' },
-       },   
+       },
       ])
-        }
-        const handlesubmits = async() => { 
+      }
+        const handlesubmits = async(selectedAccount) => { 
           // 获取当前选择账户
-          let selectedAccount;
-          if (tixianmode === 1) {
-            selectedAccount = accountList.find(a => a.type === 'ALIPAY');
-          } else {
-            selectedAccount = accountList.find(a => a.type === 'BANK');
-          }
+          // let selectedAccount;
+          // if (tixianmode === 1) {
+          //   selectedAccount = accountList.find(a => a.type === 'ALIPAY');
+          // } else {
+          //   selectedAccount = accountList.find(a => a.type === 'BANK');
+          // }
 
-          if (!selectedAccount) {
-            Toast.show('请先添加提现账户');
-            return;
-          }
+          // if (!selectedAccount) {
+          //   Toast.show('请先添加提现账户');
+          //   return;
+          // }
           console.log('当前选择提现账户ID:', selectedAccount.id);
                       try {
                     const response = await request({
@@ -501,7 +391,7 @@ const addResponse=      await request({
                         })
                   } else{
                           Toast.fail({
-                            content: '提交失败，请稍后再试',
+                            content: response.data,
                             duration: 2,
                             position: 'center',
                             mask: false,
@@ -619,7 +509,7 @@ const addResponse=      await request({
        </View>
        </LinearGradient>
        </TouchableOpacity>
-       <Text style={styles.bodes}>今日剩余提现次数：1次</Text>
+       {/* <Text style={styles.bodes}>今日剩余提现次数：1次</Text> */}
     </View>
  
 </View>
@@ -644,7 +534,7 @@ const addResponse=      await request({
             placeholder="请输入账户名"
             //keyboardType="number-pad"
             placeholderTextColor="#AAAAAA"
-            //maxLength={8}
+            maxLength={22}
             selectionColor='#FC9026'
           />
 </View>
@@ -878,10 +768,14 @@ fontFamily: 'MiSans-Regular',
         lineHeight:px(17),
   },
       inputbox:{
+        paddingRight:px(12),
+        textAlign:'left',
+        //backgroundColor:'red',
     marginLeft: px(8),
   flexDirection: 'row',
   alignItems: 'center',
-  width: px(325),
+  flex: 1,
+  // width: px(300),
   height: px(51),
   fontSize: px(14),
     },

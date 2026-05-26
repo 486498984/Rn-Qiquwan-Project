@@ -67,7 +67,8 @@ const mapOptions = [
   { label: '客服态度不好', value: 2 },
   { label: '其他', value: 3 }, 
 ];
-const OrderItem = ({ item, navigation,refreshCurrentTab,refreshTab,refreshAllTabs }) => {
+const OrderItem = ({ item, navigation,refreshCurrentTab,refreshTab,refreshAllTabs,
+  switchTab, }) => {
     const [visiblemap, setVisiblemap] = useState(false) //商品地图弹窗开关
 const [maplist, setMaplist] = useState(mapOptions); //地图列表
     const [shopmap, setShopmap] = useState(0); //商品地图
@@ -217,11 +218,23 @@ useEffect(() => {
     }else if(e=="前往评论"){
      navigation.navigate('Comment',{orderinfo:item});
     }else if(e=="申请售后"){
+      if(item.settleStatus!=='FREEZED'&&item.settleStatus!=='NONE'){
+      Toast.show({
+        content: '该订单已结算，请联系平台客服处理',
+        duration: 2,
+        position: 'center',
+        mask: false,
+      })
+      return
+      }
+     getorderinfo();
+     return
      navigation.navigate('Refund',{orderinfo:item});
     }
 
 
   };
+
   const Confirmation = () => { 
    Modalitem.alert('提示', '是否确认完成？', [
       { text: '取消', onPress: () => console.log('cancel'), style: 'cancel' },
@@ -254,6 +267,7 @@ useEffect(() => {
          triggerListOrderRefresh();
          refreshCurrentTab();
          refreshTab('all');
+         switchTab('toBeReviewed')
           }else{
             Toast.fail({
            content: '确认订单失败，请稍后重试',
@@ -283,11 +297,50 @@ useEffect(() => {
          })
         return
       }
+      getorderinfo();
+      return
     navigation.navigate('Refund',{orderinfo:item});
     }
 
 
   };
+    const getorderinfo = async() => { 
+         try {
+           const response = await request({
+             url: '/store/order/detail',
+             method: 'GET',
+             data:{},
+             query: {
+              orderId:item.id,
+              storeId:item.storeId
+              }
+           });
+           console.log(response);
+          if(response.data!==undefined&&response.code==0){
+            let res=response.data.order
+            if(res.settleStatus!=='FREEZED'&&res.settleStatus!=='NONE'){
+                Toast.show({
+                content: '该订单已结算，请联系平台客服处理',
+                duration: 2,
+                position: 'center',
+                mask: false,
+              })
+              return
+            }else{
+                  navigation.navigate('Refund',{orderinfo:item});
+            }
+          }else{
+               Toast.show({
+                content: '该订单不可售后，请联系平台客服处理',
+                duration: 2,
+                position: 'center',
+                mask: false,
+              })
+          }
+        } catch (error) {
+                console.error(error);
+              }
+   };
   const handlecannl = () => { 
    Modalitem.alert('提示', '是否取消？', [
       { text: '取消', onPress: () => console.log('cancel'), style: 'cancel' },
@@ -398,7 +451,7 @@ useEffect(() => {
             position: 'center',
             mask: false,
           })
-       
+       switchTab('toBeServed')
         } else {
          
   
@@ -440,6 +493,7 @@ useEffect(() => {
            position: 'center',
            mask: false,
          })
+         switchTab('toBeServed')
          console.log('支付成功');
        } else {
          console.log('支付未完成');

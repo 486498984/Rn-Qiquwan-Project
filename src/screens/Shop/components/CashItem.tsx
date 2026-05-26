@@ -38,28 +38,46 @@ console.log(data);
     <View style={{width: '100%',backgroundColor: '#fff',
         paddingHorizontal:px(16),paddingTop:px(16)
     }}>
-    <View style={{flexDirection: 'row',justifyContent: 'space-between',
-        alignItems: 'flex-start',
-    }}>
-     <Text style={styles.title}>提现</Text>
-     <View style={[styles.okstatus,{backgroundColor:status.bg,}]}>
-     <Text style={[styles.statustx,{color:status.color}]}>{status.text}</Text>
-     </View>
-    </View>
- <View style={{flexDirection: 'row',justifyContent: 'space-between',marginTop: px(12),
-    alignItems: 'flex-end',
- }}>
-   <Text style={styles.time}>2026-10-12 10:39</Text>
-  <Text style={[styles.price,{color:status.pricolor}]}>¥{data.amount/100}</Text>
+<View style={{flexDirection: 'row',justifyContent: 'space-between',
+    alignItems: 'flex-start',
+}}>
+ <Text style={styles.title}>提现</Text>
+
+ <View style={[styles.okstatus,{backgroundColor:status.bg}]}>
+   <Text style={[styles.statustx,{color:status.color}]}>
+     {status.text}
+   </Text>
  </View>
-{/* <View style={{width: px(361),height: px(1),backgroundColor: 'rgba(118, 118, 118, 0.2)',
-    marginTop: px(12),
-}}></View> */}
+</View>
+
+{(data.status === 'REJECTED' || data.status === 'FAILED') &&
+ !!data.auditRemark && (
+  <Text style={styles.reasonText}>
+    失败原因：{data.auditRemark}
+  </Text>
+)}
+
+    <View style={{flexDirection: 'row',justifyContent: 'space-between',marginTop: px(12),
+        alignItems: 'flex-end',
+    }}>
+      <Text style={styles.time}>{data?.updatedAt}</Text>
+      <Text style={[styles.price,{color:status.pricolor}]}>¥{data.amount/100}</Text>
     </View>
-  )
-}
+    {/* <View style={{width: px(361),height: px(1),backgroundColor: 'rgba(118, 118, 118, 0.2)',
+        marginTop: px(12),
+    }}></View> */}
+        </View>
+      )
+    }
 export default React.memo(CashItem);
 const styles = StyleSheet.create({
+reasonText: {
+  marginTop: px(6),
+  fontFamily: 'MiSans-Regular',
+  fontSize: px(12),
+  color: '#DE5452',
+  lineHeight: px(17),
+},
     price:{
   fontFamily: 'MiSans-Medium',
         fontSize:px(20),

@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View,Image,StatusBar,TouchableOpacity,ScrollView,
 Platform,BackHandler,Animated,ActivityIndicator,DeviceEventEmitter,AppState,
+TextInput,KeyboardAvoidingView,
  } from 'react-native'
 import React,{useState,useEffect,useRef,useMemo} from 'react'
 import { px } from '../../utils/scaleUtils';
@@ -73,9 +74,16 @@ export default function Shopinfo({navigation,route}) {
   const [loading, setLoading] = useState(false);//支付弹窗
   const [comments, setComments] = useState([]);//评论列表
   const [commentsall, setCommentsall] = useState(null);//评论详情
+  const [username, setUsername] = useState("");//备注信息
+  const scrollRef = useRef(null);
 
 
 
+
+       const onChangeText = (e) => { 
+           console.log(e);
+           setUsername(e)
+         };
 
   const handleback = () => {  //返回上一页
     navigation.goBack();
@@ -349,7 +357,9 @@ const finalPrice = useMemo(() => {
     return sum + (addon?.price || 0);
   }, 0); 
 
-  let total = mainPrice * paynum + addonTotal;
+  //let total = mainPrice * paynum + addonTotal;
+  // 主商品 + 增值服务 都乘数量
+  let total = (mainPrice + addonTotal) * paynum;
 
   if (selectedCoupon) {
     const { fullAmount = 0, reduceAmount = 0 } = selectedCoupon;
@@ -448,6 +458,11 @@ const handlecreatorder = async() => { //创建订单
     //setLoading(true)
     console.log(selectedCoupon ? [selectedCoupon.userCouponId] : []);
     console.log(shopallinfo,shopallinfo?.skuList[chshoptype].id);
+    let remark={
+      user:username,
+      store:'',
+      platform:'',
+    }
   try {
     const response = await request({
       url: '/order/create',
@@ -461,7 +476,7 @@ const handlecreatorder = async() => { //创建订单
       quantity: paynum,
       paymentType:payways==1? "ALIPAY":'WECHAT',
       couponReceiveIds: selectedCoupon ? [selectedCoupon.userCouponId] : [],
-      remark: "请尽快发货",
+      remark: JSON.stringify(remark),
       attr: "{\"source\":\"app\"}"
       },
       query: {},
@@ -1031,8 +1046,14 @@ onPress={() => setVisible(true)}>
 </View>
 </View>
 
+
+  <KeyboardAvoidingView
+    style={{ flex: 1 }}
+    behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    keyboardVerticalOffset={px(0)}
+  >
 <ScrollView style={{marginTop: px(16),}} showsVerticalScrollIndicator={false}
-contentContainerStyle={{paddingBottom:px(20)}}>
+contentContainerStyle={{paddingBottom:px(20)}} ref={scrollRef}>
 {/* <View style={{width: '100%',height: px(8),
 backgroundColor: '#F8F8F8',}}></View> */}
 <View style={{flexDirection: 'column',}}>
@@ -1161,6 +1182,38 @@ onPress={()=>setYvisible(true)}>
 <View style={{width: '100%',height: px(8),marginTop: px(16),
 backgroundColor: '#F8F8F8',}}></View>
 
+<View style={{height: px(114),backgroundColor: '#fff',}}>
+<View style={{marginTop: px(12),marginLeft: px(16),}}>
+<Text style={styles.modalnum}>备注信息</Text>
+     <TextInput
+     allowFontScaling={false}
+            style={[styles.inputbox]}
+            onChangeText={onChangeText}
+            value={username || ''}
+            placeholder=""
+            //keyboardType="number-pad"
+            placeholderTextColor="#AAAAAA"
+            maxLength={50}
+            selectionColor='#FC9026'
+            multiline={true}   // 开启多行
+            textAlignVertical="top" // Android 文字顶部开始
+              onFocus={() => {
+                if(Platform.OS=='ios'){
+                setTimeout(() => {
+                scrollRef.current?.scrollToEnd({
+            animated: true,
+            });             
+              }, 100);
+              }
+          }}
+          />
+</View>
+
+
+</View>
+<View style={{width: '100%',height: px(8),marginTop: px(16),
+backgroundColor: '#F8F8F8',}}></View>
+
 <View style={{flexDirection: 'column',marginTop: px(10),paddingHorizontal:px(16)}}>
 <Text style={styles.comment}>支付方式</Text>
 <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
@@ -1185,6 +1238,9 @@ backgroundColor: '#F8F8F8',}}></View>
 
 
 </ScrollView>
+</KeyboardAvoidingView>
+
+
 <View  style={{paddingBottom: bottomSafeHeight,flexDirection: 'row',
   alignItems: 'flex-start',justifyContent: 'center',
 }}>
@@ -1310,6 +1366,19 @@ showsVerticalScrollIndicator={false}>
 }
 
 const styles = StyleSheet.create({
+    inputbox:{
+      backgroundColor: '#F8F8F8',
+   // marginLeft: px(8),
+   marginTop: px(8),
+  flexDirection: 'row',
+  alignItems: 'center',
+  width: px(361),
+  minHeight: px(62),
+  //height: px(62),
+  borderRadius: px(8),
+  fontSize: px(15),
+  padding:px(12)
+    },
   disabledTypebox: {
   marginTop: px(10),
   padding: px(8),

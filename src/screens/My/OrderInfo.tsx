@@ -643,6 +643,7 @@ const handleleftbutton = () => { //左边按钮
 
     case 'WAIT_CONFIRM':
       // 确认完成
+      handlerefund()
       break;
 
     case 'WAIT_COMMENT':
@@ -667,19 +668,53 @@ const handleleftbutton = () => { //左边按钮
   }
 
  };
- const handlerefund = () => { 
+ const handlerefund = async() => { 
    console.log(orderinfo);
-   if(orderinfo.settleStatus!=="FREEZED"&&orderinfo.settleStatus!=="NONE"){
-     Toast.show({
-      content: '该订单已结算，请联系平台客服处理',
-      duration: 2,
-      position: 'center',
-      mask: false,
-      })
-     return
-   }
-    navigation.navigate('Refund',{orderinfo});
-
+  //  if(orderinfo.settleStatus!=="FREEZED"&&orderinfo.settleStatus!=="NONE"){
+  //    Toast.show({
+  //     content: '该订单已结算，请联系平台客服处理',
+  //     duration: 2,
+  //     position: 'center',
+  //     mask: false,
+  //     })
+  //    return
+  //  }
+  //   navigation.navigate('Refund',{orderinfo});
+         try {
+           const response = await request({
+             url: '/store/order/detail',
+             method: 'GET',
+             data:{},
+             query: {
+              orderId:orderinfo.id,
+              storeId:orderinfo.storeId
+              }
+           });
+           console.log(response);
+          if(response.data!==undefined&&response.code==0){
+            let res=response.data.order
+            if(res.settleStatus!=='FREEZED'&&res.settleStatus!=='NONE'){
+                Toast.show({
+                content: '该订单已结算，请联系平台客服处理',
+                duration: 2,
+                position: 'center',
+                mask: false,
+              })
+              return
+            }else{
+                  navigation.navigate('Refund',{orderinfo});
+            }
+          }else{
+               Toast.show({
+                content: '该订单不可售后，请联系平台客服处理',
+                duration: 2,
+                position: 'center',
+                mask: false,
+              })
+          }
+        } catch (error) {
+                console.error(error);
+              }
   };
 const handlecannel = async() => {  //取消订单
   console.log(22131);
@@ -852,6 +887,32 @@ source={{uri:IMG_URL+goodsinfo?.goods?.coverImage.split(',')[0]}}
     <Text style={styles.shopdesnames}>支付方式</Text>
       <Text style={styles.yingfu}>{orderinfo?.paymentType=="WECHAT"?'微信支付':'支付宝'}</Text>
 </View>
+<View
+  style={{
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  }}
+>
+  <Text style={styles.shopdesnames}>订单备注</Text>
+
+  <Text style={styles.yingfu}>
+    {(() => {
+      try {
+        const remarkObj = orderinfo?.remark
+          ? JSON.parse(orderinfo.remark)
+          : null;
+
+        return remarkObj?.user?.trim()
+          ? remarkObj.user
+          : '-';
+       } catch (e) {
+        return '-';
+      }
+    })()}
+  </Text>
+</View>
 <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
     justifyContent: 'space-between',}}>
     <Text style={styles.shopdesnames}>下单时间</Text>
@@ -873,8 +934,11 @@ source={{uri:IMG_URL+goodsinfo?.goods?.coverImage.split(',')[0]}}
         <Text style={styles.yingfu}>{orderinfo?.updatedAt}</Text>
     </View>
     }
-
 </View>
+
+
+
+
 
 {
 processList.length > 0 &&

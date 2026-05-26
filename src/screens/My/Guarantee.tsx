@@ -11,18 +11,18 @@ import SafeFastImage from '../../components/Home/SafeFastImage'
 export default function Guarantee({navigation}) {
   const [ratio, setRatio] = useState(1);
 
-const uri = IMG_URL + 'protect.png';
-  useEffect(() => {
-        Toast.loading({
-        content: '加载中',
-        mask: true,
-        duration: 5,
-      })
-    Image.getSize(uri, (w, h) => {
-      setRatio(w / h);
-      Toast.removeAll()
-    });
-  }, []);
+  const uri = IMG_URL + 'protect.png';
+  // useEffect(() => {
+  //       Toast.loading({
+  //       content: '加载中',
+  //       mask: true,
+  //       duration: 5,
+  //     })
+  //   Image.getSize(uri, (w, h) => {
+  //     setRatio(w / h);
+  //     Toast.removeAll()
+  //   });
+  // }, []);
   const handleback = () => {  //返回上一页
    navigation.goBack();
   };
@@ -43,10 +43,16 @@ const uri = IMG_URL + 'protect.png';
                </View>
              </View>
 
-       <ScrollView contentContainerStyle={{paddingHorizontal:px(16),paddingBottom:px(42)}}
+       <ScrollView contentContainerStyle={{paddingHorizontal:px(16),paddingBottom:px(48)}}
        showsVerticalScrollIndicator={false}>
-         <SafeFastImage source={{uri:IMG_URL+'protect.png'}} 
-         style={{width:'100%',aspectRatio: ratio,}} resizeMode='contain' />
+         <SafeFastImage source={{uri:IMG_URL+'protect1.png'}} 
+         style={{width:'100%',height: px(281),}} resizeMode='contain' />
+          <SafeFastImage source={{uri:IMG_URL+'protect2.png'}} 
+         style={{width:'100%',height: px(313),marginTop: px(30),}} resizeMode='contain'/>
+                   <SafeFastImage source={{uri:IMG_URL+'protect3.png'}} 
+         style={{width:'100%',height: px(362),marginTop: px(30),}} resizeMode='contain'/>
+                            <SafeFastImage source={{uri:IMG_URL+'protect4.png'}} 
+         style={{width:'100%',height: px(260),marginTop: px(30),}} resizeMode='contain'/>
         </ScrollView>      
     </View>
   )

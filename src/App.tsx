@@ -70,8 +70,11 @@ import ShopPreview from './screens/Shop/ShopPreview';
 import ShopEdit from './screens/Shop/ShopEdit';
 import ShopSale from './screens/Shop/ShopSale';
 import ShopSaleInfo from './screens/Shop/ShopSaleInfo';
+import ShopDetails from './screens/Shop/ShopDetails';
 import UserAgree from './screens/Policy/UserAgree';
 import PrivacyAgree from './screens/Policy/PrivacyAgree';
+
+
 
 
 
@@ -96,7 +99,11 @@ import {
 import { useIMStore } from './store/imStore';
 //import { TUILogin } from '@tencentcloud/tui-core';
  import * as WeChat from 'react-native-wechat-lib';
-import { navigationRef } from './api/navigationService';
+  import { navigationRef } from './api/navigationService';
+  import request from './api/request';
+
+
+
 
   const loginInfo =
   Platform.OS === 'ios'
@@ -375,13 +382,19 @@ function TabNavigator({ totalcount }) {
   );
 };
 function App() {
-  const [showPrivacy, setShowPrivacy] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false); //是否展示隐私协议
   const setPrivacyAgreed = useAuthStore(state => state.setPrivacyAgreed);
   const messageChanged = useAuthStore(state => state.loginChanged);
   const isDarkMode = useColorScheme() === 'dark';
   const { setConversationList } = useIMStore.getState();
   const [totalcount, setTotalcount] = useState(0);
+  const [privacyReady, setPrivacyReady] = useState(false); //隐私协议是否同意
+
+
 useEffect(() => {
+
+  if (!privacyReady) return;
+
   const onReady = () => {
     console.log('✅ IM ready');
   };
@@ -390,58 +403,107 @@ useEffect(() => {
     Vibration.vibrate();
     console.log('新消息:', event.data);
   };
+
   const onConversationListUpdated = function(event) {
     messageChanged();
-    console.log('会话',event.data); // 包含 Conversation 实例的数组
     setConversationList(event.data);
-    //   const conversationList = event.data;
-    //   let totalUnreadCount = 0;
-    //   conversationList.forEach(item => { 
-    //     totalUnreadCount += item.unreadCount;
-    //   });
-    // setTotalcount(totalUnreadCount)
-    // console.log('🔥 总未读数:', totalUnreadCount);
-    };
-
-
-    let onTotalUnreadMessageCountUpdated = function(event) {
-  console.log('未读总数',event.data); // 当前单聊和群聊会话的未读总数
-  setTotalcount(event.data)
   };
-chat.on(TencentCloudChat.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED, onTotalUnreadMessageCountUpdated);
-  // ✅ 先监听
-  chat.on(TencentCloudChat.EVENT.SDK_READY, onReady);
-  chat.on(TencentCloudChat.EVENT.MESSAGE_RECEIVED, onMessageReceived);
-  chat.on(TencentCloudChat.EVENT.CONVERSATION_LIST_UPDATED, onConversationListUpdated);
-// chat.logout()
-//   .then(() => {
-//     console.log('✅ 退出登录成功');
-//   })
-//   .catch(err => {
-//     console.log('❌ 退出登录失败', err);
-//   });
 
-  // ✅ 再 login（关键）
-  chat.login(loginInfo)
-  .then(res => {
-    console.log('✅ 登录成功', res);
-  })
-  .catch(err => {
-    console.log('❌ 登录失败', err);
-  });
+  const onTotalUnreadMessageCountUpdated = function(event) {
+    setTotalcount(event.data);
+  };
+
+  chat.on(
+    TencentCloudChat.EVENT.SDK_READY,
+    onReady
+  );
+
+  chat.on(
+    TencentCloudChat.EVENT.MESSAGE_RECEIVED,
+    onMessageReceived
+  );
+
+  chat.on(
+    TencentCloudChat.EVENT.CONVERSATION_LIST_UPDATED,
+    onConversationListUpdated
+  );
+
+  chat.on(
+    TencentCloudChat.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED,
+    onTotalUnreadMessageCountUpdated
+  );
+  const getuserinfo = async() => {
+   const user = await Storage.get("userinfo");
+   if(user!==null&&user){
+    ImLogin(user.user.userId);
+   console.log('用户信息',user.user.userId);
+   }
+   }
+
+   getuserinfo()
+   
+
 
   return () => {
-    chat.off(TencentCloudChat.EVENT.SDK_READY, onReady);
-    chat.off(TencentCloudChat.EVENT.MESSAGE_RECEIVED, onMessageReceived);
-  };
-}, []);
 
+    chat.off(
+      TencentCloudChat.EVENT.SDK_READY,
+      onReady
+    );
+
+    chat.off(
+      TencentCloudChat.EVENT.MESSAGE_RECEIVED,
+      onMessageReceived
+    );
+
+    chat.off(
+      TencentCloudChat.EVENT.CONVERSATION_LIST_UPDATED,
+      onConversationListUpdated
+    );
+
+    chat.off(
+      TencentCloudChat.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED,
+      onTotalUnreadMessageCountUpdated
+    );
+  };
+  
+}, [privacyReady]);
+  const ImLogin = async(e) => { 
+    try {
+      const response = await request({
+        url: '/im/register',
+        method: 'POST',
+        data:{
+          userId:e,
+        },
+        query: {}
+      });
+      console.log('imlogin',response);
+    if(response.data!==undefined&&response.code==0){
+        const loginInfo ={
+        userID: JSON.stringify(e),
+        userSig: response.data.userSig,
+      }
+        chat.login(loginInfo)
+    .then(res => {
+      console.log('✅ 登录成功', res);
+    })
+    .catch(err => {
+      console.log('❌ 登录失败', err);
+    });
+    }
+    } catch (error) {
+      console.error(error);
+    }
+
+   };
   useEffect(() => {
     const checkPrivacy = async () => {
       //await Storage.clear();
       const agreed = await Storage.get('privacyAgreed');
       console.log(agreed);
       if (agreed == true) {
+        setPrivacyReady(true);
         // 已同意，直接进入 App
         console.log("已经同意协议");
         goinit(); 
@@ -476,7 +538,7 @@ chat.on(TencentCloudChat.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED, onTotalUnread
   data.deviceType
   data.brand
   data.bundleId
-})
+  })
   })
   };
   const checkWeChat = async () => {
@@ -487,9 +549,18 @@ const openWeChat = async () => {
   const res = await WeChat.openWXApp();
   console.log('打开微信结果:', res);
 };
-  const handlagree = () => {  //同意协议
-    RNBootSplash.hide({ fade: true });
-    setShowPrivacy(false);
+  const handlagree = async() => {  //同意协议
+  await Storage.set('privacyAgreed', true);
+
+  setPrivacyReady(true);
+
+  goinit();
+
+  setPrivacyAgreed(true);
+
+  RNBootSplash.hide({ fade: true });
+
+  setShowPrivacy(false);
   };
     const handldisagree = () => { //拒绝协议
       // 二次确认弹窗
@@ -589,7 +660,7 @@ const openWeChat = async () => {
 <Stack.Screen name="SafeOrderInfo" component={SafeOrderInfo}/>
 <Stack.Screen name="ShopSale" component={ShopSale}/>
 <Stack.Screen name="ShopSaleInfo" component={ShopSaleInfo}/>
-
+<Stack.Screen name="ShopDetails" component={ShopDetails}/>
 
 
 

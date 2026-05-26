@@ -18,7 +18,7 @@ import { TabView } from 'react-native-tab-view';
 import GoodsItem from '../../components/Shop/GoodsItem';
 import request from '../../api/request';
 import useAuthStore from '../../utils/zustand';
-
+import { useFocusEffect } from '@react-navigation/native';
 
 
 const TAB_STATUS_MAP = {
@@ -38,7 +38,7 @@ const TabContent = ({
   onDelete,
   fetchGoodsList,
 }) => {
-
+ 
   return (
     <FlatList
       data={data}
@@ -210,13 +210,20 @@ export default function ShopManage({ navigation, route }) {
     }
   };
 
-  useEffect(() => {
+  useFocusEffect(
+  useCallback(() => {
     const currentKey = routes[index].key;
+    fetchGoodsList(currentKey, true);
+  }, [index, keyword])
+);
 
-    if (tabData[currentKey].list.length === 0) {
-      fetchGoodsList(currentKey, true);
-    }
-  }, [index]);
+  // useEffect(() => {
+  //   const currentKey = routes[index].key;
+
+  //   if (tabData[currentKey].list.length === 0) {
+  //     fetchGoodsList(currentKey, true);
+  //   }
+  // }, [index]);
 
   useEffect(() => {
     const timer = setTimeout(() => {

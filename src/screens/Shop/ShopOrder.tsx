@@ -1,91 +1,112 @@
 import { StyleSheet, Text, View,TouchableOpacity,Image,ScrollView,
-Animated,
+Animated,FlatList,RefreshControl,ActivityIndicator,
  } from 'react-native'
 import React,{useState,useEffect} from 'react'
 import { px } from '../../utils/scaleUtils';
-import {
-  Button,
-  Icon,
-  List,
-  Provider,
-  Toast,
-  Tooltip,
-} from '@ant-design/react-native'
-import OrderItem from './components/OrderItem';
+import OrderItem from './components/TodayOrderItem';
+import request from '../../api/request'
+
 
 
 export default function ShopOrder({navigation,route}) {
-  const { type } = route.params || {}; //1为今日订单 2为全部订单
-  const actions = [
-    {
-    key: 'wait',
-    text: <Text style={styles.tooltx}>待入账</Text>,
-  },
-    {
-    key: 'return',
-    text: <Text style={styles.tooltx}>已退款</Text>,
-  },
-      { 
-    key: 'all',
-    text: <Text style={styles.tooltx}>全部</Text>,
-  },
-]
- const actionst = [
-     {
-    key: 'ok',
-    text: <Text style={styles.tooltx}>可提现</Text>,
-  },
-    {
-    key: 'wait',
-    text: <Text style={styles.tooltx}>待入账</Text>,
-  },
-    {
-    key: 'return',
-    text: <Text style={styles.tooltx}>已退款</Text>,
-  },
-      { 
-    key: 'all',
-    text: <Text style={styles.tooltx}>全部</Text>,
-  },
-]
-  useEffect(() => {
-  if(type==1){
-  setActionsse(actions)
-  }else{
-  setActionsse(actionst)
-  }
-  }, [type])
- const [actionsse, setActionsse] = useState(actions);
- const [rttext, setRttext] = useState('全部'); //右上角文字
- const rotateAnim = useState(new Animated.Value(0))[0]
-const [open, setOpen] = useState(false)
- const handleback = () => {  //返回上一页
-   navigation.goBack();
-  };
-const toggleRotate = () => {
-  Animated.timing(rotateAnim, {
-    toValue: open ? 0 : 1,
-    duration: 200,
-    useNativeDriver: true,
-  }).start()
+  const { type, id } = route.params || {}
 
-  setOpen(!open)
-}
-const rotate = rotateAnim.interpolate({
-  inputRange: [0, 1],
-  outputRange: ['0deg', '180deg'],
-})
-  console.log(type);
-  const handlenode = (e) => {  //切换右上角
-  console.log(e.text.props.children);
-  setRttext(e.text.props.children)
+  const [list, setList] = useState([])
+  const [page, setPage] = useState(1)
+  const [refreshing, setRefreshing] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+
+  useEffect(() => {
+    if (id) {
+      fetchList(1, true)
+    }
+  }, [id])
+
+  // ===== 获取列表 =====
+  const fetchList = async (pageNum = 1, isRefresh = false) => {
+    try {
+      const response = await request({
+        url: '/store/dashboard/today/orders',
+        method: 'GET',
+        query: {
+          storeId: id,
+          page: pageNum,
+          pageSize: 10,
+        },
+      })
+
+      if (response.code === 0 && response.data) {
+        const newList = response.data.list || []
+
+        if (isRefresh) {
+          setList(newList)
+        } else {
+          setList(prev => [...prev, ...newList])
+        }
+
+        setHasMore(newList.length === 10)
+      }
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setRefreshing(false)
+      setLoadingMore(false)
+    }
   }
-  const a= {
-    orderNo:123,
-    expectedDate:'2026-5-28',
-    amount:100,
-    goodsTitle:'高级陪玩服务'
-  } 
+
+  // ===== 下拉刷新 =====
+  const onRefresh = () => {
+    setRefreshing(true)
+    setPage(1)
+    fetchList(1, true)
+  }
+
+  // ===== 上拉加载 =====
+  const onEndReached = () => {
+    if (loadingMore || !hasMore) return
+
+    const nextPage = page + 1
+    setPage(nextPage)
+    setLoadingMore(true)
+    fetchList(nextPage, false)
+  }
+
+  const renderFooter = () => {
+    if (loadingMore) {
+      return (
+        <View style={{ paddingVertical: px(16) }}>
+          <ActivityIndicator />
+          <Text style={styles.bottomtext}>
+            加载中...
+          </Text>
+        </View>
+      )
+    }
+
+    if (!hasMore && list.length > 0) {
+      return (
+        <View style={{ paddingVertical: px(16) }}>
+          <Text style={styles.bottomtext}>
+            我是有底线的～
+          </Text>
+        </View>
+      )
+    }
+    if (!hasMore && list.length == 0) {
+      return (
+        <View style={{ paddingVertical: px(16) }}>
+          <Text style={styles.bottomtext}>
+            暂无内容
+          </Text>
+        </View>
+      )
+    }
+    return null
+  }
+    const handleback = () => navigation.goBack()
+
+
   return (
     <View style={styles.container}>
          <View style={{width: px(393),height: px(98),backgroundColor: '#fff',
@@ -99,44 +120,31 @@ const rotate = rotateAnim.interpolate({
       <Image source={require('../../../assets/images/my/left.png')} 
       style={{width:px(22),height:px(22)}}></Image>
       </TouchableOpacity>
-      <Text style={styles.title}>{type==1?'今日订单':'全部订单'}</Text>
+      <Text style={styles.title}>{'今日订单'}</Text>
 
-         <Tooltip.Menu
-            actions={actionsse}
-            placement="bottom-end"
-            crossOffset={{ top: 0, left: 0 }}
-            onVisibleChange={(e)=>toggleRotate()}
-            onAction={(node) => handlenode(node)
-          }
-            trigger="onPress"
-       >
-      <TouchableOpacity   style={{  position: 'absolute',
-      right: px(16),flexDirection: 'row',alignItems: 'center',height:px(35),
-      }}>
-        <Text style={styles.alltx}>{rttext}</Text>
-        <Animated.Image
-        source={require('../../../assets/images/my/select.png')}
-        style={{
-          width: px(17),
-          height: px(17),
-          transform: [{ rotate }],
-        }}
-        />
-      </TouchableOpacity>
-          </Tooltip.Menu>
         </View>
       </View>
 
-  <ScrollView contentContainerStyle={{flexDirection: 'column',
-    alignItems: 'center',gap:px(8),paddingBottom:px(50)}}>
-      <View style={{height: px(8),}}></View>
-    {[0,1,2,3,4,5,6,7,8,9,10].map((item,index)=>
-    <View key={index}>
-        <OrderItem item={a}></OrderItem>
-    </View>
-    )}
-
-  </ScrollView>
+      {/* 列表 */}
+      <FlatList
+        data={list}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => <OrderItem item={item} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
+        onEndReached={onEndReached}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={renderFooter}
+        contentContainerStyle={{
+          paddingHorizontal: px(16),
+          paddingBottom: px(50),
+          paddingTop:px(16)
+        }}
+      />
 
 
 
@@ -145,6 +153,14 @@ const rotate = rotateAnim.interpolate({
 }
 
 const styles = StyleSheet.create({
+    bottomtext: {
+    textAlign:'center',
+     fontFamily: 'MiSans-Regular',
+        fontSize:px(13),
+        color:'#AAAAAA',
+        fontWeight:400,
+        lineHeight:px(17),
+  },
   tooltx:{
 fontFamily: 'MiSans-Regular',
         fontSize:px(13),

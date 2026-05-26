@@ -101,6 +101,7 @@ export default function ShopCashItem({ navigation, route }) {
       <FlatList
         data={withlist}
         keyExtractor={(item) => item.id.toString()}
+        showsVerticalScrollIndicator={false}
         renderItem={({ item,index }) => 
           <View style={{backgroundColor: '#fff',flexDirection: 'column',
             justifyContent: 'center',

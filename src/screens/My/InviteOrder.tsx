@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity, Image, FlatList, RefreshContr
 import React, { useEffect, useState } from 'react';
 import { px } from '../../utils/scaleUtils';
 import RewardOrder from '../../components/My/RewardOrder';
+import PendOrder from '../../components/My/PendOrder';
 import request from '../../api/request';
 import Storage from '../../utils/storage';
 
@@ -143,10 +144,16 @@ const renderFooter = () => {
       <FlatList
         data={order}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => <RewardOrder item={item}/>}
+        renderItem={({ item }) =>
+        type === 2 ? (
+          <PendOrder item={item} />
+        ) : (
+          <RewardOrder item={item} />
+        )
+      }
         contentContainerStyle={{ paddingHorizontal: px(16), paddingBottom: px(42) }}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#999" />
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#999"/>
         }
         onEndReached={onEndReached}
         onEndReachedThreshold={0.1}

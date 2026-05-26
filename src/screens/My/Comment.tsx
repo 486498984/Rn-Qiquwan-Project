@@ -10,6 +10,9 @@ import {
 } from '@ant-design/react-native'
 import request from '../../api/request';
 import Storage from '../../utils/storage';
+import ImageUploader from '../../components/Shop/ImageUploader';
+import  {uploadImage}  from '../../api/uploadImage';
+
 
 
 
@@ -22,6 +25,11 @@ export default function Comment({navigation,route}) {
     const [score, setScore] = useState(5); //评价分数，默认5分
     const [goodsid, setGoodsid] = useState(1); //商品id
     const {orderinfo} = route.params || {}
+      const [images, setImages] = useState([]); //评论照片
+
+
+
+
      const handleback = () => {  //返回上一页
      navigation.goBack();
      };
@@ -56,8 +64,15 @@ export default function Comment({navigation,route}) {
     ])
      };
      const complete = async() => {  //正式提交
+         Toast.loading({
+          content: '上传中',
+          mask: true,
+          duration: 5,
+        })
      console.log(score);
-          const user = await Storage.get("userinfo");
+     const user = await Storage.get("userinfo");
+    const legalPhoto = await handleUploadAndFormat(images);
+    console.log(legalPhoto);
            try {
              const response = await request({
                url: '/comment/add',
@@ -67,34 +82,96 @@ export default function Comment({navigation,route}) {
                 goodsId: goodsid,
                 rating: score,
                 comment: username,
-                images: "",
+                images: legalPhoto,
                 //isAnonymous: 0
                },
                query: {}
              });
              console.log(response);
             if(response.data!==undefined&&response.code==0){
-            triggerListOrderRefresh();
-            handleback();
-              Toast.success({
+            Toast.success({
             content: '评价成功',
             duration: 2,
             position: 'center',
             mask: false,
             })
+            triggerListOrderRefresh();
+            handleback();
+            Toast.removeAll()
             }else{
-         Toast.fail({
-           content: '评价失败',
-           duration: 2,
-           position: 'center',
-           mask: false,
-           })
+            Toast.fail({
+              content: '评价失败',
+              duration: 2,
+              position: 'center',
+              mask: false,
+              })
+              Toast.removeAll()
             }
            } catch (error) {
+            Toast.removeAll()
              console.error(error);
            }
 
       };
+       const handleUploadAndFormat = async (imageList) => {
+         try {
+           if (!Array.isArray(imageList) || imageList.length === 0) {
+             return '';
+           }
+       
+           // 最终结果（保持原顺序）
+           const resultList = [];
+       
+           // 本地图片待上传列表
+           const localImages = [];
+       
+           // 记录本地图片在原数组中的位置
+           const localIndexes = [];
+       
+           imageList.forEach((item, index) => {
+             const uri = item?.uri;
+       
+             if (!uri) return;
+       
+             // 网络图
+             if (uri.startsWith('http')) {
+               const uploadIndex = uri.indexOf('upload/');
+               if (uploadIndex !== -1) {
+                 const realPath = uri.substring(uploadIndex + 7); // 去掉 "upload/"
+                 resultList[index] = realPath;
+               } else {
+                 resultList[index] = uri; // 防止异常格式
+               }
+             }
+       
+             // 本地图
+             else {
+               localImages.push(uri);
+               localIndexes.push(index);
+             }
+           });
+       
+           // 上传本地图片
+           if (localImages.length > 0) {
+             const res = await uploadImage(localImages);
+       
+             const serverImages = Array.isArray(res.data) ? res.data : [];
+       
+             serverImages.forEach((img, i) => {
+               const originalIndex = localIndexes[i];
+               resultList[originalIndex] = img;
+             });
+           }
+       
+           // 去掉空值并拼接
+           return resultList.filter(Boolean).join(',');
+         } catch (error) {
+           Toast.removeAll();
+           Toast.fail('上传图片失败，请稍后重试');
+           console.log('上传处理失败:', error);
+           return '';
+         }
+       };
   return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
     <View style={styles.container}>
@@ -151,6 +228,21 @@ export default function Comment({navigation,route}) {
       <Text style={styles.countf}>/50</Text>
 </View>
   
+  <View style={{width: '100%',paddingTop:px(16),
+  flexDirection: 'column',justifyContent: 'center',
+  }}>
+  <View style={{flexDirection: 'column',paddingBottom:px(16)}}>
+  {/* <Text style={styles.lefttitle}>法人身份证正反面照片</Text> */}
+    <ImageUploader
+      max={6}
+      value={images}
+      onChange={setImages}
+      />
+    </View>
+    </View>
+
+
+
 </View>
 
 <View style={{width: '100%',height: px(51),backgroundColor: '#fff',

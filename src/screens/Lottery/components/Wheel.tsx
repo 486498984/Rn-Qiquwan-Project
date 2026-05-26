@@ -27,14 +27,14 @@ import { px } from '../../../utils/scaleUtils';
 
 const AnimatedView =
   Animated.createAnimatedComponent(View);
-
-
     const prizeIcons = {
     COIN: require('../../../../assets/images/lottery/biicon.png'),
   
     SERVICE: require('../../../../assets/images/lottery/sericon.png'),
   
     COUPON: require('../../../../assets/images/lottery/coinicon.png'),
+
+    NONE : require('../../../../assets/images/lottery/sericon.png'),
   };
 export default function LotteryWheel({
 

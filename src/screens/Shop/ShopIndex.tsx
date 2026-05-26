@@ -194,7 +194,7 @@ justifyContent: 'space-between',
     /> 
         <View style={{flexDirection: 'column',height: px(62),
             justifyContent: 'space-between',marginLeft: px(8),}}>
-<Text style={styles.clubname} numberOfLines={2}>{storeinfo?.storeName}12</Text>
+<Text style={styles.clubname} numberOfLines={2}>{storeinfo?.storeName}</Text>
 <View style={{flexDirection: 'row',alignItems: 'flex-start',
    marginTop: px(2),}}>
         <View style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}>
@@ -218,7 +218,7 @@ justifyContent: 'space-between',
 <Text style={styles.todaydata}>今日数据</Text>
 <TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',
     paddingBottom:px(20),paddingLeft:px(12)
-}} onPress={()=>navigation.navigate('ShopOrder',{type: 1})}>
+}} onPress={()=>navigation.navigate('ShopOrder',{type: 1,id:id})}>
 <Text style={styles.alldata}>今日订单</Text>
   <Image source={require('../../../assets/images/my/greyright.png')} 
    style={{width:px(16),height:px(16)}}></Image>
@@ -290,7 +290,7 @@ onPress={()=>handlegohome(5)}>
     marginTop: px(16),borderRadius: px(8),
 }}>
 <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
-  
+ 
 }}>
 <View style={{flexDirection: 'column',marginLeft: px(30),
      justifyContent: 'space-between',
@@ -327,19 +327,18 @@ onPress={()=>navigation.navigate('ShopPending',{id:id})}>
 </View> */}
 </View>
 <View style={{flexDirection: 'column',alignItems: 'flex-end',
-    marginLeft: px(30),justifyContent: 'flex-end',
-    marginRight: px(24),
+    marginLeft: px(49),justifyContent: 'flex-end',
+    marginRight: px(0),
 }}>
-
-{/* <TouchableOpacity style={{flexDirection: 'column',gap:px(6),paddingRight:px(0)}}
-onPress={()=>navigation.navigate('ShopPending',{type: 2})}>
+<TouchableOpacity style={{flexDirection: 'column',gap:px(6),paddingRight:px(0)}}
+onPress={()=>navigation.navigate('ShopDetails',{id:id})}>
 <View style={{flexDirection: 'row',alignItems: 'center',}}>
-    <Text style={styles.pricedes}>订单退款(元)</Text>
+    <Text style={styles.pricedes}>收入明细</Text>
     <Image source={require('../../../assets/images/my/greyright.png')} 
    style={{width:px(16),height:px(16)}}></Image>
 </View>
-<Text style={styles.price}>3,124.4</Text>
-</TouchableOpacity> */}
+<Text style={styles.price}></Text>
+</TouchableOpacity>
 </View>
 
 </View>
@@ -387,7 +386,7 @@ marginTop: px(16),borderRadius: px(6),flexDirection: 'row',alignItems: 'center',
     <Text style={styles.bottomdes}>商品管理</Text>
 </TouchableOpacity>
 <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',}}
- onPress={()=>navigation.navigate('ShopEmployee')}>
+ onPress={()=>navigation.navigate('ShopEmployee',{storeinfo:id})}>
   <Image source={require('../../../assets/images/my/other3.png')} 
     style={{width:px(33),height:px(33),}}></Image>
     <Text style={styles.bottomdes}>员工管理</Text>

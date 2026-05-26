@@ -4,7 +4,7 @@ import { StyleSheet, Text, View,Image,ScrollView,TouchableOpacity,RefreshControl
 import React,{useEffect,useState,useCallback,} from 'react'
 import { px } from '../../utils/scaleUtils';
 import LinearGradient from 'react-native-linear-gradient';
-import RewardOrder from '../../components/My/RewardOrder'
+import PendOrder from '../../components/My/PendOrder'
 import request from '../../api/request';
 import Storage from '../../utils/storage';
 import { useFocusEffect } from '@react-navigation/native';
@@ -17,6 +17,7 @@ export default function Asset({ navigation }) {
     const [userinfo, setUserinfo] = useState({}); //用户明细
     const [pendding, setPendding] = useState([]); //待入账订单
     const [refreshing, setRefreshing] = useState(false);
+    const [id, setId] = useState(23); //用户id
   useFocusEffect(
     useCallback(() => {
      getuserinfo();//获取资金明细
@@ -51,6 +52,7 @@ export default function Asset({ navigation }) {
       };
      const getuserinfo = async() => { 
        const user = await Storage.get("userinfo");
+       setId(user.user.userId)
     try {
     const response = await request({
       url: '/user/asset/overview',
@@ -77,7 +79,8 @@ export default function Asset({ navigation }) {
   }
 
   const user = await Storage.get("userinfo");
-
+ console.log(user.user.userId);
+ 
   try {
     const response = await request({
       url: '/user/asset/pending-list',
@@ -257,9 +260,9 @@ const onRefresh = async () => {
 </View>
 </View>
 
-<TouchableOpacity style={{width: '100%',flexDirection: 'row',alignItems: 'center',
-    justifyContent: 'center',
-}} onPress={()=>navigation.navigate('Cashout')}>
+    <TouchableOpacity style={{width: '100%',flexDirection: 'row',alignItems: 'center',
+        justifyContent: 'center',
+    }} onPress={()=>navigation.navigate('Cashout',{id:id})}>
          <LinearGradient
             colors={['#FEC525', '#FC9026']}
             start={{ x: 1, y: 0 }}
@@ -283,7 +286,7 @@ const onRefresh = async () => {
     <>
       {pendding.map((item, index) => (
         <View key={index}>
-          <RewardOrder item={item} />
+          <PendOrder item={item} />
         </View>
       ))}
 

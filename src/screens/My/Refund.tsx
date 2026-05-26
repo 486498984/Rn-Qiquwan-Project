@@ -264,6 +264,9 @@ if (finlogo) {
         mask: false,
       })
       handleback();
+      setTimeout(() => {
+        navigation.navigate('Aftersales')
+      }, 500);
     }else{
     Toast.removeAll()
     Toast.fail({

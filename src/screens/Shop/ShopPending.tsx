@@ -140,13 +140,21 @@ const orderlist=[
      <Text style={styles.topprice}>{ordernum}</Text>
 </View>
     </View>
-    <View style={{gap:px(8),marginTop: px(26),}}>
-      {orderalllist?.map((item,index)=>
-       <View key={index}>
-           <OrderItem item={item}></OrderItem>
-       </View>
-       )}
+<View style={{ gap: px(8), marginTop: px(26) }}>
+  {orderalllist && orderalllist.length > 0 ? (
+    orderalllist.map((item, index) => (
+      <View key={index}>
+        <OrderItem item={item} />
+      </View>
+    ))
+  ) : (
+    <View style={{ alignItems: 'center', paddingVertical: px(30) }}>
+      <Text style={styles.bottomtext}>
+        暂无订单
+      </Text>
     </View>
+  )}
+</View>
    
 </View>
 
@@ -156,6 +164,13 @@ const orderlist=[
 }
 
 const styles = StyleSheet.create({
+        bottomtext:{
+ fontFamily: 'MiSans-Regular',
+        fontSize:px(13),
+        color:'#767676',
+        fontWeight:400,
+        lineHeight:px(17),
+  },
     topprice:{
     fontFamily: 'MiSans-Medium',
     lineHeight:px(50),

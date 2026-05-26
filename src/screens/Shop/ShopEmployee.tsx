@@ -2,7 +2,7 @@ import { StyleSheet, Text, View,TouchableWithoutFeedback,Keyboard,TouchableOpaci
 Animated,
 ScrollView,Platform,
  } from 'react-native'
-import React,{useState,} from 'react'
+import React,{useState,useEffect,} from 'react'
 import { px } from '../../utils/scaleUtils';
 import {
   Toast,
@@ -11,34 +11,34 @@ import {
 import EmployeeItem from './components/EmployeeItem'
 import LinearGradient from 'react-native-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import request from '../../api/request'
 
 
-
-export default function ShopEmployee({ navigation }) {
+export default function ShopEmployee({ navigation,route }) {
          const insets = useSafeAreaInsets();
           const bottomSafeHeight = insets.bottom; // 底部安全区高度（数值）
-      const actions = [
-       { 
-        key: 'all',
-        text: <Text style={styles.tooltx}>全部</Text>,
-      },
+          const actions = [
+          { 
+            key: 'all',
+            text: <Text style={styles.tooltx}>全部</Text>,
+          },
+            {
+            key: 'admin',
+            text: <Text style={styles.tooltx}>管理员</Text>,
+          },
+            {
+            key: 'operation',
+            text: <Text style={styles.tooltx}>运营</Text>,
+          },
         {
-        key: 'admin',
-        text: <Text style={styles.tooltx}>管理员</Text>,
-      },
-        {
-        key: 'operation',
-        text: <Text style={styles.tooltx}>运营</Text>,
-      },
-    {
-        key: 'finance',
-        text: <Text style={styles.tooltx}>财务</Text>,
-      },
-          {
-        key: 'kefu',
-        text: <Text style={styles.tooltx}>客服</Text>,
-      },
-    ]
+            key: 'finance',
+            text: <Text style={styles.tooltx}>财务</Text>,
+          },
+              {
+            key: 'kefu',
+            text: <Text style={styles.tooltx}>客服</Text>,
+          },
+        ]
       const [username, setUsername] = useState(null);
        const [actionsse, setActionsse] = useState(actions);
         const [rttext, setRttext] = useState('全部'); //右上角文字
@@ -48,10 +48,14 @@ export default function ShopEmployee({ navigation }) {
         inputRange: [0, 1],
         outputRange: ['0deg', '180deg'],
         })
-     const onChangeText = (e) => { 
+    const {storeinfo}=route.params||{}
+
+
+
+     const onChangeText = (e) => {
       console.log(e);
       setUsername(e)
-    };
+     };
       const handleback = () => {  //返回上一页
    navigation.goBack();
   };
@@ -71,6 +75,39 @@ export default function ShopEmployee({ navigation }) {
     const handlesubmit = () => {  //提交
     navigation.navigate('ShopAddEmployee')
     };
+
+    useEffect(() => {
+      if(storeinfo){
+        console.log(storeinfo);
+      getemployeelist(storeinfo);
+      }
+
+    }, [storeinfo])
+    const getemployeelist = async(id) => { 
+          try {
+             const response = await request({
+               url: '/store/role/list',
+               method: 'GET',
+               data:{},
+               query: {
+                storeId:id,
+                page:1,
+                pageSize:10,
+
+              }
+             });
+             console.log(response);
+            if(response.data!==undefined&&response.code==0){
+                let res=response.data
+
+            }
+           } catch (error) {
+             console.error(error);
+           }
+ 
+     };
+
+
   return (
     
      <View style={styles.container}>

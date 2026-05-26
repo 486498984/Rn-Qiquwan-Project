@@ -1,15 +1,21 @@
-import { StyleSheet, Text, View,Image } from 'react-native'
+import { StyleSheet, Text, View,Image,TouchableOpacity, } from 'react-native'
 import React,{useState} from 'react'
 import { px } from '../../../utils/scaleUtils';
 import StarRating from '../../../components/Club/StarRating'
 import { IMG_URL } from '../../../api/config';
-
+import ImagePreviewer from '../../../components/Shop/ImagePreviewer';
 const Comment=({item})=> {
     const [avatarError, setAvatarError] = useState(false);
+const [previewVisible, setPreviewVisible] = useState(false);
+const [currentIndex, setCurrentIndex] = useState(0);
 
+ 
   const avatarUrl = item?.userAvatar
     ? `${IMG_URL}${item.userAvatar}`
     : null;
+    const imageList = (item?.images ? item.images.split(',') : []).map(img => ({
+  url: `${IMG_URL}${img}`,
+}));
   return (
     <View style={{marginTop: px(10),}}>
     <View style={{flexDirection: 'row',}}>
@@ -32,10 +38,49 @@ const Comment=({item})=> {
 <StarRating score={item.rating} size={px(16)}></StarRating>
 </View>
 <Text style={styles.content}>{item.comment}</Text>
+{/* 评论图片 */}
+<View
+  style={{
+    width: px(279),
+    //backgroundColor: 'red',
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    marginTop: px(6),
+    gap: px(10),
+  }}
+>
+  {imageList.map((img, index) => (
+    <TouchableOpacity
+      key={index}
+      activeOpacity={0.9}
+      onPress={() => {
+        setCurrentIndex(index);
+        setPreviewVisible(true);
+      }}
+    >
+      <Image
+        source={{ uri: img.url }}
+        style={{
+          width: px(80),
+          height: px(80),
+          borderRadius: px(8),
+          backgroundColor: '#F5F5F5',
+        }}
+        resizeMode="cover"
+      />
+    </TouchableOpacity>
+  ))}
+</View>
 <Text style={styles.time}>{item?.createdAt?.slice(0, 10)}</Text>
   </View>
   </View>
-
+<ImagePreviewer
+  visible={previewVisible}
+  images={imageList}
+  index={currentIndex}
+  onClose={() => setPreviewVisible(false)}
+/>
     </View>
   )
 }
