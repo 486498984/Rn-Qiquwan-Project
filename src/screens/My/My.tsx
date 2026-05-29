@@ -213,9 +213,9 @@ export default function My({navigation}) {
       navigation.navigate('Invite')
       //navigation.navigate('Asset')
       }else if(e==3){ //跳转俱乐部
-       const user = await Storage.get("userinfo");
-        console.log(storeauth);
-      getclubpermission(user.user.userId)
+      // const user = await Storage.get("userinfo");
+      console.log(storeauth);
+      getclubpermission()
 
       return;
       navigation.navigate('ShopIndex')
@@ -225,7 +225,7 @@ export default function My({navigation}) {
       navigation.navigate('Aftersales')
       }
     };
-    const getclubpermission = async(e) => { 
+    const getclubpermission = async() => {
         try {
         const response = await request({
           url: '/store/role/auth',
@@ -237,6 +237,8 @@ export default function My({navigation}) {
         console.log('auth',response);
       if (response.data !== null && response.code == 0) {
         const storelist=response.data
+        //console.log('storelist',storelist);
+        
         setStoreauth(storelist)
         if (storelist.length === 0) {
           Toast.show({
@@ -281,7 +283,16 @@ export default function My({navigation}) {
 };
 const goStore = (store) => { //跳转俱乐部
  console.log(store);
- navigation.navigate('ShopIndex',{id:store.storeId})
+ navigation.navigate('ShopIndex',{id:store.storeId,userinfo:store})
+};
+const openWechatLink = async () => {
+  const url = 'https://work.weixin.qq.com/ca/cawcdea2c4e121224f';
+
+  try {
+    await Linking.openURL(url);
+  } catch (e) {
+    console.log('无法打开链接', e);
+  }
 };
   return (
     <View style={styles.container}>
@@ -543,11 +554,12 @@ width: '25%',
 </TouchableOpacity>
 <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',gap:px(4),
 width: '25%',
-}} >
+}} onPress={openWechatLink}>
  <Image source={require('../../../assets/images/my/more5.png')} 
         style={{width:px(33),height:px(33)}}></Image>
        <Text style={styles.moretext}>平台客服</Text> 
 </TouchableOpacity>
+{storeauth&&
 <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',gap:px(4),
 width: '25%',
 }} onPress={()=>handlegocoupon(3)}>
@@ -555,6 +567,8 @@ width: '25%',
         style={{width:px(33),height:px(33)}}></Image>
        <Text style={styles.moretext}>俱乐部端</Text> 
 </TouchableOpacity>
+}
+
 
 </View>
 </View>

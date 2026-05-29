@@ -31,6 +31,7 @@
     "react-native-blob-util": "^0.24.7",
     "react-native-bootsplash": "^7.1.0",
     "react-native-context-menu-view": "^1.21.0",
+    "react-native-device-info": "^15.0.2",
     "react-native-fast-image": "^8.6.3",
     "react-native-gesture-handler": "^2.30.0",
     "react-native-haptic-feedback": "^3.0.0",

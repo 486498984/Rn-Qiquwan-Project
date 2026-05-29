@@ -2148,6 +2148,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - RNDeviceInfo (15.0.2):
+    - React-Core
   - RNFastImage (8.6.3):
     - React-Core
     - SDWebImage (~> 5.11.1)
@@ -2609,6 +2611,7 @@ DEPENDENCIES:
   - "ReactNativeWheelPickerFeedback (from `../node_modules/@quidone/react-native-wheel-picker-feedback`)"
   - RNBootSplash (from `../node_modules/react-native-bootsplash`)
   - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
+  - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNFastImage (from `../node_modules/react-native-fast-image`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
@@ -2813,6 +2816,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-bootsplash"
   RNCClipboard:
     :path: "../node_modules/@react-native-clipboard/clipboard"
+  RNDeviceInfo:
+    :path: "../node_modules/react-native-device-info"
   RNFastImage:
     :path: "../node_modules/react-native-fast-image"
   RNGestureHandler:
@@ -2927,6 +2932,7 @@ SPEC CHECKSUMS:
   ReactNativeWheelPickerFeedback: efded6b7bf0ec6d0bfa2717b2a7602850d9cd1de
   RNBootSplash: 59b082697b36dd600dcd75ffbbf8ac22f3eb94ec
   RNCClipboard: 88d7eeb555d1183915f0885bdbc5c97eb6f7f3ba
+  RNDeviceInfo: 4c852998208b60dc192ae3529e5867817719ad1e
   RNFastImage: 462a183c4b0b6b26fdfd639e1ed6ba37536c3b87
   RNGestureHandler: 07de6f059e0ee5744ae9a56feb07ee345338cc31
   RNImageCropPicker: 7e6bd58550bcb942bfa48847247dbf62eda20c89

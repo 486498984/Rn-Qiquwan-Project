@@ -210,9 +210,10 @@ useEffect(() => {
         console.log('items:', res.items);
       });
       }
-   
-    if(res.openHours!==null&&res.openHours!==""&&res.openHours.start!==undefined){
+   console.log('weekdd',res.openHours);
+    if(res.openHours!==null&&res.openHours!==""){
        let opentimes=JSON.parse(res.openHours)
+       console.log('weekdd',opentimes.start);
     setOnetimevalue(opentimes.start)
     setTwotimevalue(opentimes.end)
     setWeekRange(opentimes.week)
@@ -1106,7 +1107,8 @@ const normalizeTimeRange = (start, end) => {
   onOk={(v, ext) => {
      const fixed = normalizeWeekRange(v);
 
-    setWeekRange(fixed);
+    //setWeekRange(fixed);
+    setWeekRange(v);
     setWeekExtend(ext); // ⚠️ ext 不一定是修正后的，要重新算
     setVisibleWeek(false);
   }}
@@ -1122,11 +1124,11 @@ const normalizeTimeRange = (start, end) => {
   onOk={(v, ext) => {
 
     // 用当前结束时间比较
-    const fixed = normalizeTimeRange(v, twotimevalue);
+    //const fixed = normalizeTimeRange(v, twotimevalue);
 
-    setOnetimevalue(fixed.start);
-    setTwotimevalue(fixed.end);
-
+    //setOnetimevalue(fixed.start);
+    //setTwotimevalue(fixed.end);
+    setOnetimevalue(v);
     setExtendonetime(ext);
     setVisibleonetime(false);
   }}
@@ -1141,11 +1143,11 @@ const normalizeTimeRange = (start, end) => {
   onOk={(v, ext) => {
 
     // 用当前开始时间比较
-    const fixed = normalizeTimeRange(onetimevalue, v);
+    //const fixed = normalizeTimeRange(onetimevalue, v);
 
-    setOnetimevalue(fixed.start);
-    setTwotimevalue(fixed.end);
-
+    //setOnetimevalue(fixed.start);
+    //setTwotimevalue(fixed.end);
+    setTwotimevalue(v);
     setExtendtwotime(ext);
     setVisibletwotime(false);
   }}

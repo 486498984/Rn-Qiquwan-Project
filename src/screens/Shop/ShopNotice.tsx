@@ -7,6 +7,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import request from '../../api/request';
 import {Toast } from '@ant-design/react-native'
+import AuditStatusCard from './components/AuditStatusCard';
+
 
 const Line=()=>{
     return (
@@ -21,6 +23,9 @@ const shoptitleinputRef = React.useRef(null); //商品标题
 const [shoptitle, setShoptitle] = useState(''); //商品标题
 const [isnotice, setIsnotice] = useState(false); //是否存在公告
 const [idnotice, setIdnotice] = useState(""); //公告id
+const [status, setStatus] = useState({}); //公告详情
+const [statusp, setStatusp] = useState("PUBLISHED"); //公告审核状态
+
     const insets = useSafeAreaInsets();
     const bottomSafeHeight = insets.bottom; // 底部安全区高度（数值）
 
@@ -33,24 +38,28 @@ useEffect(() => {
     console.log(e);
      try {
 const response = await request({
-  url: '/store/notice/list',
+  url: '/store/notice/detail',
   method: 'GET',
   data: {
     },
    query: {
     storeId:e,
-    status:'PUBLISHED',
-    page:1,
-    pageSize:10
    },
     }); 
       console.log('address',response);
-      if (response.data.list !== null && response.code == 0&&response.data.list !== undefined&&response.data.list.length !== 0) {
-      console.log(response.data.list);
-      setShopinfotx(response.data.list[0].content)
-      setIdnotice(response.data.list[0].id)
-      setIsnotice(true) 
-      }else{ 
+      if (response.data !== null && response.code == 0) {
+      //console.log(response.data.list);
+      if(response.data.status=='PUBLISHED'){
+      setStatusp('APPROVED')
+      }else{
+        setStatusp(response.data.status)
+      }
+
+      setStatus(response.data)
+      setShopinfotx(response.data.content)
+      //setIdnotice(response.data.list[0].id)
+      setIsnotice(true)
+      }else{
       setIsnotice(false)
       }
       } catch (error) {
@@ -67,13 +76,13 @@ const onChangeShopinfotx = (e) => {  //修改商品详情
      };
          const handlesubmit = async() => {  //提交
         console.log(idnotice);
-       if(isnotice){ //编辑
+  
      try {
     const response = await request({
     url: '/store/notice/update',
     method: 'PUT',
     data: {
-    id: idnotice,
+    //id: idnotice,
     storeId: storeinfo,
     title: "标题",
     content: shopinfotx,
@@ -87,40 +96,15 @@ const onChangeShopinfotx = (e) => {  //修改商品详情
     }); 
       console.log('address',response);
       if(response.data !== null && response.code == 0) {
-     Toast.success({content: '保存成功',mask:false,duration:2})
+     Toast.success({content: '提交成功',mask:false,duration:2})
+     getnoticelist(storeinfo)
       }else{
-        Toast.fail({content: '保存失败,请稍后再试',mask:false,duration:2})
+        Toast.fail({content: '提交失败,请稍后再试',mask:false,duration:2})
       }
       } catch (error) {
       console.error(error);
       }
-       }else{ //新增
-     try {
-    const response = await request({
-    url: '/store/notice/add',
-    method: 'POST',
-    data: {
-  storeId: storeinfo,
-  title: "标题",
-  content: shopinfotx,
-  coverImage: "",
-  noticeType: "TEXT",
-  isTop: 1,
-  sort: 100
-    },
-   query: {},
-    }); 
-      console.log('address',response);
-      if(response.data !== null && response.code == 0) {
-        Toast.success({content: '保存成功',mask:false,duration:2})
-      getnoticelist(storeinfo)
-      }else{ 
-        Toast.fail({content: '保存失败,请稍后再试',mask:false,duration:2})
-      }
-      } catch (error) {
-      console.error(error);
-      }
-       }  
+      
         //navigation.navigate('ShopAddEmployee')
     };
   return (
@@ -180,9 +164,16 @@ paddingHorizontal:px(16)
 <View style={{width: '100%',backgroundColor: '#fff',
     paddingVertical:px(16),paddingHorizontal:px(16),marginTop: px(0),
 }}>
+    {isnotice&&
+        <AuditStatusCard
+  status={statusp}
+  reason={status.auditRemark}
+  submitTime={status.updatedAt}
+/> 
+    }
 <View style={{width: '100%',
     flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',
-    marginTop: px(0),
+    marginTop: px(12),
 }}>
     <View style={{flexDirection: 'row',alignItems: 'center',}}>
 <Text style={styles.lefttitle}>内容</Text>

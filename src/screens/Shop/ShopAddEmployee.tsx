@@ -1,21 +1,93 @@
 import { StyleSheet, Text, View,TouchableOpacity,Image,TextInput,ScrollView, } from 'react-native'
-import React,{useState,} from 'react'
+import React,{useState,useRef,useEffect} from 'react'
 import { px } from '../../utils/scaleUtils';
 import AccountItem from './components/AccountItem'
+import request from '../../api/request'
 
 
 
 
-
-export default function ShopAddEmployee({navigation}) {
+export default function ShopAddEmployee({navigation,route}) {
  const [username, setUsername] = useState(null);
+const [list, setList] = useState([]);
+const [loading, setLoading] = useState(false);
+const [hasSearch, setHasSearch] = useState(false);
+const {storeinfo}=route.params||{}
+const timerRef = useRef(null);
 
+useEffect(() => {
+
+  // 清除旧定时器
+  if (timerRef.current) {
+    clearTimeout(timerRef.current);
+  }
+
+  // 输入为空
+  if (!username || username.trim() === '') {
+    setList([]);
+    setHasSearch(false);
+    return;
+  }
+
+  // 防抖
+  timerRef.current = setTimeout(() => {
+    getuserlist(username);
+  }, 500);
+
+  return () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+  };
+
+}, [username]);
  const handleback = () => {  //返回上一页
    navigation.goBack();
   };
     const onChangeText = (e) => { 
     console.log(e);
     setUsername(e)
+};
+const getuserlist = async(keyword) => { 
+
+  try {
+
+    setLoading(true);
+
+    const response = await request({
+      url: '/store/user/search',
+      method: 'GET',
+      data: {},
+      query: {
+        keyword: keyword,
+        page: 1,
+        pageSize: 10,
+      },
+    }); 
+
+    console.log('address',response);
+
+    if (response.data !== null && response.code == 0) {
+
+      setList(response.data.list || []);
+      setHasSearch(true);
+
+    } else {
+
+      setList([]);
+
+    }
+
+  } catch (error) {
+
+    console.error(error);
+
+  } finally {
+
+    setLoading(false);
+
+  }
+
 };
   return (
     <View style={styles.container}>
@@ -58,13 +130,29 @@ export default function ShopAddEmployee({navigation}) {
      <ScrollView contentContainerStyle={{paddingTop: px(8),paddingHorizontal:px(16),
         paddingBottom:px(50)
      }}>
-    {[0,1,2,3,4,5,6].map((item,index)=>
+    {list?.map((item,index)=>
     <View key={index} style={{marginTop: px(8)}}>
-    <AccountItem navigation={navigation}></AccountItem>
+    <AccountItem 
+    navigation={navigation} 
+    item={item}
+    storeinfo={storeinfo}
+    ></AccountItem>
     </View>
     )}
-
-        
+{
+  loading &&
+  <View style={{paddingVertical:px(20),alignItems:'center'}}>
+    <Text style={styles.bottomText}>搜索中...</Text>
+  </View>
+}
+        {
+  hasSearch &&
+  !loading &&
+  list.length === 0 &&
+  <View style={{paddingVertical:px(20),alignItems:'center'}}>
+    <Text style={styles.bottomText}>暂无用户</Text>
+  </View>
+}
      </ScrollView>
 
 
@@ -75,6 +163,12 @@ export default function ShopAddEmployee({navigation}) {
 }
 
 const styles = StyleSheet.create({
+  bottomText:{
+  fontFamily: 'MiSans-Regular',
+  fontSize:px(13),
+  color:'#AAAAAA',
+  lineHeight:px(17),
+},
           inputbox:{
   paddingTop:0,
   paddingBottom:0,

@@ -651,6 +651,50 @@ const handlecreatorder = async() => { //创建订单
 
       return `${year}-${month}-${day} ${hour}:${minute}`;
       };
+
+        const handlegokefu = async() => {
+  console.log(shopallinfo);
+  
+      const user = await Storage.get("userinfo");
+      console.log(user);
+      if(user==null){ //未登陆的情况
+      Toast.info({content:'请先完成登陆',mask:false});
+      return
+      }
+
+             try {
+             const response = await request({
+               url: '/customer/get',
+               method: 'GET',
+               data:{},
+               query: {
+                //userId:user.user.userId,
+                storeId:shopallinfo.storeId
+              }
+             });
+             console.log(response);
+            if(response.data!==undefined&&response.code==0){
+              console.log(response.data.userId);
+                
+              let a={
+                storeName: shopallinfo.storeName,
+                storeId: response.data.keeper.storeId,
+                id: response.data.keeper.sessionId,
+              }
+              console.log(a);
+            navigation.navigate('OneChat',{item:a})
+            }else{
+            Toast.show({
+                content: response.data,
+                duration: 2,
+                position: 'center',
+                mask: false,
+              })
+            }
+           } catch (error) {
+             console.error(error);
+           }
+  };
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={()=>handleback()} style={{
@@ -931,14 +975,14 @@ style={styles.comgraguanBox}
     <View style={{flexDirection: 'row',alignItems: 'center',gap:px(0),marginLeft: px(18),}}>
 <TouchableOpacity  style={{flexDirection: 'column',alignItems: 'center',
     width: px(46),
-}}>
+}} onPress={()=>navigation.navigate('ClubHome',{storeinfo:storeinfo})}>
  <Image source={require('../../../assets/images/home/game.png')} 
          style={{width:px(34),height:px(34)}}></Image>
 <Text style={styles.botext}>俱乐部</Text>
 </TouchableOpacity>
 
 <TouchableOpacity  style={{flexDirection: 'column',alignItems: 'center',
-    width: px(46),}}>
+    width: px(46),}} onPress={()=>handlegokefu()}>
  <Image source={require('../../../assets/images/home/kefu.png')} 
          style={{width:px(34),height:px(34)}}></Image>
 <Text style={styles.botext}>客服</Text>

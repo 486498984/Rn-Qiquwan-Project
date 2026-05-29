@@ -23,7 +23,10 @@ import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import Sound from 'react-native-nitro-sound';
 import RNHapticFeedback from "react-native-haptic-feedback";
 import  {  impact,Patterns  }  from  "react-native-haptic-feedback" ; 
-
+import apiRequest from '../../api/request';
+import Storage from '../../utils/storage';
+import  {uploadImage}  from '../../api/uploadImage';
+import {IMG_URL } from '../../api/config';
 
 
  const EMOJIS = [
@@ -74,7 +77,7 @@ import  {  impact,Patterns  }  from  "react-native-haptic-feedback" ;
 const loginUserID = Platform.OS === 'ios' ? 'user1' : 'user2';
 export default function OneChat({navigation,route}) {
   const { item } = route.params;
-   console.log('zheshi1item',item.conversationID);
+   console.log('zheshi1item',item);
    
     const insets = useSafeAreaInsets();
    const [isonline, setIsonline] = useState(true); //是否在线
@@ -99,6 +102,14 @@ const panelRef = useRef(null);
 const bubbleRef = useRef<View | null>(null);
 const [playingId, setPlayingId] = useState(null);
 const [paused, setPaused] = useState(false);
+const [opentime, setOpentime] = useState({isOnline:false,businessText:"09:00-22:00"});//营业时间
+const [page, setPage] = useState(1);
+const [hasMore, setHasMore] = useState(true);
+const [loadingMoreApi, setLoadingMoreApi] = useState(false);
+
+
+
+
 const scrollToBottom = (animated = false) => {
   requestAnimationFrame(() => {
     listRef.current?.scrollToOffset({
@@ -114,55 +125,124 @@ useEffect(() => {
 }, [keyboardVisible, messages.length]);
   const sendMessage = () => {
     if (!text.trim()) return;
-//发送消息
-const toUserID =
-  loginUserID === 'user1' ? 'user2' : 'user1';
+    console.log(item.storeName);
+    if(item.storeName){ //存在就是用户发送消息
+    usersendmessage();
+    }else{ //不存在就是客服发送消息
+    kefusendmessage()
+    }
+//     const id = item.conversationID;
+// const userId = id.replace("C2C", "");
+// //发送消息
+// const toUserID =
+//   loginUserID === 'user1' ? 'user2' : 'user1';
 
-const message = chat.createTextMessage({
-  to: toUserID,
-  conversationType: TencentCloudChat.TYPES.CONV_C2C,
-  payload: {
-    text,
-  },
-});
-chat.sendMessage(message)
-  .then(res => {
-    console.log('✅ 发送成功 ->',);
-        const msg = res.data.message;
+// const message = chat.createTextMessage({
+//   to: userId,
+//   conversationType: TencentCloudChat.TYPES.CONV_C2C,
+//   payload: {
+//     text,
+//   },
+// });
+// chat.sendMessage(message)
+//   .then(res => {
+//     console.log('✅ 发送成功 ->',);
+//         const msg = res.data.message;
 
-    const newMsg = {
-      id: msg.ID,
-      content: msg.payload.text,
-      isMe: true,
-      time: msg.time,
-      rawMessage: msg, // ⭐关键
-      isRevoked: msg.isRevoked || false,
-    };
+//     const newMsg = {
+//       id: msg.ID,
+//       content: msg.payload.text,
+//       isMe: true,
+//       time: msg.time,
+//       rawMessage: msg, // ⭐关键
+//       isRevoked: msg.isRevoked || false,
+//     };
 
-    setMessages(prev => [newMsg,...prev]);
-      chat.setMessageRead({
-    conversationID: item.conversationID,
-  });
-  })
-  .catch(err => {
-    console.log('❌ 发送失败', err);
-  });
-    setText('');
+//     setMessages(prev => [newMsg,...prev]);
+//       chat.setMessageRead({
+//     conversationID: item.conversationID,
+//   });
+//   })
+//   .catch(err => {
+//     console.log('❌ 发送失败', err);
+//   });
+    //setText('');
     scrollToBottom();
-  }; 
+  };
+  const usersendmessage = async() => {
+    console.log(text);
+    try {
+      const response = await apiRequest({
+        url: '/message/send',
+        method: 'POST',
+        data: {
+        sessionId: item.id,
+        storeId: item.storeId,
+        contentType: "text",
+        content: text,
+        duration: 0
+        },
+        query: {
+      
+        },
+          }); 
+        console.log('message',response);
+        if (response.data !== null && response.code == 0) {
+        gethistory();
+        setText('');
+        }
+    } catch (error) {
+    console.error(error);
+    }
+  }
+  const kefusendmessage = async() => {
+        try {
+      const response = await apiRequest({
+        url: '/message/reply',
+        method: 'POST',
+        data: {
+        userId:item.userId,
+        sessionId: item.sessionId,
+        storeId: item.storeId,
+        contentType: "text",
+        content: text,
+        //duration: 0
+        },
+        query: {
+      
+        },
+          }); 
+        console.log('message',response);
+        if (response.data !== null && response.code == 0) {
+        gethistory();
+        setText('');
+        }else{
+          handleCloseAll();
+     Toast.fail({
+           content: response.data,
+           duration: 2,
+           position: 'center',
+           mask: false,
+         })
+        }
+    } catch (error) {
+    console.error(error);
+    }
+  }
+
 const renderItem = useCallback(({ item, index }) => {
   const prev = messages[index + 1];
-  const showTime = shouldShowTime(item, prev);
+  const showTime = shouldShowTimee(item, prev);
 
   return (
     <MessageItem
       setMessages={setMessages}
       item={item}
       showTime={showTime}
-        playingId={playingId}
-  setPlayingId={setPlayingId}
-  paused={paused}
-  setPaused={setPaused}
+      playingId={playingId}
+      setPlayingId={setPlayingId}
+      paused={paused}
+      setPaused={setPaused}
     />
   );
 }, [messages, playingId, paused]);
@@ -173,7 +253,19 @@ const shouldShowTime = (current, prev) => {
   const diff = current.time - prev.time;
   return diff > 5 * 60; // 超过5分钟显示
 };
+const shouldShowTimee = (current, prev) => {
 
+  if (!prev) return true;
+
+  const currentTime = new Date(current.sendTime).getTime();
+
+  const prevTime = new Date(prev.sendTime).getTime();
+
+  // 毫秒转秒
+  const diff = (currentTime - prevTime) / 1000;
+
+  return diff > 5 * 60;
+};
 
 // 初始值：安全区（避免首次闪动）
 const bottomAnim = useRef(
@@ -271,44 +363,420 @@ const formatMessage = (msg) => {
     isRevoked: msg.isRevoked || false,
   };
 };
+const hasInit = useRef(false);
 useEffect(() => {
-  
+    if (hasInit.current) return;
+  hasInit.current = true;
   async function loadHistory() {
     const res = await chat.getMessageList({
       conversationID: item.conversationID,
       //count: 20,
     });
-  chat.setMessageRead({
-    conversationID: item.conversationID,
-  });
+    
+  // chat.setMessageRead({
+  //   conversationID: item.conversationID,
+  // });
     const list = res.data.messageList;
-console.log('12123weq',res);
+    console.log('12123weq',res);
 
-const formatted = list
-  .map(formatMessage)
-  .reverse();
+    const formatted = list
+      .map(formatMessage)
+      .reverse();
 
     setMessages(formatted);
     setNextReqMessageID(res.data.nextReqMessageID);
     setIsCompleted(res.data.isCompleted);
     setFirstLoaded(true);
   }
-  loadHistory();
+  console.log('重新加载了');
+  
+   //gethistory();
+   initHistory();
+  //loadHistory();
+
+
 }, [item]); 
+const gethistory = async() => {
+  //setPage(1);
+//   let promises = chat.getConversationList();
+
+// promises.then(function(imResponse) {
+// console.log(imResponse);
+
+//   const conversationList = imResponse.data.conversationList;
+
+//   conversationList.forEach(item => {
+
+//     console.log('会话ID:', item.conversationID);
+
+//     console.log('未读数:', item.unreadCount);
+
+//   });
+
+// });
+
+  if(item.storeName){ //用户访问历史消息
+    console.log('name',item.storeName);
+    //getstoreinfo();
+    //getuserhistory();
+    getuserhistory(1, false,true);
+  }else{  //客服访问历史消息
+    //getcoshistory();
+    getcoshistory(1, false,true);
+  }
+}
+const initHistory = () => {
+  setPage(1);
+  setHasMore(true);
+
+  if (item.storeName) {
+    getstoreinfo();
+    getuserhistory(1, true);
+  } else {
+    getcoshistory(1, true);
+  }
+};
+
+const getstoreinfo = async() => {
+             try {
+               const response = await apiRequest({
+                 url: '/store/detail',
+                 method: 'GET',
+                 data:{},
+                 query: {
+                  id:item.storeId
+                }
+               });
+               console.log(response);
+              if(response.data!==undefined&&response.code==0){
+                let open=response.data.openHours
+                if(open&&open!==""){
+                  let opentime=JSON.parse(open)
+                  console.log(JSON.parse(open));
+                  const result = formatBusinessStatus(opentime);
+                  console.log(result);
+                  setOpentime(result)
+                }
+              }
+             } catch (error) {
+               console.error(error);
+             }
+};
+
+const formatBusinessStatus = (data) => {
+
+  const { start, end } = data;
+
+  const [startHour, startMinute] = start;
+  const [endHour, endMinute] = end;
+
+  // 当前时间
+  const now = new Date();
+
+  const nowMinutes =
+    now.getHours() * 60 + now.getMinutes();
+
+  const startMinutes =
+    startHour * 60 + startMinute;
+
+  const endMinutes =
+    endHour * 60 + endMinute;
+
+  // 是否跨天
+  const isNextDay = startMinutes > endMinutes;
+
+  let isOnline = false;
+
+  if (isNextDay) {
+
+    // 跨天逻辑
+    isOnline =
+      nowMinutes >= startMinutes ||
+      nowMinutes <= endMinutes;
+
+  } else {
+
+    // 正常逻辑
+    isOnline =
+      nowMinutes >= startMinutes &&
+      nowMinutes <= endMinutes;
+  }
+
+  // 补零
+  const pad = (n) => String(n).padStart(2, '0');
+
+  // 时间字符串
+  const startText =
+    `${pad(startHour)}:${pad(startMinute)}`;
+
+  const endText =
+    `${pad(endHour)}:${pad(endMinute)}`;
+
+  // 营业时间展示
+  const businessText = isNextDay
+    ? `${startText}-次日${endText}`
+    : `${startText}-${endText}`;
+
+  return {
+    isOnline,
+    businessText,
+  };
+};
+// const getuserhistory = async() => {
+//        const user = await Storage.get("userinfo");
+//      let myUserId=user.user.userId
+//         try {
+//           const response = await apiRequest({
+//             url: '/message/history',
+//             method: 'GET',
+//             data: {
+//             },
+//             query: {
+//               sessionId:item.id,
+//               page:1,
+//               pageSize:20,
+//             },
+//           }); 
+//           console.log('history',response);
+// if (response.data !== null && response.code == 0) {
+//   if (response.data.list !== null && response.data.list.length !== 0) {
+
+//     let list = response.data.list;
+
+//     const newList = list
+//       .map(item => ({
+//         ...item,
+//         isMe: item.senderId === myUserId,
+//       }))
+//       //.reverse(); // 倒序
+
+//     console.log('new', newList);
+
+//     setMessages(newList);
+//   }
+// }
+//         } catch (error) {
+//           console.error(error);
+//         }
+// }
+const getuserhistory = async (
+  pageNum = 1,
+  refresh = false,
+  add=false
+) => {
+
+  if (loadingMoreApi) return;
+
+  setLoadingMoreApi(true);
+
+  const user = await Storage.get("userinfo");
+
+  let myUserId = user.user.userId;
+
+  try {
+
+    const response = await apiRequest({
+      url: '/message/history',
+      method: 'GET',
+      query: {
+        sessionId: item.id,
+        page: pageNum,
+        pageSize: 20,
+      },
+    });
+
+    if (
+      response.data &&
+      response.code === 0
+    ) {
+
+      const list = response.data.list || [];
+
+      const newList = list.map(item => ({
+        ...item,
+        isMe: item.senderId === myUserId,
+      }));
+
+      // inverted=true
+      // 老消息应该拼接到后面
+
+      // setMessages(prev => {
+
+      //   if (refresh) {
+      //     return newList;
+      //   }
+
+      //   return [...prev, ...newList];
+
+      // });
+setMessages(prev => {
+
+  if (refresh) {
+    return uniqueMessages(newList);
+  }
+ if(add){
+  return uniqueMessages([
+    ...newList,
+    ...prev,
+  ]);
+ }
+  return uniqueMessages([
+    ...prev,
+    ...newList,
+  ]);
+
+});
+      // 是否还有更多
+      if (list.length < 20) {
+        setHasMore(false);
+      }
+
+      setPage(pageNum);
+    }
+
+  } catch (error) {
+
+    console.error(error);
+
+  } finally {
+
+    setLoadingMoreApi(false);
+
+  }
+};
+const getcoshistory = async (
+  pageNum = 1,
+  refresh = false,
+  add=false
+) => {
+
+  if (loadingMoreApi) return;
+
+  setLoadingMoreApi(true);
+
+  const user = await Storage.get("userinfo");
+
+  let myUserId = user.user.userId;
+
+  try {
+
+    const response = await apiRequest({
+      url: '/customer/history',
+      method: 'GET',
+      query: {
+        sessionId: item.sessionId,
+        page: pageNum,
+        pageSize: 20,
+      },
+    });
+
+    if (
+      response.data &&
+      response.code === 0
+    ) {
+
+      const list = response.data.list || [];
+
+      const newList = list.map(item => ({
+        ...item,
+        isMe: item.senderId === myUserId,
+      }));
+
+      // setMessages(prev => {
+
+      //   if (refresh) {
+      //     return newList;
+      //   }
+
+      //   return [...prev, ...newList];
+
+      // });
+setMessages(prev => {
+
+  if (refresh) {
+    return uniqueMessages(newList);
+  }
+ if(add){
+    return uniqueMessages([
+    ...newList,
+    ...prev,
+  ]);
+ }
+  return uniqueMessages([
+    ...prev,
+    ...newList,
+  ]);
+
+});
+      if (list.length < 20) {
+        setHasMore(false);
+      }
+
+      setPage(pageNum);
+    }
+
+  } catch (error) {
+
+    console.error(error);
+
+  } finally {
+
+    setLoadingMoreApi(false);
+
+  }
+};
+// const getcoshistory = async() => {
+//        const user = await Storage.get("userinfo");
+//      let myUserId=user.user.userId
+//         try {
+//           const response = await apiRequest({
+//             url: '/customer/history',
+//             method: 'GET',
+//             data: {
+//             },
+//             query: {
+//               sessionId:item.sessionId,
+//               page:1,
+//               pageSize:20,
+//             },
+//           }); 
+//           console.log('history',response);
+// if (response.data !== null && response.code == 0) {
+//   if (response.data.list !== null && response.data.list.length !== 0) {
+
+//     let list = response.data.list;
+
+//     const newList = list
+//       .map(item => ({
+//         ...item,
+//         isMe: item.senderId === myUserId,
+//       }))
+//       //.reverse(); // 倒序
+
+//     console.log('new', newList);
+
+//     setMessages(newList);
+//   }
+// }
+//         } catch (error) {
+//           console.error(error);
+//         }
+// }
+
   useEffect(() => {
     // setTimeout(() => {
     //   scrollToBottomWithoutAnim();
     // }, 400);
-    
+   
   const onReceive = (event) => {
     Vibration.vibrate();
     const msgs = event.data;
-const newMsgs = msgs.map(formatMessage);
- 
-    setMessages(prev => [...newMsgs,...prev]);
-    chat.setMessageRead({
-    conversationID: item.conversationID,
-  });
+    const newMsgs = msgs.map(formatMessage);
+     gethistory();
+    //setMessages(prev => [...newMsgs,...prev]);
+    // chat.setMessageRead({
+    // conversationID: item.conversationID,
+    // });
   };
 const onRevoked=(event)=>{
   const revokedMsgs = event.data;
@@ -338,41 +806,56 @@ const onRevoked=(event)=>{
     );
   };
 }, []);  
- const loadMore = async () => {
-    // ❗拦截首次触发
-  if (!firstLoaded) return;
-  if (loadingMore || isCompleted) return;
+const loadMore = () => {
 
-  setLoadingMore(true);
+  if (!hasMore || loadingMoreApi) return;
 
-  try {
-    const res = await chat.getMessageList({
-      conversationID: item.conversationID,
-      nextReqMessageID,
-      //count: 15,
-    });
+  const nextPage = page + 1;
 
-    const list = res.data.messageList;
-console.log('vnewlist',list);
+  if (item.storeName) {
 
-const formatted = list
-  .map(formatMessage)
-  .reverse();
-    
-console.log('formatted',formatted);
+    getuserhistory(nextPage);
 
-    // ✅ 拼接到尾部（旧数据）
-    setMessages(prev => [...prev, ...formatted]);
+  } else {
 
-    setNextReqMessageID(res.data.nextReqMessageID);
-    setIsCompleted(res.data.isCompleted);
+    getcoshistory(nextPage);
 
-  } catch (e) {
-    console.log('加载更多失败', e);
   }
-
-  setLoadingMore(false);
 };
+//  const loadMore = async () => {
+
+//   if (!firstLoaded) return;
+//   if (loadingMore || isCompleted) return;
+
+//   setLoadingMore(true);
+
+//   try {
+//     const res = await chat.getMessageList({
+//       conversationID: item.conversationID,
+//       nextReqMessageID,
+    
+//     });
+
+//     const list = res.data.messageList;
+// console.log('vnewlist',list);
+
+// const formatted = list
+//   .map(formatMessage)
+//   .reverse();
+    
+// console.log('formatted',formatted);
+
+//     setMessages(prev => [...prev, ...formatted]);
+
+//     setNextReqMessageID(res.data.nextReqMessageID);
+//     setIsCompleted(res.data.isCompleted);
+
+//   } catch (e) {
+//     console.log('加载更多失败', e);
+//   }
+
+//   setLoadingMore(false);
+// };
 const handleOpenMore = () => {
     setIsVoiceMode(false)
   if (panelType === 'more') {
@@ -478,6 +961,18 @@ const handleCloseAll = () => {
     useNativeDriver: false,
   }).start();
 };
+const uniqueMessages = (list) => {
+
+  const map = new Map();
+
+  list.forEach(item => {
+
+    map.set(item.id, item);
+
+  });
+
+  return Array.from(map.values());
+};
 const keyExtractor = useCallback(
   (item) => item.id.toString(),
   []
@@ -545,7 +1040,7 @@ const sendImage = async (type = 'album') => {
     const options = {
       mediaType: 'photo',
       selectionLimit: 1,
-      quality: 0.7, // ⭐压缩（很关键）
+      quality: 0.5, // ⭐压缩（很关键）
     };
 
     const result =
@@ -562,74 +1057,147 @@ const sendImage = async (type = 'album') => {
     }
 
     const asset = result.assets[0];
+    console.log('image',asset);
+    console.log(item);
+    if(item.storeName){ //走用户发送图片
+    usersendimg(asset.uri)
+    }else{ //走客服发送图片
+    cussendimg(asset.uri)
+    }
 
     // ⭐ RN 必须转格式（重要）
-    const file = {
-      uri: asset.uri,
-      type: asset.type || 'image/jpeg',
-      name: asset.fileName || `image_${Date.now()}.jpg`,
-    };
+    // const file = {
+    //   uri: asset.uri,
+    //   type: asset.type || 'image/jpeg',
+    //   name: asset.fileName || `image_${Date.now()}.jpg`,
+    // };
 
-    const toUserID =
-      loginUserID === 'user1' ? 'user2' : 'user1';
+    // const toUserID =
+    //   loginUserID === 'user1' ? 'user2' : 'user1';
 
     // 1️⃣ 创建消息（立即上屏用）
-    const message = chat.createImageMessage({
-      to: toUserID,
-      conversationType: TencentCloudChat.TYPES.CONV_C2C,
-      payload: { file },
-    });
+    // const message = chat.createImageMessage({
+    //   to: toUserID,
+    //   conversationType: TencentCloudChat.TYPES.CONV_C2C,
+    //   payload: { file },
+    // });
 
     // ⭐2️⃣ 先本地上屏（关键：体验像微信）
-    const tempMsg = {
-      id: message.ID,
-      imageUrl: asset.uri, // 本地预览
-      isMe: true,
-      time: message.time || Date.now() / 1000,
-      rawMessage: message,
-      isImage: true,
-      status: 'sending',
-    };
+    // const tempMsg = {
+    //   id: message.ID,
+    //   imageUrl: asset.uri, // 本地预览
+    //   isMe: true,
+    //   time: message.time || Date.now() / 1000,
+    //   rawMessage: message,
+    //   isImage: true,
+    //   status: 'sending',
+    // };
 
-    setMessages(prev => [tempMsg, ...prev]);
+    //setMessages(prev => [tempMsg, ...prev]);
 
     scrollToBottom();
 
     // 3️⃣ 发送
-    const res = await chat.sendMessage(message);
+    //const res = await chat.sendMessage(message);
 
-    const msg = res.data.message;
+    //const msg = res.data.message;
 
     // 4️⃣ 替换为真实云端图片
-    const url =
-      msg.payload.imageInfoArray?.[0]?.url || '';
+    // const url =
+    //   msg.payload.imageInfoArray?.[0]?.url || '';
 
-    setMessages(prev =>
-      prev.map(item =>
-        item.id === message.ID
-          ? {
-              ...item,
-              imageUrl: url,
-              status: 'success',
-              rawMessage: msg,
-            }
-          : item
-      )
-    );
+    // setMessages(prev =>
+    //   prev.map(item =>
+    //     item.id === message.ID
+    //       ? {
+    //           ...item,
+    //           imageUrl: url,
+    //           status: 'success',
+    //           rawMessage: msg,
+    //         }
+    //       : item
+    //   )
+    // );
 
   } catch (err) {
     console.log('❌ 图片发送失败', err);
 
     // 标记失败
-    setMessages(prev =>
-      prev.map(item =>
-        item.status === 'sending'
-          ? { ...item, status: 'fail' }
-          : item
-      )
-    );
+    // setMessages(prev =>
+    //   prev.map(item =>
+    //     item.status === 'sending'
+    //       ? { ...item, status: 'fail' }
+    //       : item
+    //   )
+    // );
   }
 };
+const usersendimg = async (e) => {
+  try {
+    const formData = new FormData();
+
+    formData.append('file', {
+      //uri: Platform.OS === 'ios' ? e.replace('file://', '') : e,
+      uri:  e,
+      type: 'image/jpeg',
+      name: `upload_${Date.now()}.jpg`,
+    });
+
+    formData.append('sessionId', item.id);
+    formData.append('storeId', item.storeId);
+    formData.append('contentType', 'image');
+
+    const response = await apiRequest({
+      url: '/message/send',
+      method: 'POST',
+      data: formData, // ⭐关键：直接传FormData
+    });
+
+    console.log('send image:', response);
+
+    if (response?.code === 0) {
+      gethistory();
+      setText('');
+    }
+  } catch (error) {
+    console.error('send image error:', error);
+  }
+};
+const cussendimg = async(e) => {
+  console.log(item,e);
+  
+    try {
+    const formData = new FormData();
+
+    formData.append('file', {
+      uri: Platform.OS === 'ios' ? e.replace('file://', '') : e,
+      //uri:  e,
+      type: 'image/jpeg',
+      name: `upload_${Date.now()}.jpg`,
+    });
+
+    formData.append('sessionId', item.sessionId);
+    formData.append('storeId', item.storeId);
+    formData.append('contentType', 'image');
+    formData.append('userId', item.userId);
+
+    const response = await apiRequest({
+      url: '/message/reply',
+      method: 'POST',
+      data: formData, // ⭐关键：直接传FormData
+    });
+
+    console.log('send image:', response);
+
+    if (response?.code === 0) {
+      gethistory();
+      setText('');
+    }
+  } catch (error) {
+    console.error('send image error:', error);
+  }
+}
+
 const startY = useRef(0);
 const requestAudioPermission = async () => {
   if (Platform.OS !== 'android') return true;
@@ -817,19 +1385,26 @@ Keyboard.dismiss();
            <Image source={require('../../../assets/images/my/left.png')} 
            style={{width:px(22),height:px(22)}}></Image>
            </TouchableOpacity>
-           <View style={{flexDirection: 'column',alignItems: 'center',gap:px(6)}}>
-            <View style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}>
- <Text style={styles.title}>东东电竞俱乐部</Text>
- <View style={isonline?styles.onlinebox:styles.noonlinebox}>
- <Text style={isonline?styles.onlinetx:styles.noonlinetx}>{isonline?'在线':'打烊'}</Text>
+ <View style={{flexDirection: 'column',alignItems: 'center',gap:px(6),
+  paddingBottom:item.storeName?0:px(6)
+ }}>
+  <View style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}>
+ <Text style={styles.title}>{item.userNickName||item.storeName}</Text>
+   {item.storeName&&
+ <View style={opentime.isOnline?styles.onlinebox:styles.noonlinebox}>
+ <Text style={opentime.isOnline?styles.onlinetx:styles.noonlinetx}>{opentime.isOnline?'在线':'打烊'}</Text>
  </View>
-            </View>
- <Text style={styles.destitle}>客服在线时间：11:00 - 次日 02:00</Text>
+ }
+   </View>
+  {item.storeName&&
+   <Text style={styles.destitle}>客服在线时间：{opentime.businessText}</Text>
+  }
            </View>
           
               </View>
             </View>
-            <View style={{top: px(98),position: 'absolute',zIndex: 1,width: '100%',}}>
+
+<View style={{top: px(98),position: 'absolute',zIndex: 1,width: '100%',}}>
    <NoticeBar 
      action={<Image source={require('../../../assets/images/home/yclose.png')} 
      style={{width:px(16),height:px(16),}}></Image>}
@@ -878,12 +1453,29 @@ Keyboard.dismiss();
         // }}
           onEndReached={loadMore}
         onEndReachedThreshold={0.1}
-        ListFooterComponent={
-        <View style={{ height: px(40), justifyContent: 'center', alignItems: 'center' }}>
-          {loadingMore && <Text style={{ color: '#999' }}>加载中...</Text>}
-          {isCompleted && <Text style={{ color: '#ccc' }}>没有更多了</Text>}
-        </View>
-        }
+ListFooterComponent={
+  <View
+    style={{
+      height: px(40),
+      //paddingTop:px(41),
+      marginTop: px(41),
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}
+  >
+    {loadingMoreApi && (
+      <Text style={styles.emptyText}>
+        加载中...
+      </Text>
+    )}
+
+    {!hasMore && (
+      <Text style={styles.emptyText}>
+        没有更多了
+      </Text>
+    )}
+  </View>
+}
         initialNumToRender={12}
         maxToRenderPerBatch={8}
         windowSize={7}
@@ -908,7 +1500,7 @@ Keyboard.dismiss();
       styles.inputContainer,
       { paddingBottom: bottomAnim }
       ]}>
-        <TouchableOpacity 
+        {/* <TouchableOpacity 
           style={{flexDirection: 'row',width: px(32),height: px(32),
             justifyContent: 'center',alignItems: 'center',
           }}  onPress={() => {
@@ -922,10 +1514,10 @@ Keyboard.dismiss();
          <Image source={require('../../../assets/images/my/keyboard.png')} 
            style={{width:px(24),height:px(24)}}></Image>
     }
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
       <View style={{flexDirection: 'row',alignItems: 'center',borderRadius: px(4),
-        backgroundColor: '#fff',width:text!==''? px(253):px(273),marginLeft: px(12),
+        backgroundColor: '#fff',width:text!==''? px(290):px(315),marginLeft: px(0),
         justifyContent: 'space-between',paddingHorizontal:px(0)
       }}>
 
@@ -995,7 +1587,7 @@ Keyboard.dismiss();
         </TouchableOpacity>
         }
         {text!==''&&
-           <TouchableOpacity  style={{width: px(52),height: px(42),
+           <TouchableOpacity  style={{width: px(58),height: px(42),
          marginLeft: px(12),flexDirection: 'row',borderRadius: px(4),
           alignItems: 'center',justifyContent: 'center',
           backgroundColor: '#FF9500',
@@ -1107,6 +1699,13 @@ onPress={() => sendImage('camera')}>
 }
 
 const styles = StyleSheet.create({
+  emptyText: {
+   fontFamily: 'MiSans-Regular',
+        fontSize:px(13),
+        color:'#AAAAAA',
+        fontWeight:400,
+        lineHeight:px(17),
+},
   recordMaskWrap: {
   position: 'absolute',
   top: 0,

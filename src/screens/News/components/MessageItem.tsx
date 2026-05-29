@@ -12,6 +12,11 @@ import ReactNativeBlobUtil from 'react-native-blob-util'
 import FastImage from 'react-native-fast-image';
 import Sound from 'react-native-nitro-sound';
 import VoiceWave from './VoiceWave';
+import { IMG_URL } from '../../../api/config';
+import SafeFastImage from '../../../components/Home/SafeFastImage'
+
+
+
 
 interface MessageItemProps {
   item: any;
@@ -77,20 +82,20 @@ const images = previewUri
   : [];
 const actions = [
   // ⭐ 只有文本才显示复制
-...(!item.isImage && !item.isAudio
+...(item.contentType!=="image" && !item.isAudio
   ? [{ title: "复制", systemIcon: "doc.on.doc" }]
   : []),
 
   // ⭐ 自己的消息才有撤回
-  ...(isMe
-    ? [
-        {
-          title: "撤回",
-          systemIcon: "arrow.uturn.backward",
-          destructive: true,
-        },
-      ]
-    : []),
+  // ...(isMe
+  //   ? [
+  //       {
+  //         title: "撤回",
+  //         systemIcon: "arrow.uturn.backward",
+  //         destructive: true,
+  //       },
+  //     ]
+  //   : []),
 ];
 const renderAudio = () => {
    console.log(item);
@@ -142,13 +147,13 @@ const renderAudio = () => {
   );
 };
     useEffect(() => {
-  if (item.isImage && item.imageUrl) {
-    Image.getSize(item.imageUrl, (w, h) => {
+  if (item.contentType=="image" && item.content) {
+    Image.getSize(IMG_URL+item.content, (w, h) => {
       const result = calcImageSize(w, h);
       setSize(result);
     });
   }
-}, [item.imageUrl]);
+}, [item.content]);
     const handleCopy = (text) => {
     Clipboard.setString(text);
          Toast.show({
@@ -159,53 +164,68 @@ const renderAudio = () => {
           })
 };
     // 时间格式化
-    const formatTime = (timestamp) => {
-    const date = new Date(timestamp * 1000);
-    const now = new Date();
-    
-    // 今天 00:00
-    const todayStart = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate()
-    ).getTime();
-    
-    // 昨天 00:00
-    const yesterdayStart = todayStart - 24 * 60 * 60 * 1000;
-    
-    // 7天前
-    const weekStart = todayStart - 7 * 24 * 60 * 60 * 1000;
-    
-    const time = date.getTime();
-    
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    const HM = `${hours}:${minutes}`;
-    
-    // ✅ 今天
-    if (time >= todayStart) {
-        return HM;
-    }
-    
-    // ✅ 昨天
-    if (time >= yesterdayStart) {
-        return `昨天 ${HM}`;
-    }
-    
-    // ✅ 7天内（星期）
-    if (time >= weekStart) {
-        const weekMap = ['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
-        const day = weekMap[date.getDay()];
-        return `${day} ${HM}`;
-    }
-    
-    // ✅ 7天前（完整日期）
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    
-    return `${year}/${month}/${day} ${HM}`;
-    };
+const formatTime = (timeString) => {
+  // ISO 时间格式直接解析
+  const date = new Date(timeString);
+  const now = new Date();
+
+  // 今天 00:00
+  const todayStart = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  ).getTime();
+
+  // 昨天 00:00
+  const yesterdayStart = todayStart - 24 * 60 * 60 * 1000;
+
+  // 7天前
+  const weekStart = todayStart - 7 * 24 * 60 * 60 * 1000;
+
+  const time = date.getTime();
+
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+
+  const HM = `${hours}:${minutes}`;
+
+  // ✅ 今天
+  if (time >= todayStart) {
+    return HM;
+  }
+
+  // ✅ 昨天
+  if (time >= yesterdayStart) {
+    return `昨天 ${HM}`;
+  }
+
+  // ✅ 7天内
+  if (time >= weekStart) {
+    const weekMap = [
+      '星期日',
+      '星期一',
+      '星期二',
+      '星期三',
+      '星期四',
+      '星期五',
+      '星期六',
+    ];
+
+    return `${weekMap[date.getDay()]} ${HM}`;
+  }
+
+  // ✅ 超过7天
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1)
+    .toString()
+    .padStart(2, '0');
+
+  const day = date.getDate()
+    .toString()
+    .padStart(2, '0');
+
+  return `${year}/${month}/${day} ${HM}`;
+};
     if (item.isRevoked) {
   return (
     <View style={{ alignItems: 'center', marginVertical: px(10) }}>
@@ -322,7 +342,7 @@ const renderAudio = () => {
             paddingVertical: px(2),
             borderRadius: px(4),
           }}>
-            {formatTime(item.time)}
+            {formatTime(item.sendTime)}
           </Text>
         </View>
       )}
@@ -332,10 +352,26 @@ const renderAudio = () => {
         marginVertical: px(6),
         alignItems: 'flex-start',
       }}>
-        <Image
-          source={item.isMe ? myAvatar : otherAvatar}
-          style={{ width: px(43), height: px(43), borderRadius: px(4) }}
-        />
+    <SafeFastImage
+      source={
+        item.isMe
+          ? item?.senderAvatar
+            ? { uri: IMG_URL + item.senderAvatar }
+            : require('../../../../assets/images/my/defultavtar1.png')
+          : item?.senderAvatar
+          ? { uri: IMG_URL + item.senderAvatar }
+          : require('../../../../assets/images/my/defultavtar1.png')
+      }
+      style={{
+        width: px(43),
+        height: px(43),
+        borderRadius: px(4),
+      }}
+    />
+    <View>
+      {!item.isMe&&
+      <Text style={styles.nickname}>{item?.senderName}</Text>
+      }
     <ContextMenu
        actions={actions}
      onPress={(e) => {
@@ -389,6 +425,7 @@ const renderAudio = () => {
           style={{
             maxWidth: px(252),
             //padding: px(10),
+            marginTop:item.isMe?0: px(6),
             //borderRadius: px(4),
             marginHorizontal: px(12),
             //backgroundColor: '#fff',
@@ -397,26 +434,27 @@ const renderAudio = () => {
           {/* <Text style={{ fontSize: px(17), color: '#1A1A1A' }}>
             {item.content}
           </Text> */}
-  {item.isImage ? (
+  {item.contentType=="image" ? (
     <TouchableOpacity
   activeOpacity={0.9}
   onPress={() => {
-    setPreviewUri(item.imageUrl);
+    setPreviewUri(IMG_URL+item.content);
     setPreviewVisible(true);
   }}
 >
-  <FastImage
+  <SafeFastImage
   source={{
-    uri: item.imageUrl,
-    priority: FastImage.priority.normal,
-    cache: FastImage.cacheControl.immutable, // ⭐强缓存（推荐IM用）
+    uri: IMG_URL+item.content,
+    //priority: FastImage.priority.normal,
+    //cache: FastImage.cacheControl.immutable, // ⭐强缓存（推荐IM用）
   }}
   style={{
     width: size.width,
     height: size.height,
     borderRadius: px(6),
   }}
-  resizeMode={FastImage.resizeMode.cover}
+  resizeMode="contain"
+  //resizeMode={FastImage.resizeMode.cover}
   />
   </TouchableOpacity>
 ) : item.isAudio ? (
@@ -430,6 +468,9 @@ const renderAudio = () => {
 )}
         </TouchableOpacity>
         </ContextMenu>
+        </View>
+
+        
       </View>
 
 <Modal
@@ -490,6 +531,14 @@ const renderAudio = () => {
 
 export default MessageItem;
 const styles = StyleSheet.create({
+  nickname:{
+  fontFamily: 'MiSans-Regular',
+        fontSize:px(14),
+        color:'#AAAAAA',
+        fontWeight:400,
+        lineHeight:px(19),
+        marginLeft: px(12),
+  },
   audiotx:{
       fontFamily: 'MiSans-Regular',
       fontSize:px(13),

@@ -4,20 +4,20 @@ import { px } from '../../../utils/scaleUtils';
 import LinearGradient from 'react-native-linear-gradient';
 
 
-const AccountItem=({navigation})=> {
+const AccountItem=({navigation,item,storeinfo})=> {
   return (
     <View style={{width: '100%',backgroundColor: '#fff',borderRadius: px(8),
     padding:px(8),
     }}>
          <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',}}>
-          <Text style={styles.nickname}>伊戈达拉到特勤</Text>
-                <Text style={styles.idnumber}>ID：549072</Text>
+          <Text style={styles.nickname}>{item?.nickName}</Text>
+                <Text style={styles.idnumber}>ID：{item?.userId}</Text>
             </View>
        <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',
         marginTop: px(7),
        }}>
-          <Text style={styles.idnumber}>账号：19983458001</Text>
-                <Text style={styles.idnumber}>注册时间：2026.04.02</Text>
+          <Text style={styles.idnumber}>账号：{item?.phone}</Text>
+                <Text style={styles.idnumber}>状态：{item.status=="ACTIVE"?'可用':'不可用'}</Text>
             </View>
             <View style={{width: px(345),height: px(1),backgroundColor: 'rgba(118, 118, 118, 0.1)',
                 marginTop: px(11),
@@ -28,7 +28,7 @@ const AccountItem=({navigation})=> {
                   <View style={{marginTop: px(8),flexDirection: 'row',alignItems: 'center',
                           justifyContent: 'flex-end',}}>
                             <View style={{flexDirection: 'row',alignItems: 'center',gap:px(12)}}>
-                      <TouchableOpacity onPress={()=>navigation.navigate('ShopEditEmployee',{type:1})}>
+  <TouchableOpacity onPress={()=>navigation.navigate('ShopEditEmployee',{type:1,item:item,storeinfo:storeinfo})}>
                  <LinearGradient
                       colors={['#FEC525', '#FC9026']}
                       start={{ x: 1, y: 0 }}

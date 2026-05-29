@@ -13,6 +13,10 @@ const useAuthStore = create((set) => ({
     // 订单tab列表页刷新标记
   orderListRefreshKey: 0,
 
+    // ⭐总未读数
+  unreadTotal: 0,
+
+  
   // 登录切换
   loginChanged: () => set((state)=>({ isLogin: !state.isLogin})),
     // im状态切换
@@ -39,6 +43,13 @@ const useAuthStore = create((set) => ({
       orderListRefreshKey:
         state.orderListRefreshKey + 1,
     })),
+      // ⭐设置总未读数
+  setUnreadTotal: (value) =>
+    set(() => ({
+      unreadTotal: value,
+    })),
+
+
     
 }))
 

@@ -72,14 +72,30 @@ export default async function request(obj) {
         .join('&');
       splicingurl += `&${sortedQueryParams}`;
     }
+
+    let bodyData;
+
+    if (data instanceof FormData) {
+      bodyData = data; // ⭐直接用FormData
+    } else if (method !== 'GET') {
+      bodyData = JSON.stringify(data);
+    }
+
+const isFormData = data instanceof FormData;
+
     // 执行请求
     const response = await fetch(`${BASE_URL}${url}${splicingurl}`, {
       method,
-      headers: {
-        'Content-Type': contentType,
-        'appid': appid,
-      },
-      body: method !== 'GET' ? JSON.stringify(data) : undefined,
+        headers: {
+    ...(isFormData ? {} : { 'Content-Type': contentType }),
+    appid: appid,
+    },
+      // headers: {
+      //   'Content-Type': contentType,
+      //   'appid': appid,
+      // },
+      //body: method !== 'GET' ? JSON.stringify(data) : undefined,
+      body: method !== 'GET' ? bodyData : undefined,
     });
      
     const result = await response.json();

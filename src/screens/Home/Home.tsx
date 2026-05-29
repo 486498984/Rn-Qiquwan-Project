@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View,Image,TouchableOpacity,ScrollView,
-Dimensions,Linking,RefreshControl,
+Dimensions,Linking,RefreshControl,Platform,Alert,
  } from 'react-native'
 import React,{useRef,useState,useEffect} from 'react'
 import { px } from '../../utils/scaleUtils';
@@ -19,6 +19,9 @@ import request from '../../api/request';
 import { BASE_URL,IMG_URL } from '../../api/config';
 import FastImage from 'react-native-fast-image';
 import { Toast } from '@ant-design/react-native'
+import DeviceInfo from 'react-native-device-info';
+import UpdateModal from '../../components/Home/UpdateModal'; // 引入组件
+
 
   const routes = [
     { key: "0", title: "全部" },
@@ -46,7 +49,13 @@ export default function Home({navigation}) {
     require('../../../assets/images/home/banner1.png'),
     require('../../../assets/images/home/banner1.png'),
   ]
+  const versionName = DeviceInfo.getVersion();   // "1.0.0"
+  const versionCode = DeviceInfo.getBuildNumber(); // "1"
+
+
  
+
+
 const unsubscribeRef = useRef(null);
 //const [hasInit, setHasInit] = useState(false)
 useEffect(() => {
@@ -67,6 +76,7 @@ const online = !!state.isConnected
       console.log("有网，开始请求");
       gettabinfo();
       getHomeConfig();
+      updates();
       // ✅ 关键：请求一次后停止监听
       unsubscribeRef.current && unsubscribeRef.current();
     } 
@@ -75,6 +85,60 @@ const online = !!state.isConnected
     unsubscribeRef.current && unsubscribeRef.current();
   };
 }, [privacyAgreed]);
+  const [hasShownUpdateAlert, setHasShownUpdateAlert] = useState(false);
+    const [updateVisible, setUpdateVisible] = useState(false);
+    const [apkUrl, setApkUrl] = useState("");
+  const [updateways, setUpdateways] = useState(1); //0否，1是
+  const [updatename, setUpdatename] = useState("1.0.0"); //更新版本号
+  const [updateContent, setUpdaContent] = useState("是否立即下载？"); //更新内容
+    const updates = async() => { 
+      console.log(999888,versionName,versionCode);
+         
+    try {
+        const response = await request({
+          url: '/get/app/version',
+          method: 'GET',
+          data:{
+          },
+          query: {platform:Platform.OS}
+          });
+          console.log(response); 
+          console.log(111222666);
+          if(response.code==0&&response.data!==null){
+          if(Platform.OS=='ios'&& !hasShownUpdateAlert){
+   const currentVersion = DeviceInfo.getVersion(); // 当前 App 版本
+  const latestVersion = response.data.edition_name;      // 后台最新版本
+  const appStoreUrl = response.data.edition_url;
+   if(response.data.edition_number>Number(versionCode)){
+    // 弹出原生 Alert 
+    Alert.alert( 
+      '发现新版本',
+      `是否立即升级？`,
+      [
+        { text: '取消', style: 'cancel' },
+        { text: '升级', onPress: () => Linking.openURL(appStoreUrl) },
+      ],
+      { cancelable: false }
+     );
+        setHasShownUpdateAlert(true); // 标记已弹出
+     } 
+  
+      }else if(Platform.OS=='android'){
+          if(response.data.edition_number>versionCode){
+          setUpdateways(response.data.edition_force)
+          setApkUrl(response.data.edition_url);
+          setUpdatename(response.data.edition_name)
+          setUpdaContent(response.data.update_desc)
+          setUpdateVisible(true);  
+          }
+       
+          }
+          }
+          
+          } catch (error) {
+            console.error(error);
+          }
+     };
 const gettabinfo = async () => {
 
   
@@ -410,15 +474,22 @@ const onRefresh = async () => {
   <Text style={styles.sanother}>其他</Text>
     </View>
 <View style={{flexDirection: 'row',alignItems: 'center',gap:px(8)}}>
-  <View style={styles.parallelogram}>
+  <TouchableOpacity style={styles.parallelogram}
+  onPress={()=>navigation.navigate('Searchlist',{type:1})}>
        <Image source={require('../../../assets/images/home/searchbox.png')} 
          style={{width:px(168),height:px(34),position: 'absolute',}}></Image>
     <Image source={require('../../../assets/images/home/search.png')} 
          style={{width:px(16),height:px(16),marginLeft: px(12),}}></Image>
          <Text style={styles.searchtext}>搜一搜</Text>
-</View>
+</TouchableOpacity> 
+<TouchableOpacity onPress={()=>
+  navigation.navigate('MainTab', {
+  screen: 'Lottery',
+})
+}>
    <Image source={require('../../../assets/images/home/newcomer.png')} 
          style={{width:px(34),height:px(34),}}></Image>
+  </TouchableOpacity>
 </View>
   </View>
 
@@ -549,7 +620,14 @@ const onRefresh = async () => {
   </View>
 
   </ScrollView>
-
+              <UpdateModal
+              updateContent={updateContent}
+              updatename={updatename}
+              updateways={updateways}
+          visible={updateVisible}
+          apkUrl={apkUrl}
+          onClose={() => setUpdateVisible(false)}
+        />
     </View>
   )
 }

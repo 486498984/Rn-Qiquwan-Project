@@ -15,6 +15,7 @@ import { px } from './utils/scaleUtils';
  import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 //import { createStackNavigator } from '@react-navigation/stack';
  import Home from './screens/Home/Home';
+import Searchlist from './screens/Home/Searchlist';
 import Allcomments from './screens/Home/Allcomments';
  import Shopinfo from './screens/Home/Shopinfo';
 import Club from './screens/Club/Club';
@@ -120,7 +121,7 @@ import { useIMStore } from './store/imStore';
   const Tab = createBottomTabNavigator();
   //const Stack = createStackNavigator();
   // 底部导航
-function TabNavigator({ totalcount }) {
+function TabNavigator({ totalcount,unreadTotal }) {
   return (
     <Tab.Navigator
       //tabBar={props => <MyTabBar {...props} />}
@@ -278,14 +279,14 @@ function TabNavigator({ totalcount }) {
           tabBarIcon: ({ focused }) => (
           <View style={{position: 'relative',width: px(34),
         height: px(34),}}>
-          {totalcount!==0&&
+          {/* {totalcount!==0&& 
              <View style={{height: px(16),borderRadius: px(8),zIndex: 1,
               backgroundColor: '#DE5452',position: 'absolute',right: -px(8),top:0,
               flexDirection: 'row',alignItems: 'center',justifyContent: 'center',
               paddingHorizontal:px(4),minWidth: px(16),}}>
           <Text style={styles.message}>{totalcount}</Text>
             </View>
-          }
+          } */}
           <Image
             source={focused 
               ?require('../assets/icons/slottery.png')
@@ -322,12 +323,12 @@ function TabNavigator({ totalcount }) {
           tabBarIcon: ({ focused }) => (
           <View style={{position: 'relative',width: px(34),
         height: px(34),}}>
-          {totalcount!==0&&
+          {unreadTotal!==0&&
              <View style={{height: px(16),borderRadius: px(8),zIndex: 1,
               backgroundColor: '#DE5452',position: 'absolute',right: -px(8),top:0,
               flexDirection: 'row',alignItems: 'center',justifyContent: 'center',
               paddingHorizontal:px(4),minWidth: px(16),}}>
-          <Text style={styles.message}>{totalcount}</Text>
+          <Text style={styles.message}>{unreadTotal}</Text>
             </View>
           }
           <Image
@@ -385,57 +386,66 @@ function App() {
   const [showPrivacy, setShowPrivacy] = useState(false); //是否展示隐私协议
   const setPrivacyAgreed = useAuthStore(state => state.setPrivacyAgreed);
   const messageChanged = useAuthStore(state => state.loginChanged);
+  const unreadTotal = useAuthStore(
+  state => state.unreadTotal
+  );
   const isDarkMode = useColorScheme() === 'dark';
   const { setConversationList } = useIMStore.getState();
   const [totalcount, setTotalcount] = useState(0);
   const [privacyReady, setPrivacyReady] = useState(false); //隐私协议是否同意
 
 
+
+
 useEffect(() => {
 
   if (!privacyReady) return;
 
-  const onReady = () => {
-    console.log('✅ IM ready');
-  };
+  // const onReady = () => {
+  //   console.log('✅ IM ready');
+  // };
 
-  const onMessageReceived = (event) => {
-    Vibration.vibrate();
-    console.log('新消息:', event.data);
-  };
+  // const onMessageReceived = (event) => {
+  //    console.log(event);
+  //   Vibration.vibrate();
+  //   console.log('新消息:', event.data);
+  // };
 
-  const onConversationListUpdated = function(event) {
-    messageChanged();
-    setConversationList(event.data);
-  };
+  // const onConversationListUpdated = function(event) {
+  //   console.log(event);
+    
+  //   messageChanged();
+  //   setConversationList(event.data);
+  // };
 
-  const onTotalUnreadMessageCountUpdated = function(event) {
-    setTotalcount(event.data);
-  };
+  // const onTotalUnreadMessageCountUpdated = function(event) {
+  //    console.log(event);
+  //   setTotalcount(event.data);
+  // };
 
-  chat.on(
-    TencentCloudChat.EVENT.SDK_READY,
-    onReady
-  );
+  // chat.on(
+  //   TencentCloudChat.EVENT.SDK_READY,
+  //   onReady
+  // );
 
-  chat.on(
-    TencentCloudChat.EVENT.MESSAGE_RECEIVED,
-    onMessageReceived
-  );
+  // chat.on(
+  //   TencentCloudChat.EVENT.MESSAGE_RECEIVED,
+  //   onMessageReceived
+  // );
 
-  chat.on(
-    TencentCloudChat.EVENT.CONVERSATION_LIST_UPDATED,
-    onConversationListUpdated
-  );
+  // chat.on(
+  //   TencentCloudChat.EVENT.CONVERSATION_LIST_UPDATED,
+  //   onConversationListUpdated
+  // );
 
-  chat.on(
-    TencentCloudChat.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED,
-    onTotalUnreadMessageCountUpdated
-  );
+  // chat.on(
+  //   TencentCloudChat.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED,
+  //   onTotalUnreadMessageCountUpdated
+  // );
   const getuserinfo = async() => {
    const user = await Storage.get("userinfo");
    if(user!==null&&user){
-    ImLogin(user.user.userId);
+   ImLogin(user.user.userId);
    console.log('用户信息',user.user.userId);
    }
    }
@@ -446,25 +456,25 @@ useEffect(() => {
 
   return () => {
 
-    chat.off(
-      TencentCloudChat.EVENT.SDK_READY,
-      onReady
-    );
+    // chat.off(
+    //   TencentCloudChat.EVENT.SDK_READY,
+    //   onReady
+    // );
 
-    chat.off(
-      TencentCloudChat.EVENT.MESSAGE_RECEIVED,
-      onMessageReceived
-    );
+    // chat.off(
+    //   TencentCloudChat.EVENT.MESSAGE_RECEIVED,
+    //   onMessageReceived
+    // );
 
-    chat.off(
-      TencentCloudChat.EVENT.CONVERSATION_LIST_UPDATED,
-      onConversationListUpdated
-    );
+    // chat.off(
+    //   TencentCloudChat.EVENT.CONVERSATION_LIST_UPDATED,
+    //   onConversationListUpdated
+    // );
 
-    chat.off(
-      TencentCloudChat.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED,
-      onTotalUnreadMessageCountUpdated
-    );
+    // chat.off(
+    //   TencentCloudChat.EVENT.TOTAL_UNREAD_MESSAGE_COUNT_UPDATED,
+    //   onTotalUnreadMessageCountUpdated
+    // );
   };
   
 }, [privacyReady]);
@@ -495,7 +505,7 @@ useEffect(() => {
     } catch (error) {
       console.error(error);
     }
-
+ 
    };
   useEffect(() => {
     const checkPrivacy = async () => {
@@ -604,7 +614,7 @@ const openWeChat = async () => {
     }}>
          {/* Tab 导航 */}
      <Tab.Screen name="MainTab">
-  {() => <TabNavigator totalcount={totalcount} />}
+  {() => <TabNavigator totalcount={totalcount} unreadTotal={unreadTotal}/>}
 </Tab.Screen>
       {/* 登录页 */}
       <Stack.Screen name="Login" component={Login}/>
@@ -661,7 +671,7 @@ const openWeChat = async () => {
 <Stack.Screen name="ShopSale" component={ShopSale}/>
 <Stack.Screen name="ShopSaleInfo" component={ShopSaleInfo}/>
 <Stack.Screen name="ShopDetails" component={ShopDetails}/>
-
+<Stack.Screen name="Searchlist" component={Searchlist}/>
 
 
 

@@ -112,20 +112,22 @@ export default function ClubInfo({navigation,route}) {
   <View style={{flexDirection: 'row',alignItems: 'center',}}>
   <SafeFastImage source={{uri:IMG_URL+shopinfo?.storeLogo}} 
      style={{width:px(65),height:px(65),borderRadius: px(4),}}/>
-    <View style={{flexDirection: 'column',marginLeft: px(6),gap:px(2)}}>
- <View style={{flexDirection: 'row',alignItems: 'center',}}>
+    <View style={{flexDirection: 'column',marginLeft: px(6),gap:px(2),
+     justifyContent: 'space-between',height: px(65),
+    }}>
+ <View style={{flexDirection: 'row',alignItems: 'flex-start',}}>
 <Image source={require('../../../assets/images/club/champion.png')} 
       style={{width:px(24),height:px(24),}}></Image>
-<Text style={styles.clubname}>{shopinfo?.storeName}</Text>
+<Text style={styles.clubname} numberOfLines={2}>{shopinfo?.storeName}</Text>
         </View>
-    <View style={{flexDirection: 'row',alignItems: 'center',gap:px(6)}}>
+    {/* <View style={{flexDirection: 'row',alignItems: 'center',gap:px(6)}}>
 <View style={{width: px(30),height: px(19),backgroundColor: '#FEF7E0',
   borderRadius: px(4),flexDirection: 'row',alignItems: 'center',justifyContent: 'center',
 }}>
 <Text style={styles.join}>加盟</Text>
 </View>
 <Text style={styles.follow}>{shopinfo?.followCount}关注</Text>
-    </View>
+    </View> */}
     <View style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}>
 <StarRating score={5}></StarRating>
 <Text style={styles.score}>5.0</Text>
@@ -248,6 +250,7 @@ const styles = StyleSheet.create({
         lineHeight:px(15),
   },
           clubname:{
+            width: px(170),
  fontFamily: 'MiSans-Medium',
         fontSize:px(18),
         color:'#1A1A1A',

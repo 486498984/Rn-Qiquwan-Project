@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Image,TextInput,
-Animated,
+Animated,RefreshControl,
 ScrollView,Platform,
  } from 'react-native'
-import React,{useState,useEffect,} from 'react'
+import React,{useState,useEffect,useCallback,} from 'react'
 import { px } from '../../utils/scaleUtils';
 import {
   Toast,
@@ -12,100 +12,111 @@ import EmployeeItem from './components/EmployeeItem'
 import LinearGradient from 'react-native-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import request from '../../api/request'
-
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function ShopEmployee({ navigation,route }) {
          const insets = useSafeAreaInsets();
           const bottomSafeHeight = insets.bottom; // 底部安全区高度（数值）
-          const actions = [
-          { 
-            key: 'all',
-            text: <Text style={styles.tooltx}>全部</Text>,
-          },
-            {
-            key: 'admin',
-            text: <Text style={styles.tooltx}>管理员</Text>,
-          },
-            {
-            key: 'operation',
-            text: <Text style={styles.tooltx}>运营</Text>,
-          },
-        {
-            key: 'finance',
-            text: <Text style={styles.tooltx}>财务</Text>,
-          },
-              {
-            key: 'kefu',
-            text: <Text style={styles.tooltx}>客服</Text>,
-          },
-        ]
       const [username, setUsername] = useState(null);
-       const [actionsse, setActionsse] = useState(actions);
-        const [rttext, setRttext] = useState('全部'); //右上角文字
-         const rotateAnim = useState(new Animated.Value(0))[0]
-        const [open, setOpen] = useState(false)
-        const rotate = rotateAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: ['0deg', '180deg'],
-        })
     const {storeinfo}=route.params||{}
+
+const [list, setList] = useState([]);
+const [page, setPage] = useState(1);
+const [refreshing, setRefreshing] = useState(false);
+const [loadingMore, setLoadingMore] = useState(false);
+const [hasMore, setHasMore] = useState(true);
+
 
 
 
      const onChangeText = (e) => {
       console.log(e);
       setUsername(e)
+        // 搜索时重新加载第一页
+     getemployeelist(1, true, e);
      };
       const handleback = () => {  //返回上一页
    navigation.goBack();
   };
-    const handlenode = (e) => {  //切换右上角
-  console.log(e.text.props.children);
-  setRttext(e.text.props.children)
-  };
-  const toggleRotate = () => {
-    Animated.timing(rotateAnim, {
-      toValue: open ? 0 : 1,
-      duration: 200,
-      useNativeDriver: true,
-    }).start()
-  
-    setOpen(!open)
-  };
-    const handlesubmit = () => {  //提交
-    navigation.navigate('ShopAddEmployee')
-    };
 
-    useEffect(() => {
-      if(storeinfo){
-        console.log(storeinfo);
-      getemployeelist(storeinfo);
+    const handlesubmit = () => {  //提交
+    navigation.navigate('ShopAddEmployee',{storeinfo})
+    };
+useFocusEffect(
+  useCallback(() => {
+    if (!storeinfo) return;
+
+    // 重置状态
+    setPage(1);
+    setHasMore(true);
+
+    // 关键：必须是“刷新模式”
+    getemployeelist(1, true, username);
+
+  }, [storeinfo, username])
+);
+useEffect(() => {
+  if (storeinfo) {
+    console.log(storeinfo);
+    getemployeelist(1, true);
+  }
+}, [storeinfo]);
+const getemployeelist = async(pageNum = 1, 
+  isRefresh = false ,keyword = username,) => {
+  try {
+
+    if (!isRefresh) {
+      setLoadingMore(true);
+    }
+
+    const response = await request({
+      url: '/store/role/list',
+      method: 'GET',
+      data:{},
+      query: {
+        storeId: storeinfo,
+        page: pageNum,
+        pageSize: 10,
+        keyword: keyword || '',
+      }
+    });
+
+    console.log(response);
+
+    if (response.data !== undefined && response.code == 0) {
+
+      let res = response.data.list || [];
+
+      // 是否还有更多
+      setHasMore(res.length >= 10);
+
+      // 刷新
+      if (isRefresh) {
+        setList(res);
+      } else {
+        setList(prev => [...prev, ...res]);
       }
 
-    }, [storeinfo])
-    const getemployeelist = async(id) => { 
-          try {
-             const response = await request({
-               url: '/store/role/list',
-               method: 'GET',
-               data:{},
-               query: {
-                storeId:id,
-                page:1,
-                pageSize:10,
+      setPage(pageNum);
+    }
 
-              }
-             });
-             console.log(response);
-            if(response.data!==undefined&&response.code==0){
-                let res=response.data
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setRefreshing(false);
+    setLoadingMore(false);
+  }
+};
+const onRefresh = () => {
+    setRefreshing(true);
+  getemployeelist(1, true);
+};
+const loadMore = () => {
 
-            }
-           } catch (error) {
-             console.error(error);
-           }
- 
-     };
+  if (loadingMore || !hasMore) return;
+
+  getemployeelist(page + 1, false);
+};
 
 
   return (
@@ -127,7 +138,7 @@ export default function ShopEmployee({ navigation,route }) {
             <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
              justifyContent:'space-between',marginBottom: px(8),paddingHorizontal:px(16)
             }}>
-    <View style={{width: px(290),height: px(32),backgroundColor: '#F2F3F5',
+    <View style={{width: '100%',height: px(32),backgroundColor: '#F2F3F5',
              borderRadius: px(20), flexDirection: 'row',alignItems: 'center',
              padding:px(0),
             }}>
@@ -145,41 +156,65 @@ export default function ShopEmployee({ navigation,route }) {
             />
             </View>
 
-           <Tooltip.Menu
-            actions={actionsse}
-            onVisibleChange={(e)=>toggleRotate()}
-            placement="bottom-end"
-            crossOffset={{ top: 0, left: 0 }}
-            onAction={(node) => handlenode(node)
-            }
-            trigger="onPress"
-       >
-        <TouchableOpacity   style={{  position: 'absolute',
-        right: px(16),flexDirection: 'row',alignItems: 'center',height:px(35),
-        }}>
-        <Text style={styles.alltx}>{rttext}</Text>
-        <Animated.Image
-        source={require('../../../assets/images/my/select.png')}
-        style={{
-          width: px(17),
-          height: px(17),
-          transform: [{ rotate }],
-        }}
-        />
-      </TouchableOpacity>
-          </Tooltip.Menu>
             </View>
          
           </View>
- <ScrollView contentContainerStyle={{paddingTop:px(8),paddingHorizontal:px(16),paddingBottom:px(155),
-    
- }}  showsVerticalScrollIndicator={false}>
-{[0,1,2,3,4,5,6].map((item,index)=>
-    <View key={index} style={{marginTop: px(8),}}>
-   <EmployeeItem navigation={navigation}></EmployeeItem>
-    </View>
-)}
+ <ScrollView contentContainerStyle={{paddingTop:px(8),paddingHorizontal:px(16),
+ paddingBottom:px(155),}}  showsVerticalScrollIndicator={false}
+   refreshControl={
+    <RefreshControl
+      refreshing={refreshing}
+      onRefresh={onRefresh}
+      colors={['#FC9026']}
+      tintColor={'#FC9026'}
+    />
+   }
+   onScroll={({ nativeEvent }) => {
+  const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
 
+  const isCloseToBottom =
+    layoutMeasurement.height + contentOffset.y >=
+    contentSize.height - 20;
+
+  if (isCloseToBottom) {
+    loadMore();
+  }
+}}
+scrollEventThrottle={200}
+ >
+  {list?.map((item,index)=>
+      <View key={index} style={{marginTop: px(8),}}>
+    <EmployeeItem navigation={navigation} item={item}
+      onRefresh={onRefresh}
+    ></EmployeeItem>
+      </View>
+  )}
+{
+  loadingMore &&
+  <View style={{paddingVertical:px(18),alignItems:'center'}}>
+    <Text style={styles.bottomtext}>
+      加载中...
+    </Text>
+  </View>
+}
+
+{
+  !hasMore && list.length > 0 &&
+  <View style={{paddingVertical:px(18),alignItems:'center'}}>
+    <Text style={styles.bottomtext}>
+      没有更多了
+    </Text>
+  </View>
+}
+
+{
+  !hasMore && list.length == 0 &&
+  <View style={{paddingVertical:px(18),alignItems:'center'}}>
+    <Text style={styles.bottomtext}>
+      暂无员工
+    </Text>
+  </View>
+}
  </ScrollView>
 
     <View style={{position: 'absolute',bottom:0,width: '100%',backgroundColor: '#fff',
@@ -211,6 +246,14 @@ export default function ShopEmployee({ navigation,route }) {
 }
 
 const styles = StyleSheet.create({
+      bottomtext: {
+    textAlign:'center',
+     fontFamily: 'MiSans-Regular',
+        fontSize:px(13),
+        color:'#AAAAAA',
+        fontWeight:400,
+        lineHeight:px(17),
+  },
                     xiadantx:{
       fontFamily: 'MiSans-Regular',
         fontSize:px(15),
@@ -242,11 +285,13 @@ fontFamily: 'MiSans-Regular',
         lineHeight:px(17),
   },
       inputbox:{
+       //backgroundColor: 'red',
   paddingTop:0,
   paddingBottom:0,
     marginLeft: px(7),
-  width: px(225),
-  height: px(32),
+  
+  width: px(285),
+  //height: px(32),
   fontSize: px(12),
   fontFamily: 'MiSans-Regular',
     },

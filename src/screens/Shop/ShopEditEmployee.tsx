@@ -1,13 +1,24 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image, Platform, TextInput,TouchableWithoutFeedback,
     Keyboard,
  } from 'react-native'
-import React, { useRef, useState, } from 'react'
+import React, { useRef, useState,useEffect, } from 'react'
 import { px } from '../../utils/scaleUtils';
 import TextCheckboxModal from '../../components/Shop/TextCheckboxModal';
 import LinearGradient from 'react-native-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import request from '../../api/request'
+import TextRadioModal from '../../components/Shop/TextRadioModal';
+import {
+  Toast,Modal as Modalitem,
+} from '@ant-design/react-native'
 
 
+
+const platOptions = [
+  { label: '手游', value: 0 },
+  { label: '端游', value: 1 },
+  { label: '双端', value: 2 },
+];
 const Line = () => {
     return (
         <View style={{
@@ -17,27 +28,171 @@ const Line = () => {
     )
 }
 export default function ShopEditEmployee({ navigation,route }) {
-      const { type } = route.params || {}; //1为新增 2为编辑
+      const { type,item,storeinfo, } = route.params || {}; //1为新增 2为编辑
     const insets = useSafeAreaInsets();
     const bottomSafeHeight = insets.bottom; // 底部安全区高度（数值）
     const shopsortinputRef = useRef(null); //商品排序
     const [shopsort, setShopsort] = useState(''); //商品排序
     const [visiblecommit, setVisiblecommit] = useState(false); //承诺保障开关
     const [commitvalues, setCommitvalues] = useState<(number | string)[]>([]); //承诺保障内容
+    const [userinfo, setUserinfo] = useState({}); //传入信息
+    const [visibleplat, setVisibleplat] = useState(false) //商品平台弹窗开关
+    const [shopplat, setShopplat] = useState(0); //商品平台
+    const [platform, setPlatform] = useState(platOptions); //平台列表
 
 
+
+    useEffect(() => {
+        getrolelist();
+     if(item){
+        console.log(item);
+        setUserinfo(item);
+        if(type==2){
+        setShopsort(item.name)
+        setShopplat(item.roleId)
+        }
+     }
+    }, [item])
+    const getrolelist = async() => { 
+     try {
+const response = await request({
+  url: '/store/role/syslist',
+  method: 'GET',
+  data: {
+    },
+   query: {
+    storeId:100,
+    roleType:'STORE',
+   },
+    }); 
+      console.log('address',response);
+      if (response.data !== null && response.code == 0) {
+      const platOptions = response.data.map(item => ({
+            id: item.roleId,
+            label: item.roleName,
+            value: item.roleId,
+            }));
+        console.log(platOptions);
+        setPlatform(platOptions)
+      }
+      } catch (error) {
+      console.error(error);
+      }
+
+
+     };
     const handleback = () => {  //返回上一页
         navigation.goBack();
     };
-    const handlesubmit = () => {  //提交
+    const handlesubmit = async() => {  //提交
+        console.log(shopplat,shopsort,item.phone,storeinfo);
+          if(shopplat==0){
+   Toast.show({
+    content: '请先选择角色',
+    duration: 2,
+    position: 'center',
+    mask: false,
+  })
+  return
+ }
+   if(shopsort==''){
+   Toast.show({
+    content: '请先填写真实姓名',
+    duration: 2,
+    position: 'center',
+    mask: false,
+  })
+  return
+ }
+      try {
+const response = await request({
+  url: '/store/role/add',
+  method: 'POST',
+  data: {
+    storeId: storeinfo,
+    phone: item.phone,
+    roleId: shopplat,
+    name: shopsort,
+    attr: "{\"level\":\"senior\"}",
+    remark: ""
+    },
+   query: {
+
+   },
+    }); 
+      console.log('address',response);
+      if (response.data !== null && response.code == 0) {
+            Toast.success({
+            content: '添加成功',
+            duration: 2,
+            position: 'center',
+            mask: false,
+          })
+       handleback();
+      }else{
+            Toast.fail({
+            content: response.data,
+            duration: 2,
+            position: 'center',
+            mask: false,
+          })
+      }
+      } catch (error) {
+      console.error(error);
+      }
         //navigation.navigate('ShopAddEmployee')
     };
-    const getLabels = (values, data) => {
-  return data
-    .filter(item => values.includes(item.value))
-    .map(item => item.label)
-    .join('、');
-};
+        const getRoleName = (id) => {
+        return platform.find(item => item.value === id)?.label || '请选择角色';
+        };
+    const handlesavesubmit = async() => {
+   if(shopsort==''){
+   Toast.show({
+    content: '请先填写真实姓名',
+    duration: 2,
+    position: 'center',
+    mask: false,
+  })
+  return
+ }
+ console.log(item);
+
+      try {
+const response = await request({
+  url: '/store/role/update',
+  method: 'PUT',
+  data: {
+    id:item.id,
+    storeId: item.storeId,
+    roleId: shopplat,
+    name: shopsort,
+    remark: ""
+    },
+   query: {
+
+   },
+    }); 
+      console.log('address',response);
+      if (response.data !== null && response.code == 0) {
+            Toast.success({
+            content: '保存成功',
+            duration: 2,
+            position: 'center',
+            mask: false,
+          })
+       handleback();
+      }else{
+            Toast.fail({
+            content: response.data,
+            duration: 2,
+            position: 'center',
+            mask: false,
+          })
+      }
+      } catch (error) {
+      console.error(error);
+      }
+    };
     return (
              <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
         <View style={styles.container}>
@@ -74,7 +229,7 @@ export default function ShopEditEmployee({ navigation,route }) {
                         height: px(51),
                     }}>
                         <Text style={styles.lefttitle}>账号</Text>
-                        <Text style={styles.lefttitle}>19983458001</Text>
+                        <Text style={styles.lefttitle}>{userinfo?.phone}</Text>
                     </View>
                     <Line></Line>
                 </View>
@@ -109,7 +264,7 @@ export default function ShopEditEmployee({ navigation,route }) {
                                     }}
                                     placeholder="请输入姓名"
                                     placeholderTextColor="#AAAAAA"
-                                    maxLength={8}
+                                    maxLength={18}
                                     selectionColor='#FC9026'
                                 //multiline
                                 //keyboardType="numeric" 
@@ -123,7 +278,7 @@ export default function ShopEditEmployee({ navigation,route }) {
                 <TouchableOpacity style={{
                     width: '100%', height: px(51), paddingHorizontal: px(16),
                     flexDirection: 'column', justifyContent: 'center', backgroundColor: '#fff',
-                }} onPress={() => setVisiblecommit(true)}>
+                }} onPress={() => setVisibleplat(true)}>
                     <View style={{
                         flexDirection: 'row', alignItems: 'center',
                         justifyContent: 'space-between', width: '100%',
@@ -134,15 +289,7 @@ export default function ShopEditEmployee({ navigation,route }) {
                         </View>
                         <View style={{ flexDirection: 'row', alignItems: 'center', }}>
                             <Text style={[styles.lefttitle, { width: px(247), textAlign: 'right' }]} numberOfLines={1}>
-                                {/* {commitvalues?.length ? commitvalues.join('、') : '请选择'} */}
-                                  {commitvalues?.length
-                                    ? getLabels(commitvalues, [
-                                    { label: '管理员', value: 0 },
-                                    { label: '运营', value: 1 },
-                                    { label: '财务', value: 2 },
-                                    { label: '客服', value: 3 },
-                                ])
-                                    : '请选择'}
+                              {getRoleName(shopplat)}
                                 </Text>
                             <Image source={require('../../../assets/images/my/right.png')}
                                 style={{ width: px(19), height: px(19) }}></Image>
@@ -167,7 +314,18 @@ export default function ShopEditEmployee({ navigation,route }) {
                     setVisiblecommit(false);
                 }}
             />
-
+    <TextRadioModal
+      visible={visibleplat}
+      onClose={() => setVisibleplat(false)}
+      data={platform} 
+      value={shopplat}
+      onConfirm={(val) => {
+        console.log(val);
+        
+        setShopplat(val);
+        setVisibleplat(false);
+      }}
+    />
 
             <View style={{
                 position: 'absolute', bottom: 0, width: '100%', backgroundColor: '#fff',
@@ -196,7 +354,7 @@ export default function ShopEditEmployee({ navigation,route }) {
                         </TouchableOpacity>
                         }
                        {type==2&&
-                                <TouchableOpacity onPress={() => handlesubmit()}>
+                                <TouchableOpacity onPress={() => handlesavesubmit()}>
                             <LinearGradient
                                 colors={['#FEC525', '#FC9026']} // 渐变颜色
                                 start={{ x: 1, y: 0 }}

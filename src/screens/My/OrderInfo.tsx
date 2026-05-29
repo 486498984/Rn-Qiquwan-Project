@@ -761,6 +761,43 @@ const handlecannel = async() => {  //取消订单
            console.error(error);
          }
    };
+   const handlegokefu = async() => {
+     console.log(213,orderinfo);
+     //return
+    try {
+    const response = await request({
+      url: '/customer/get',
+      method: 'GET',
+      data:{},
+      query: {
+        //userId:user.user.userId,
+        storeId:orderinfo.storeId
+      }
+    });
+    console.log(response);
+    if(response.data!==undefined&&response.code==0){
+      console.log(response.data.userId);
+        
+      let a={
+        storeName: orderinfo.storeName,
+        storeId: response.data.keeper.storeId,
+        id: response.data.keeper.sessionId,
+      }
+      console.log(a);
+    navigation.navigate('OneChat',{item:a})
+    }else{
+    Toast.show({
+        content: response.data,
+        duration: 2,
+        position: 'center',
+        mask: false,
+      })
+    }
+  } catch (error) {
+    console.error(error);
+  }
+   }
+   
   return (
     <View style={styles.container}>
       <View style={{width: px(393),height: px(98),backgroundColor: '#fff',
@@ -810,7 +847,8 @@ style={{width:px(32),height:px(32)}}></Image>
     style={{width:px(19),height:px(19)}}></Image>
     </TouchableOpacity>
     {currentConfig.showCustomer &&
-       <TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}>
+       <TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}
+       onPress={()=>handlegokefu()}>
       <Image source={require('../../../assets/images/my/kefu.png')} 
     style={{width:px(16),height:px(16)}}></Image>
     <Text style={styles.yingfu}>客服</Text>

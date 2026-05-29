@@ -459,7 +459,7 @@ const addResponse=      await request({
     handleopenmodal()
   }}>
   {tixianmode==1?(
-<Text style={usernumber?styles.zfbisdes:styles.zfbdes}>{usernumber?usernumber:'提现账户名必须与工作室主体名称一致'}</Text>
+<Text style={usernumber?styles.zfbisdes:styles.zfbdes}>{usernumber?usernumber:'提现账户名需与实名认证姓名一致'}</Text>
   ):(
 <Text style={usernumberyhk?styles.zfbisdes:styles.zfbdes}>{usernumberyhk?usernumberyhk:'请填写银行卡信息'}</Text>
   )

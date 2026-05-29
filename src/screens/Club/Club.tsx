@@ -6,6 +6,7 @@ import {
   Image,
   RefreshControl,
   FlatList,
+  TouchableOpacity,
 } from 'react-native'
 
 import { px } from '../../utils/scaleUtils'
@@ -190,7 +191,8 @@ export default function Club({ navigation }) {
           gap: px(8),
         }}>
 
-          <View style={styles.parallelogram}>
+          <TouchableOpacity style={styles.parallelogram}
+           onPress={()=>navigation.navigate('Searchlist',{type:2})}>
 
             <Image
               source={require('../../../assets/images/home/searchbox.png')}
@@ -214,8 +216,13 @@ export default function Club({ navigation }) {
               搜俱乐部
             </Text>
 
-          </View>
-
+          </TouchableOpacity>
+         
+<TouchableOpacity onPress={()=>
+  navigation.navigate('MainTab', {
+  screen: 'Lottery',
+})
+}>
           <Image
             source={require('../../../assets/images/home/newcomer.png')}
             style={{
@@ -223,7 +230,7 @@ export default function Club({ navigation }) {
               height: px(34),
             }}
           />
-
+</TouchableOpacity>
         </View>
 
       </View>

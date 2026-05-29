@@ -57,7 +57,7 @@ const [reshop, setReshop] = useState([]) //推荐商品列表
   const [tablist, setTablist] = useState(routes)  //tab列表
   const [dataMap, setDataMap] = useState({});
   const [shopnumber, setShopnumber] = useState(8)
-
+  const [notice, setNotice] = useState(null) //公告详情
 
 
           const handleback = () => {  //返回上一页
@@ -71,7 +71,8 @@ const [reshop, setReshop] = useState([]) //推荐商品列表
             getshoplist(storeinfo,'isNew') //获取商品列表
             getshoplist(storeinfo,'isHot') //获取商品列表
             getshoplist(storeinfo,'isRecommend') //获取商品列表
-            gettabinfo()
+            gettabinfo();
+            getnotice(storeinfo);
            }
           }, [storeinfo])
           useEffect(() => {
@@ -90,6 +91,26 @@ const [reshop, setReshop] = useState([]) //推荐商品列表
               fetchList(key, 1, false); // ✅ 每次切换都请求
             }
           }, [tabIndex]);
+          const getnotice = async(e) => { 
+        try {
+    const response = await request({
+      url: '/store/notice/detail',
+      method: 'GET',
+      data: {
+        },
+      query: {
+        storeId:e.id,
+      },
+        }); 
+      console.log('address',response);
+      if (response.data !== null && response.code == 0&&response.data.status=="PUBLISHED") {
+      setNotice(response.data)
+      }
+      } catch (error) {
+      console.error(error);
+      }
+
+           };
 const gettabinfo = async () => {
   const routes = await gettabslist(); // 👈 返回 routes
   const key = routes?.[tabIndex]?.key;
@@ -342,7 +363,7 @@ const gettabslist = async () => {
            }
        }
        };
-  const handlegokefu = async() => { 
+  const handlegokefu = async() => {
   const user = await Storage.get("userinfo");
       console.log(user);
       if(user==null){ //未登陆的情况
@@ -362,7 +383,15 @@ const gettabslist = async () => {
              });
              console.log(response);
             if(response.data!==undefined&&response.code==0){
-
+              console.log(response.data.userId);
+                
+              let a={
+                storeName: '123',
+                storeId: response.data.keeper.storeId,
+                id: response.data.keeper.sessionId,
+              }
+              console.log(a);
+            navigation.navigate('OneChat',{item:a})
             }else{
             Toast.show({
                 content: response.data,
@@ -389,13 +418,14 @@ const gettabslist = async () => {
 <Text style={styles.title}>俱乐部</Text>
                 </View>
                 <View style={{flexDirection: 'row',alignItems: 'center',gap:px(12)}}>
-  <View style={styles.parallelogram}>
+  <TouchableOpacity style={styles.parallelogram}
+    onPress={()=>navigation.navigate('Searchlist',{type:1,id:storeinfo.id})}>
        <Image source={require('../../../assets/images/home/searchbox.png')} 
          style={{width:px(187),height:px(34),position: 'absolute',}}></Image>
     <Image source={require('../../../assets/images/home/search.png')} 
          style={{width:px(16),height:px(16),marginLeft: px(12),}}></Image>
          <Text style={styles.searchtext}>搜店内商品</Text>
-</View>
+</TouchableOpacity>
 <TouchableOpacity style={{width:px(32),height: px(32),flexDirection: 'row',
     alignItems: 'center',gap:px(5),justifyContent: 'center',
 }} onPress={()=> navigation.navigate('ClubInfo',{shopinfo:storedata})}>
@@ -496,23 +526,23 @@ justifyContent: 'space-between',width: px(290),height: px(65),}}>
 </View> */}
 </View>
 </View>
-{storedata?.Notice!==null&&
-<View style={{marginTop: px(12),}}>
-     <NoticeBar marqueeProps={{ loop: true }}
-     icon={<Image source={require('../../../assets/images/club/notice.png')} 
-     style={{width:px(18),height:px(18),}}></Image>}
-      styles={{
-    font: { color: '#1A1A1A',},
-    marquee:{fontSize:px(13),fontFamily: 'MiSans-Medium',lineHeight:px(17)},
-    background: { backgroundColor: '#fff' },
-    iconWrap:{marginLeft: px(7),},
-    container:{borderRadius: px(8),},
-    }}
-    >
-  {storedata?.Notice?.content}
-</NoticeBar>
-</View>
-}
+  {notice!==null&&
+  <View style={{marginTop: px(12),}}>
+      <NoticeBar marqueeProps={{ loop: true }}
+      icon={<Image source={require('../../../assets/images/club/notice.png')} 
+      style={{width:px(18),height:px(18),}}></Image>}
+        styles={{
+      font: { color: '#1A1A1A',},
+      marquee:{fontSize:px(13),fontFamily: 'MiSans-Medium',lineHeight:px(17)},
+      background: { backgroundColor: '#fff' },
+      iconWrap:{marginLeft: px(7),},
+      container:{borderRadius: px(8),},
+      }}
+      >
+    {notice?.content}
+  </NoticeBar>
+  </View>
+  }
  
 <View style={{marginTop: px(12),}}>
     {/* <Image source={require('../../../assets/images/club/clubback.png')} 

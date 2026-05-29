@@ -14,7 +14,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 
 export default function ShopIndex({navigation,route}) {
-    const {id} =route.params || null
+    const {id,userinfo} =route.params || null
     const [storeinfo, setStoreinfo] = useState(null);
     const [logoError, setLogoError] = useState(false);
   const [badge, setBadge] = useState({}); //订单下标
@@ -44,7 +44,7 @@ navigation.navigate('ShopHomeOrder',{e,id:id})
  const [isOn, setIsOn] = useState(true);
  useEffect(() => {
     if(id){
-   console.log(id); //店铺id
+   console.log('huichaun',id,userinfo); //店铺id
    getstoreinfo(id) //获取店铺详情
    gettodaydata(id) //获取今日数据
    getmoney(id) //获取提现金额
@@ -155,6 +155,126 @@ const changestatus = async (e) => {
     console.error(error);
   }
 };
+const goemploye = () => { //跳转员工管理
+  console.log(id);
+  
+  getclubpermission();
+  return
+  navigation.navigate('ShopEmployee',{storeinfo:id})
+};
+    const getclubpermission = async() => {
+        try {
+        const response = await request({
+          url: '/store/role/auth',
+          method: 'GET',
+          data: {
+          },
+          query: {},
+        }); 
+        console.log('auth',response);
+      if (response.data !== null && response.code == 0) {
+ const storelist = response.data || [];
+
+// 找到当前店铺
+const currentStore = storelist.find(
+  item => item.storeId === id
+);
+
+// 当前店铺下的用户列表
+const users = currentStore?.users || [];
+
+// 判断权限
+const hasPermission = users.some(
+  item => item.roleCode === 'STORE_ADMIN'
+);
+
+if (hasPermission) {
+  navigation.navigate('ShopEmployee', {
+    storeinfo: id,
+  });
+} else {
+  Toast.show({
+    content: '暂无权限',
+    duration: 2,
+    position: 'center',
+    mask: false,
+  });
+}
+      } else{
+            Toast.show({
+          content: '暂无权限',
+          duration: 2,
+          position: 'center',
+          mask: false,
+        })
+      }
+      } catch (error) {
+            Toast.show({
+          content: '暂无权限',
+          duration: 2,
+          position: 'center',
+          mask: false,
+        })
+        console.error(error);
+      }
+     };
+    const gotixian = async() => {
+
+              try {
+        const response = await request({
+          url: '/store/role/auth',
+          method: 'GET',
+          data: {
+          },
+          query: {},
+        }); 
+        console.log('auth',response);
+      if (response.data !== null && response.code == 0) {
+ const storelist = response.data || [];
+
+// 找到当前店铺
+const currentStore = storelist.find(
+  item => item.storeId === id
+);
+console.log(currentStore);
+
+// 当前店铺下的用户列表
+const users = currentStore?.users || [];
+
+const hasPermission =
+  users.length === 1 &&
+  users[0]?.roleCode === 'STORE_CS';
+console.log(hasPermission);
+
+if (!hasPermission) {
+  navigation.navigate('ShopCashout',{id:id})
+} else {
+  Toast.show({
+    content: '暂无权限',
+    duration: 2,
+    position: 'center',
+    mask: false,
+  });
+}
+      } else{
+            Toast.show({
+          content: '暂无权限',
+          duration: 2,
+          position: 'center',
+          mask: false,
+        })
+      }
+      } catch (error) {
+            Toast.show({
+          content: '暂无权限',
+          duration: 2,
+          position: 'center',
+          mask: false,
+        })
+        console.error(error);
+      }
+    };
+
   return (
     <View style={styles.container}>
           <View style={{width: px(393),height: px(98),backgroundColor: '#fff',
@@ -296,7 +416,7 @@ onPress={()=>handlegohome(5)}>
      justifyContent: 'space-between',
 }}>
 <TouchableOpacity style={{flexDirection: 'column',gap:px(6)}} 
-onPress={()=>navigation.navigate('ShopCashout',{id:id})}>
+onPress={()=>gotixian()}>
 <View style={{flexDirection: 'row',alignItems: 'center',}}>
     <Text style={styles.pricedes}>可提现(元)</Text>
     <Image source={require('../../../assets/images/my/greyright.png')} 
@@ -386,7 +506,7 @@ marginTop: px(16),borderRadius: px(6),flexDirection: 'row',alignItems: 'center',
     <Text style={styles.bottomdes}>商品管理</Text>
 </TouchableOpacity>
 <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',}}
- onPress={()=>navigation.navigate('ShopEmployee',{storeinfo:id})}>
+ onPress={()=>goemploye()}>
   <Image source={require('../../../assets/images/my/other3.png')} 
     style={{width:px(33),height:px(33),}}></Image>
     <Text style={styles.bottomdes}>员工管理</Text>

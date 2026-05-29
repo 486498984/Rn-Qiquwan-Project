@@ -1,4 +1,6 @@
-import { StyleSheet, Text, View,TouchableOpacity,Image } from 'react-native'
+import { StyleSheet, Text, View,TouchableOpacity,Image,Linking,
+    
+ } from 'react-native'
 import React,{useState} from 'react'
 import { px } from '../../utils/scaleUtils';
 import LinearGradient from 'react-native-linear-gradient';
@@ -9,6 +11,15 @@ export default function Join({navigation}) {
       const handleback = () => {  //返回上一页
      navigation.goBack();
      };
+const openWechatLink = async () => {
+  const url = 'https://work.weixin.qq.com/ca/cawcdea2c4e121224f';
+
+  try {
+    await Linking.openURL(url);
+  } catch (e) {
+    console.log('无法打开链接', e);
+  }
+};
   return (
     <View style={styles.container}>
            <LinearGradient
@@ -167,7 +178,7 @@ style={styles.smallBox}
 </View>
 <TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',justifyContent: 'center',
     marginTop: px(18),
-}}>
+}} onPress={openWechatLink}>
   <LinearGradient
                 colors={['#FEC525', '#FC9026']} // 渐变颜色
                 start={{ x: 1, y: 0 }}   
