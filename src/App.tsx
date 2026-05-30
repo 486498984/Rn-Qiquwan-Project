@@ -52,6 +52,8 @@ import Refund from './screens/My/Refund';
 import Aftersales from './screens/My/Aftersales';
 import SafeOrderInfo from './screens/My/SafeOrderInfo';
 import OneChat from './screens/News/OneChat';
+import Noticepla from './screens/News/Noticepla';
+import Noticeinfo from './screens/News/Noticeinfo';
 import ShopIndex from './screens/Shop/ShopIndex';
 import ShopOrder from './screens/Shop/ShopOrder';
 import ShopCashout from './screens/Shop/ShopCashout';
@@ -100,12 +102,12 @@ import {
 import { useIMStore } from './store/imStore';
 //import { TUILogin } from '@tencentcloud/tui-core';
  import * as WeChat from 'react-native-wechat-lib';
-  import { navigationRef } from './api/navigationService';
+  import { navigationRef,navigate } from './api/navigationService';
   import request from './api/request';
+import Push from '@tencentcloud/react-native-push';
 
 
-
-
+ 
   const loginInfo =
   Platform.OS === 'ios'
     ? {
@@ -389,12 +391,19 @@ function App() {
   const unreadTotal = useAuthStore(
   state => state.unreadTotal
   );
+    const isNewmessageChanged = useAuthStore(
+  state => state.isNewmessageChanged
+  );
+    const setUnreadTotal = useAuthStore(
+  state => state.setUnreadTotal
+  );
+  const isLogin = useAuthStore(state => state.isLogin);
   const isDarkMode = useColorScheme() === 'dark';
   const { setConversationList } = useIMStore.getState();
   const [totalcount, setTotalcount] = useState(0);
   const [privacyReady, setPrivacyReady] = useState(false); //隐私协议是否同意
 
-
+ 
 
 
 useEffect(() => {
@@ -405,11 +414,14 @@ useEffect(() => {
   //   console.log('✅ IM ready');
   // };
 
-  // const onMessageReceived = (event) => {
-  //    console.log(event);
-  //   Vibration.vibrate();
-  //   console.log('新消息:', event.data);
-  // };
+  const onMessageReceived = (event) => {
+     console.log(event);
+    Vibration.vibrate();
+    console.log('新消息cccc:', event.data);
+    getclubpermission();
+    isNewmessageChanged();
+
+  };
 
   // const onConversationListUpdated = function(event) {
   //   console.log(event);
@@ -428,10 +440,10 @@ useEffect(() => {
   //   onReady
   // );
 
-  // chat.on(
-  //   TencentCloudChat.EVENT.MESSAGE_RECEIVED,
-  //   onMessageReceived
-  // );
+  chat.on(
+    TencentCloudChat.EVENT.MESSAGE_RECEIVED,
+    onMessageReceived
+  );
 
   // chat.on(
   //   TencentCloudChat.EVENT.CONVERSATION_LIST_UPDATED,
@@ -446,13 +458,103 @@ useEffect(() => {
    const user = await Storage.get("userinfo");
    if(user!==null&&user){
    ImLogin(user.user.userId);
+   getclubpermission();
    console.log('用户信息',user.user.userId);
+   }else{
+    setUnreadTotal(0)
    }
    }
 
    getuserinfo()
+       const getclubpermission = async() => { 
+           try {
+           const response = await request({
+             url: '/store/role/auth',
+             method: 'GET',
+             data: {
+             },
+             query: {},
+           }); 
+           console.log('auth',response);
+         if (response.data !== null && response.code == 0&&response.data.length!==0) {
+           const storelist=response.data
+         //   const customerServiceItem = storelist.find(item =>
+         //   item.roleName?.includes('客服')
+         // );
+         const customerServiceItem = storelist
+     .flatMap(store => store.users || [])
+     .find(user => user.roleCode === 'STORE_CS');
    
-
+   console.log(customerServiceItem);
+         const hasCustomerService = storelist.some(store =>
+         store.users?.some(user => user.roleCode === 'STORE_CS')
+       );
+          console.log(hasCustomerService);
+         //const hasCustomerService = !!customerServiceItem;
+         console.log(hasCustomerService);
+         console.log(customerServiceItem);
+         //   const hasCustomerService = storelist.some(item =>
+         //   item.roleName?.includes('客服')
+         // );
+         //console.log(hasCustomerService);
+         if (hasCustomerService) {
+           getuntotal(customerServiceItem)
+           //handlegetservice(customerServiceItem)
+         //setCurrentTab('service');
+         } else {
+          //setCurrentTab('user');
+          getuntotal('user')
+          }
+   
+         }
+         } catch (error) {
+           console.error(error);
+         }
+       };
+  const getuntotal = async(e) => {
+    console.log('qwfqwrqwr',e);
+     if(e=='user'){ //用户获取未读数字
+    try {
+    const response = await request({
+      url: '/unread/total',
+      method: 'GET',
+      data: {
+        },
+      query: {
+        type:'user'
+      },
+      });
+      console.log('imlist',response);
+      if (response.data !== null && response.code == 0) {
+       if(response.data.type=='user'&&response.data.unreadTotal!==null&&response.data.unreadTotal!==undefined){
+        setUnreadTotal(response.data.unreadTotal)
+       }
+      }
+      } catch (error) {
+      console.error(error);
+      }
+     }else{ //客服获取未读数字
+    try {
+    const response = await request({
+      url: '/customer/unread',
+      method: 'GET',
+      data: {
+        },
+      query: {
+        //type:'user'
+      },
+      });
+      console.log('imlist',response);
+      if (response.data !== null && response.code == 0) {
+       if(response.data.unreadCount!==null&&response.data.unreadCount!==undefined){
+        setUnreadTotal(response.data.unreadCount)
+       }
+      }
+      } catch (error) {
+      console.error(error);
+      }
+     }
+  };
 
   return () => {
 
@@ -461,10 +563,10 @@ useEffect(() => {
     //   onReady
     // );
 
-    // chat.off(
-    //   TencentCloudChat.EVENT.MESSAGE_RECEIVED,
-    //   onMessageReceived
-    // );
+    chat.off(
+      TencentCloudChat.EVENT.MESSAGE_RECEIVED,
+      onMessageReceived
+    );
 
     // chat.off(
     //   TencentCloudChat.EVENT.CONVERSATION_LIST_UPDATED,
@@ -477,7 +579,7 @@ useEffect(() => {
     // );
   };
   
-}, [privacyReady]);
+}, [privacyReady,isLogin]);
   const ImLogin = async(e) => { 
     try {
       const response = await request({
@@ -491,7 +593,7 @@ useEffect(() => {
       console.log('imlogin',response);
     if(response.data!==undefined&&response.code==0){
         const loginInfo ={
-        userID: JSON.stringify(e),
+        userID: String(e),
         userSig: response.data.userSig,
       }
         chat.login(loginInfo)
@@ -508,6 +610,8 @@ useEffect(() => {
  
    };
   useEffect(() => {
+ console.log('App render', isLogin);
+    
     const checkPrivacy = async () => {
       //await Storage.clear();
       const agreed = await Storage.get('privacyAgreed');
@@ -527,7 +631,7 @@ useEffect(() => {
       }
     };
     checkPrivacy();
-  }, []);
+  }, [isLogin]);
   const goinit = async() => {  //初始化sdk
         WeChat.registerApp('wxa6e17fe1975fb8a6', 'https://tourok.com.cn').then((res) => {
       console.log("registerApp: " + res)
@@ -550,6 +654,57 @@ useEffect(() => {
   data.bundleId
   })
   })
+
+const SDKAppID = 1600137039; // 您的 SDKAppID
+const appKey = 'oL2Yk4JlJEZtu0GqtssWuCCguQdPoXPDU0hqBnlyRfOlSTCNNAWs6NyEtPRqytmi'; // 客户端密钥
+﻿
+if (Push) {
+     const user = await Storage.get("userinfo");
+   if(user!==null&&user){
+    let userId=user.user.userId
+    
+      Push.setRegistrationID(String(userId), () => {
+      console.log('setRegistrationID ok123', String(userId));
+  });
+   console.log('用户信息',String(userId));
+  }  
+  // 如果您需要与 Chat 的登录 userID 打通（即向此 userID 推送消息），请使用 setRegistrationID 接口
+  // Push.setRegistrationID(userID, () => {
+      // console.log('setRegistrationID ok', userID);
+  // });
+  
+  Push.registerPush(SDKAppID, appKey, (data) => {
+      console.log('registerPush ok', data);
+      Push.getRegistrationID((registrationID) => {
+        console.log('getRegistrationID ok', registrationID);
+      });
+    }, (errCode, errMsg) => {
+      console.error('registerPush failed', errCode, errMsg);
+    }
+  );
+  
+  
+  // 监听通知栏点击事件，获取推送扩展信息
+  Push.addPushListener(Push.EVENT.NOTIFICATION_CLICKED, (res) => {
+    // res 为推送扩展信息
+    //navigation.navigate('OneChat',)
+     navigate('News');
+    console.log('notification clicked', res);
+  });
+  
+  // 监听在线推送
+  Push.addPushListener(Push.EVENT.MESSAGE_RECEIVED, (res) => {
+    // res 为消息内容
+    console.log('message received', res);
+  });
+
+  // 监听在线推送被撤回
+  Push.addPushListener(Push.EVENT.MESSAGE_REVOKED, (res) => {
+    // res 为被撤回的消息 ID
+    console.log('message revoked', res);
+  });
+}
+
   };
   const checkWeChat = async () => {
   const installed = await WeChat.isWXAppInstalled();
@@ -672,8 +827,8 @@ const openWeChat = async () => {
 <Stack.Screen name="ShopSaleInfo" component={ShopSaleInfo}/>
 <Stack.Screen name="ShopDetails" component={ShopDetails}/>
 <Stack.Screen name="Searchlist" component={Searchlist}/>
-
-
+<Stack.Screen name="Noticepla" component={Noticepla}/>
+<Stack.Screen name="Noticeinfo" component={Noticeinfo}/>
 
 
       </Stack.Navigator>

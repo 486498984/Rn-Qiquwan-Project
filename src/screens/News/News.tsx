@@ -1,9 +1,10 @@
 import { StyleSheet, Text, View,ScrollView,TouchableOpacity,
-  RefreshControl,TextInput,Image,Animated,
+  RefreshControl,TextInput,Image,Animated,Vibration,
  } from 'react-native'
 import React,{useState,useEffect,useRef,useCallback,} from 'react'
 import { px } from '../../utils/scaleUtils';
 import NewItem from './components/NewItem'
+import NoticeItem from './components/NoticeItem'
 import { useIMStore } from '../../store/imStore';
 import useAuthStore from '../../utils/zustand'
 import { initIM, connectIM, onConnectStatus,onMessageStatus,onMessage,
@@ -16,6 +17,9 @@ import {
 } from '@ant-design/react-native';
 import Storage from '../../utils/storage';
 import { useFocusEffect } from '@react-navigation/native';
+import  chat  from '../../utils/im';
+ import TencentCloudChat from '@tencentcloud/chat';
+
 
 
 
@@ -41,7 +45,14 @@ export default function News({navigation}) {
   const messageChanged = useAuthStore(state => state.loginChanged);
   const setUnreadTotal = useAuthStore(
   state => state.setUnreadTotal
-);
+  );
+    const unreadTotal = useAuthStore(
+  state => state.unreadTotal
+  );
+      const isNewmessage = useAuthStore(
+  state => state.isNewmessage
+  );
+  
     const [text, setText] = useState('')
 const [visible, setVisible] = useState(false);
 const [islogin, setIslogin] = useState(false); //是否登陆
@@ -51,11 +62,14 @@ const [kefuinfo, setKefuinfo] = useState({}); //客服角色详情
 const [currentTab, setCurrentTab] = useState('service');
 const [serviceList, setServiceList] = useState([]); //工作室会话列表
 const [userList, setUserList] = useState([]); //用户会话列表
- 
+const [noticelist, setNoticelist] = useState({}); //公告列表
+
+
    useFocusEffect(
      useCallback(() => {
      getclubpermission();
      getuserinfo();
+     getnoticelist();
      }, [])
    );
 useEffect(() => {
@@ -74,9 +88,10 @@ const rotate = rotateAnim.interpolate({
   useEffect(() => {
     getclubpermission();
     getuserinfo();
+    getnoticelist();
    console.log('conlist',conversationList);
    
-  }, [conversationList,unreadCount,message])
+  }, [conversationList,unreadCount,message,isNewmessage,unreadTotal])
   const getuntotal = async(e) => {
     console.log(e);
      if(e=='user'){ //用户获取未读数字
@@ -197,12 +212,29 @@ const rotate = rotateAnim.interpolate({
     setRefreshing(true);
     getclubpermission();
     getuserinfo();
+    getnoticelist();
     // 模拟请求
     setTimeout(() => {
       console.log('刷新完成');
       setRefreshing(false);
     }, 1000);
-  }; 
+  };  
+const getnoticelist = async() => { 
+  try { 
+    const response = await request({ 
+      url: '/notice/admin/list', 
+      method: 'GET', 
+      data: { }, 
+      query: { page:1, pageSize:1 }, }); 
+      console.log('noticelist',response); 
+      if (response.data !== null && response.code == 0) { 
+        if(response.data.list!==null&&response.data.list.length!==0){
+        setNoticelist(response.data.list[0])
+        }
+
+       } 
+      } catch (error) { console.error(error); } }
+  
   const online = async(e) => { 
       try {
 const response = await request({
@@ -259,10 +291,19 @@ const response = await request({
         console.log('auth',response);
       if (response.data !== null && response.code == 0&&response.data.length!==0) {
         const storelist=response.data
-        const customerServiceItem = storelist.find(item =>
-        item.roleName?.includes('客服')
-      );
-      const hasCustomerService = !!customerServiceItem;
+      //   const customerServiceItem = storelist.find(item =>
+      //   item.roleName?.includes('客服')
+      // );
+      const customerServiceItem = storelist
+  .flatMap(store => store.users || [])
+  .find(user => user.roleCode === 'STORE_CS');
+
+console.log(customerServiceItem);
+      const hasCustomerService = storelist.some(store =>
+      store.users?.some(user => user.roleCode === 'STORE_CS')
+    );
+       console.log(hasCustomerService);
+      //const hasCustomerService = !!customerServiceItem;
       console.log(hasCustomerService);
       console.log(customerServiceItem);
       //   const hasCustomerService = storelist.some(item =>
@@ -280,7 +321,7 @@ const response = await request({
       setIskefu(hasCustomerService)
       if(customerServiceItem){
       setKefuinfo(customerServiceItem)
-      if(customerServiceItem.users[0].isOnline==1){
+      if(customerServiceItem.isOnline==1){
         setStatus('online')
       }else{
         setStatus('offline')
@@ -321,14 +362,62 @@ const response = await request({
      currentTab === 'service'
     ? serviceList
     : userList;
+
+      useEffect(() => {
+    // setTimeout(() => {
+    //   scrollToBottomWithoutAnim();
+    // }, 400);
+   
+  const onReceive = async(event) => {
+    const user = await Storage.get("userinfo");
+    if(user!==null){
+      if(user.user.userId){
+
+      }
+    }
+    Vibration.vibrate();
+    const msgs = event.data;
+    console.log('消息123',msgs);
+    const messageList = await chat.getMessageList({
+  conversationID: 'C2C23',
+  //count: 15, // 每次拉多少条
+  });
+  console.log(messageList);
+
+    getclubpermission();
+    getuserinfo();
+
+    //const newMsgs = msgs.map(formatMessage);
+     //gethistory();
+    //setMessages(prev => [...newMsgs,...prev]);
+    // chat.setMessageRead({
+    // conversationID: item.conversationID,
+    // });
+  };
+
+  chat.on(
+    TencentCloudChat.EVENT.MESSAGE_RECEIVED,
+    onReceive
+  );
+  // chat.on(
+  //   TencentCloudChat.EVENT.MESSAGE_REVOKED,
+  //   //onRevoked
+  // );
+  return () => {
+    chat.off(
+      TencentCloudChat.EVENT.MESSAGE_RECEIVED,
+      onReceive
+    );
+  };
+}, []);  
   return (
     <View style={styles.container}>
       <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
         justifyContent: 'center',paddingTop: px(65),
         //backgroundColor: 'red',
       }}>
-    <Text style={[styles.title,{marginBottom: px(8),}]}>消息中心({unreadCount})</Text>
-    {iskefu&&
+    <Text style={[styles.title,{marginBottom: px(8),}]}>消息中心({unreadTotal})</Text>
+    {iskefu&& 
       <View
       style={{
         flex: 1,
@@ -391,6 +480,8 @@ const response = await request({
 }
 
       </View>
+
+
 {/* <TouchableOpacity onPress={()=>senmessage()}
   style={{width: 100,height: 50,backgroundColor: 'red',}}>
         
@@ -446,6 +537,31 @@ const response = await request({
           onRefresh={onRefresh}
         />
       }> 
+
+<View style={{paddingHorizontal:px(0)}}>
+<NoticeItem
+noticelist={noticelist}
+navigation={navigation}
+></NoticeItem>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              marginTop: px(16),
+              paddingBottom:px(16)
+            }}
+          >
+            <View
+              style={{
+                width: px(304),
+                height: px(1),
+                backgroundColor: 'rgba(118, 118, 118,0.2)',
+              }}
+            />
+          </View>
+</View>
+
 <View style={{ gap: px(12), flex: 1 }}>
   {/* 未登录 */}
   {!islogin ? (

@@ -16,6 +16,7 @@ const useAuthStore = create((set) => ({
     // ⭐总未读数
   unreadTotal: 0,
 
+  isNewmessage: false,
   
   // 登录切换
   loginChanged: () => set((state)=>({ isLogin: !state.isLogin})),
@@ -48,7 +49,8 @@ const useAuthStore = create((set) => ({
     set(() => ({
       unreadTotal: value,
     })),
-
+  // 新消息切换
+  isNewmessageChanged: () => set((state)=>({ isLogin: !state.isNewmessage})),
 
     
 }))

@@ -1129,6 +1129,11 @@
     "@babel/helper-string-parser" "^7.27.1"
     "@babel/helper-validator-identifier" "^7.28.5"
 
+"@bam.tech/react-native-image-resizer@^3.0.11":
+  version "3.0.11"
+  resolved "https://registry.yarnpkg.com/@bam.tech/react-native-image-resizer/-/react-native-image-resizer-3.0.11.tgz#b9dc0f155b1293fe6d04944e45b6e3252ca2dea3"
+  integrity sha512-J/vAe51uPhJafT0uAIQI3gziqVs4Tnw32bHau/+I7AukSs4YxLXIaOVF6EChZ9ZFu+fLxvVrRTbHKDf+1YoXag==
+
 "@bang88/react-native-ultimate-listview@^4.1.1":
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/@bang88/react-native-ultimate-listview/-/react-native-ultimate-listview-4.1.1.tgz#d0436f4a7163adbe5b9a25c6a7f1aa4e3e279f2b"
@@ -2236,6 +2241,11 @@
   version "3.6.6"
   resolved "https://registry.yarnpkg.com/@tencentcloud/chat/-/chat-3.6.6.tgz#08e01f1baad8b684eec47a272f674b36503b1ac4"
   integrity sha512-PYPGUoZHw3GjDgM0N72qr0K/Wjp28HAoGaND077sbUQEwYFaMjZ1tuBQZugFG6v8OS8Ihx71yqNshR3xDHvYaA==
+
+"@tencentcloud/react-native-push@^1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@tencentcloud/react-native-push/-/react-native-push-1.3.0.tgz#117f52ddf38c9eb363bed9e28c087ee9ee83e49f"
+  integrity sha512-ShPCs9vMfKNw0m3R95HnDch/aLipymaSE3tRiAmunoOvmP6cU6H+nWwa3K8Xb/RQqKVUpRbzSONBqO6H8uIVlw==
 
 "@types/babel__core@^7.1.14":
   version "7.20.5"

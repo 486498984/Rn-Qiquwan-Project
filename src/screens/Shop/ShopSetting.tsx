@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View,TouchableOpacity,Image,ScrollView,TextInput,Platform,
-  KeyboardAvoidingView,DeviceEventEmitter,
+  KeyboardAvoidingView,DeviceEventEmitter,ActivityIndicator,
  } from 'react-native'
 import React,{useState,useRef,useEffect} from 'react'
 import { px } from '../../utils/scaleUtils';
@@ -375,7 +375,12 @@ const handlesubmit = async() => {  //提交
   // Toast.show({ content: "统一社会信用代码必须为18位" });
   // return
   // }
-  
+    Toast.show({
+    content: '上传中',
+    icon: <ActivityIndicator />,
+    mask: true,
+    duration: 0,
+  });
   const finlogo = await handleUploadAndFormat(shoplogo);
   const finphoto = await handleUploadAndFormat(shopphoto);
   const legalPhoto = await handleUploadAndFormat(legalPersonPhoto);
@@ -425,6 +430,7 @@ console.log(result);
     });
     console.log(response);
     if(response.data!==null&&response.data!==undefined&&response.code==0){
+      Toast.removeAll();
     Toast.success({
         content: '保存成功',
         duration: 2,
@@ -432,6 +438,7 @@ console.log(result);
         mask: false,
       })
     }else{
+      Toast.removeAll();
        Toast.fail({
         content: '保存失败，请稍后再试',
         duration: 2,
@@ -441,6 +448,7 @@ console.log(result);
     }
     
   } catch (error) {
+    Toast.removeAll();
     console.error(error);
   } 
   };

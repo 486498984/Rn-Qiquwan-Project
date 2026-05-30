@@ -15,7 +15,7 @@ import request from '../../api/request';
 import {
  Modal as Modalitem,
 } from '@ant-design/react-native'
-
+ import  chat  from '../../utils/im';
 
  const Underline=()=>{
 return(
@@ -77,8 +77,8 @@ const logoutlogin = async() => {
            await Storage.remove('userinfo');
            loginChanged();
            handleback();
-
- }
+chat.logout();
+ } 
   useEffect(() => {
    console.log('isLogin:', isLogin);
    getloginstatus();//获取登陆状态

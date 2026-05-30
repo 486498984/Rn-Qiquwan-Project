@@ -13,7 +13,7 @@ import { px } from '../../utils/scaleUtils';
 import ImagePreviewer from './ImagePreviewer';
 import SafeFastImage from '../../components/Home/SafeFastImage'
 import FastImage from 'react-native-fast-image';
-
+import ImageResizer from '@bam.tech/react-native-image-resizer';
 
 export default function ImageUploader({
   value = [],
@@ -24,32 +24,53 @@ export default function ImageUploader({
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // ✅ 选择图片
-  const handleSelectImage = () => {
-           Toast.show({
-          content: '上传中',
-          icon: <ActivityIndicator />,
-          mask: true,
-          duration:0,
+const handleSelectImage = () => {
+  Toast.show({
+    content: '上传中',
+    icon: <ActivityIndicator />,
+    mask: true,
+    duration: 0,
+  });
 
-        });
-    launchImageLibrary(
-      {
-        mediaType: 'photo',
-        quality: 0.8,
-        selectionLimit: max - value.length,
-      },
-      (response) => {
-        Toast.removeAll()
-        if (response.didCancel) return;
-        if (response.errorCode) {
-          console.log('ImagePicker Error: ', response.errorMessage);
-          return;
-        }
-        const newImages = response.assets || [];
-        onChange && onChange([...value, ...newImages]);
+  launchImageLibrary(
+    {
+      mediaType: 'photo',
+      quality: 0.8,
+      selectionLimit: max - value.length,
+    },
+    async (response) => {
+      Toast.removeAll();
+
+      if (response.didCancel) return;
+      if (response.errorCode) {
+        console.log('ImagePicker Error: ', response.errorMessage);
+        return;
       }
-    );
-  };
+
+      const assets = response.assets || [];
+
+      // 🚀 关键：统一处理图片（修正 + 压缩）
+      const fixedImages = await Promise.all(
+        assets.map(async (item) => {
+          const fixed = await fixImage(
+            item.uri,
+            item.width,
+            item.height
+          );
+
+          return {
+            ...item,
+            uri: fixed.uri,   // ⭐关键：替换成修正后的
+          };
+        })
+      );
+
+      console.log('处理后图片:', fixedImages);
+
+      onChange && onChange([...value, ...fixedImages]);
+    }
+  );
+};
 
   // ✅ 删除
   const handleDeleteImage = (index) => {
@@ -64,6 +85,24 @@ const handleImageError = (uri) => {
     [uri]: true,
   }));
 };
+const fixImage = async (uri, width, height) => {
+  try {
+    const res = await ImageResizer.createResizedImage(
+      uri,
+      width || 1080,
+      height || 1080,
+      'JPEG',
+      80,  // 压缩质量
+      0    // ⭐关键：修正 iOS 旋转
+    );
+
+    return res;
+  } catch (e) {
+    console.log('图片处理失败', e);
+    return { uri };
+  }
+};
+
   return (
     <View>
       <View style={styles.imageContainer}>

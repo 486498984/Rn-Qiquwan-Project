@@ -34,9 +34,9 @@ export default function Login({navigation}) {
       }
     });
       const handleback = () => {  //返回上一页
-   navigation.goBack();
+      navigation.goBack();
      };
-       const handleradio = () => { 
+    const handleradio = () => { 
     setRadiostatus(!radiostatus)
    };
       const handleUserAgreement = () => { //用户协议

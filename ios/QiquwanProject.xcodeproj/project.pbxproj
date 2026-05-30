@@ -21,6 +21,7 @@
 		047FA90E2F6298B60059A9B8 /* ATAuthSDK.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 047FA90D2F6298B60059A9B8 /* ATAuthSDK.bundle */; };
 		047FA9122F629AC30059A9B8 /* AliOnePassModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 047FA9102F629AC30059A9B8 /* AliOnePassModule.m */; };
 		047FA9142F62B36D0059A9B8 /* applogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 047FA9132F62B36D0059A9B8 /* applogo.png */; };
+		04B7CCEA2FCAC89500F741DF /* timpush-configs.json in Resources */ = {isa = PBXBuildFile; fileRef = 04B7CCE92FCAC89500F741DF /* timpush-configs.json */; };
 		0C80B921A6F3F58F76C31292 /* libPods-QiquwanProject.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-QiquwanProject.a */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		17651F47326B4F4FAC579136 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C817E7E98C1544C9BF580279 /* Colors.xcassets */; };
@@ -55,6 +56,8 @@
 		047FA90F2F629AC30059A9B8 /* AliOnePassModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AliOnePassModule.h; sourceTree = "<group>"; };
 		047FA9102F629AC30059A9B8 /* AliOnePassModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AliOnePassModule.m; sourceTree = "<group>"; };
 		047FA9132F62B36D0059A9B8 /* applogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = applogo.png; sourceTree = "<group>"; };
+		04B7CCE82FCABA3300F741DF /* QiquwanProject.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = QiquwanProject.entitlements; path = QiquwanProject/QiquwanProject.entitlements; sourceTree = "<group>"; };
+		04B7CCE92FCAC89500F741DF /* timpush-configs.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "timpush-configs.json"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* QiquwanProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = QiquwanProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = QiquwanProject/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = QiquwanProject/Info.plist; sourceTree = "<group>"; };
@@ -133,6 +136,7 @@
 		13B07FAE1A68108700A75B9A /* QiquwanProject */ = {
 			isa = PBXGroup;
 			children = (
+				04B7CCE82FCABA3300F741DF /* QiquwanProject.entitlements */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				761780EC2CA45674006654EE /* AppDelegate.swift */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
@@ -175,6 +179,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				04B7CCE92FCAC89500F741DF /* timpush-configs.json */,
 				047FA9112F629AC30059A9B8 /* AliOnePassModule */,
 				047FA90D2F6298B60059A9B8 /* ATAuthSDK.bundle */,
 				13B07FAE1A68108700A75B9A /* QiquwanProject */,
@@ -267,6 +272,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04B7CCEA2FCAC89500F741DF /* timpush-configs.json in Resources */,
 				047FA90E2F6298B60059A9B8 /* ATAuthSDK.bundle in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
@@ -311,9 +317,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-QiquwanProject/Pods-QiquwanProject-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-QiquwanProject/Pods-QiquwanProject-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -350,9 +360,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-QiquwanProject/Pods-QiquwanProject-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-QiquwanProject/Pods-QiquwanProject-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -380,7 +394,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 23;
+				CODE_SIGN_ENTITLEMENTS = QiquwanProject/QiquwanProject.entitlements;
+				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_TEAM = 9A77ZS5JNQ;
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -422,7 +437,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 23;
+				CODE_SIGN_ENTITLEMENTS = QiquwanProject/QiquwanProject.entitlements;
+				CURRENT_PROJECT_VERSION = 26;
 				DEVELOPMENT_TEAM = 9A77ZS5JNQ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

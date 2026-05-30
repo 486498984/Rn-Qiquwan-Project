@@ -10,10 +10,10 @@ import com.github.reactnativehero.umenganalytics.RNTUmengAnalyticsModule
 import com.github.reactnativehero.umenganalytics.RNTUmengAnalyticsPackage
 import android.content.pm.PackageManager
 import com.theweflex.react.WeChatPackage
+import com.tencent.qcloud.rntimpush.TencentCloudPushApplication
 
 
-
-class MainApplication : Application(), ReactApplication {
+class MainApplication : TencentCloudPushApplication(), ReactApplication {
 
   override val reactHost: ReactHost by lazy {
     getDefaultReactHost(

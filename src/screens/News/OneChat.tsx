@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View,TouchableOpacity,Keyboard,
     Image,TextInput,FlatList,KeyboardAvoidingView,Platform,Animated,
     SafeAreaView,Pressable,ScrollView,Vibration,Alert,PermissionsAndroid,
-
+ActivityIndicator,
  } from 'react-native'
 import React,{useState,useEffect,useRef,useCallback} from 'react'
 import { px } from '../../utils/scaleUtils';
@@ -27,6 +27,9 @@ import apiRequest from '../../api/request';
 import Storage from '../../utils/storage';
 import  {uploadImage}  from '../../api/uploadImage';
 import {IMG_URL } from '../../api/config';
+import ImageResizer from '@bam.tech/react-native-image-resizer';
+
+
 
 
  const EMOJIS = [
@@ -1041,6 +1044,7 @@ const sendImage = async (type = 'album') => {
       mediaType: 'photo',
       selectionLimit: 1,
       quality: 0.5, // ⭐压缩（很关键）
+      includeExtra: true,
     };
 
     const result =
@@ -1059,12 +1063,47 @@ const sendImage = async (type = 'album') => {
     const asset = result.assets[0];
     console.log('image',asset);
     console.log(item);
-    if(item.storeName){ //走用户发送图片
-    usersendimg(asset.uri)
-    }else{ //走客服发送图片
-    cussendimg(asset.uri)
-    }
 
+
+// 🚀 核心：修正 iOS 旋转 + 压缩重绘
+const fixImage = async (uri, width, height) => {
+  try {
+    const res = await ImageResizer.createResizedImage(
+      uri,
+      width || 1280,
+      height || 1280,
+      'JPEG',
+      80,   // 压缩质量（0~100）
+      0     // ⭐关键：不旋转（强制修正 orientation）
+    );
+
+    return res.uri;
+  } catch (e) {
+    console.log('图片处理失败', e);
+    return uri; // fallback
+  }
+};
+
+// 🚀 处理后再上传
+const fixedUri = await fixImage(
+  asset.uri,
+  asset.width,
+  asset.height
+);
+
+console.log('修正后图片:', fixedUri);
+
+//return
+    // if(item.storeName){ //走用户发送图片
+    // usersendimg(asset.uri)
+    // }else{ //走客服发送图片
+    // cussendimg(asset.uri)
+    // }
+    if(item.storeName){ //走用户发送图片
+    usersendimg(fixedUri)
+    }else{ //走客服发送图片
+    cussendimg(fixedUri)
+    }
     // ⭐ RN 必须转格式（重要）
     // const file = {
     //   uri: asset.uri,
@@ -1469,7 +1508,7 @@ ListFooterComponent={
       </Text>
     )}
 
-    {!hasMore && (
+    {!hasMore&&messages.length!==0 && (
       <Text style={styles.emptyText}>
         没有更多了
       </Text>
