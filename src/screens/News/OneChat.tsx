@@ -401,22 +401,23 @@ useEffect(() => {
 }, [item]); 
 const gethistory = async() => {
   //setPage(1);
-//   let promises = chat.getConversationList();
+  let promises = chat.getConversationList();
 
-// promises.then(function(imResponse) {
-// console.log(imResponse);
+promises.then(function(imResponse) {
+console.log(imResponse);
+ console.log('imlisr',imResponse);
+ 
+  const conversationList = imResponse.data.conversationList;
 
-//   const conversationList = imResponse.data.conversationList;
+  conversationList.forEach(item => {
 
-//   conversationList.forEach(item => {
+    console.log('会话ID:', item.conversationID);
 
-//     console.log('会话ID:', item.conversationID);
+    console.log('未读数:', item.unreadCount);
 
-//     console.log('未读数:', item.unreadCount);
+  });
 
-//   });
-
-// });
+});
 
   if(item.storeName){ //用户访问历史消息
     console.log('name',item.storeName);
@@ -587,7 +588,8 @@ const getuserhistory = async (
         pageSize: 20,
       },
     });
-
+    console.log('history222',response);
+    
     if (
       response.data &&
       response.code === 0
@@ -772,7 +774,7 @@ setMessages(prev => {
     // }, 400);
    
   const onReceive = (event) => {
-    Vibration.vibrate();
+    //Vibration.vibrate();
     const msgs = event.data;
     const newMsgs = msgs.map(formatMessage);
      gethistory();

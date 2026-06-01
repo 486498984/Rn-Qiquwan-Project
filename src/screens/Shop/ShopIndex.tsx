@@ -187,8 +187,10 @@ const users = currentStore?.users || [];
 const hasPermission = users.some(
   item => item.roleCode === 'STORE_ADMIN'
 );
+// 是否是店铺拥有者
+const isOwner = currentStore?.isOwner === true;
 
-if (hasPermission) {
+if (hasPermission||isOwner) {
   navigation.navigate('ShopEmployee', {
     storeinfo: id,
   });

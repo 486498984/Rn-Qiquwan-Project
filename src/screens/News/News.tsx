@@ -159,6 +159,9 @@ const rotate = rotateAnim.interpolate({
       console.log('imlist',response);
       if (response.data !== null && response.code == 0) {
         if(response.data.list.length!==0){
+        console.log('wgqwfqw',response.data.list);
+        console.log('cruwgw',currentTab);
+         
         setUserList(response.data.list)
         }else{
         setUserList([])
@@ -191,6 +194,8 @@ const rotate = rotateAnim.interpolate({
         }else{
           setServiceList([])
         }
+      }else{
+        setServiceList([])
       }
       } catch (error) {
       console.error(error);
@@ -218,7 +223,7 @@ const rotate = rotateAnim.interpolate({
       console.log('刷新完成');
       setRefreshing(false);
     }, 1000);
-  };  
+  };   
 const getnoticelist = async() => { 
   try { 
     const response = await request({ 
@@ -255,28 +260,28 @@ const response = await request({
       console.error(error);
       }
    };
-const onlineoff = async() => {
-  console.log(kefuinfo);
-  
-        try {
-const response = await request({
-  url: '/customer/offline',
-  method: 'POST',
-  data: {
+  const onlineoff = async() => {
+    console.log(kefuinfo);
+    
+          try {
+  const response = await request({
+    url: '/customer/offline',
+    method: 'POST',
+    data: {
 
-  },
-   query: {
-   storeId: kefuinfo.storeId,
-   },
-    }); 
-      console.log('address',response);
-      if (response.data !== null && response.code == 0) {
-       
-      }
-      } catch (error) {
-      console.error(error);
-      }
-}
+    },
+    query: {
+    storeId: kefuinfo.storeId,
+    },
+      }); 
+        console.log('address',response);
+        if (response.data !== null && response.code == 0) {
+        
+        }
+        } catch (error) {
+        console.error(error);
+        }
+  }
 
 
     const getclubpermission = async() => { 
@@ -298,17 +303,17 @@ const response = await request({
   .flatMap(store => store.users || [])
   .find(user => user.roleCode === 'STORE_CS');
 
-console.log(customerServiceItem);
+console.log('cust2132131',customerServiceItem);
       const hasCustomerService = storelist.some(store =>
       store.users?.some(user => user.roleCode === 'STORE_CS')
     );
        console.log(hasCustomerService);
       //const hasCustomerService = !!customerServiceItem;
-      console.log(hasCustomerService);
+      console.log('haskefu',hasCustomerService);
       console.log(customerServiceItem);
       //   const hasCustomerService = storelist.some(item =>
       //   item.roleName?.includes('客服')
-      // );
+      // ); 
       //console.log(hasCustomerService);
       if (hasCustomerService) {
         getuntotal(customerServiceItem)
@@ -328,6 +333,9 @@ console.log(customerServiceItem);
       } 
       }
 
+      }else{
+         setCurrentTab('user');
+        getuntotal('user')
       }
       } catch (error) {
         console.error(error);
@@ -375,14 +383,14 @@ console.log(customerServiceItem);
 
       }
     }
-    Vibration.vibrate();
+    //Vibration.vibrate();
     const msgs = event.data;
     console.log('消息123',msgs);
     const messageList = await chat.getMessageList({
-  conversationID: 'C2C23',
+  conversationID: 'C2C22',
   //count: 15, // 每次拉多少条
   });
-  console.log(messageList);
+  console.log('ewggq',messageList);
 
     getclubpermission();
     getuserinfo();
@@ -409,7 +417,7 @@ console.log(customerServiceItem);
       onReceive
     );
   };
-}, []);  
+      }, []);  
   return (
     <View style={styles.container}>
       <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',

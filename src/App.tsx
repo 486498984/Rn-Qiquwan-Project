@@ -416,7 +416,7 @@ useEffect(() => {
 
   const onMessageReceived = (event) => {
      console.log(event);
-    Vibration.vibrate();
+    //Vibration.vibrate();
     console.log('新消息cccc:', event.data);
     getclubpermission();
     isNewmessageChanged();
@@ -682,7 +682,7 @@ if (Push) {
       console.error('registerPush failed', errCode, errMsg);
     }
   );
-  
+   
   
   // 监听通知栏点击事件，获取推送扩展信息
   Push.addPushListener(Push.EVENT.NOTIFICATION_CLICKED, (res) => {
