@@ -16,6 +16,9 @@ import {
  Modal as Modalitem,
 } from '@ant-design/react-native'
  import  chat  from '../../utils/im';
+import Push from '@tencentcloud/react-native-push';
+
+
 
  const Underline=()=>{
 return(
@@ -77,7 +80,15 @@ const logoutlogin = async() => {
            await Storage.remove('userinfo');
            loginChanged();
            handleback();
-chat.logout();
+           chat.logout();
+           Push.unRegisterPush(
+    () => {
+      console.log('Push 注销成功');
+    },
+    (errCode, errMsg) => {
+      console.log('Push 注销失败', errCode, errMsg);
+    }
+  );
  } 
   useEffect(() => {
    console.log('isLogin:', isLogin);

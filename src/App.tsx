@@ -104,10 +104,10 @@ import { useIMStore } from './store/imStore';
  import * as WeChat from 'react-native-wechat-lib';
   import { navigationRef,navigate } from './api/navigationService';
   import request from './api/request';
-import Push from '@tencentcloud/react-native-push';
+  import Push from '@tencentcloud/react-native-push';
 
 
- 
+  
   const loginInfo =
   Platform.OS === 'ios'
     ? {
@@ -675,6 +675,7 @@ if (Push) {
   
   Push.registerPush(SDKAppID, appKey, (data) => {
       console.log('registerPush ok', data);
+      Push.disablePostNotificationInForeground(true);
       Push.getRegistrationID((registrationID) => {
         console.log('getRegistrationID ok', registrationID);
       });
