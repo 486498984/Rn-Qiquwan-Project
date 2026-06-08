@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View,Image,TouchableOpacity,ScrollView,
 Dimensions,Linking,RefreshControl,Platform,Alert,
  } from 'react-native'
-import React,{useRef,useState,useEffect} from 'react'
+import React,{useRef,useState,useEffect,useCallback,} from 'react'
 import { px } from '../../utils/scaleUtils';
 import HotServices from './components/HotServices'
 import StarClub from './components/StarClub'
@@ -21,6 +21,8 @@ import FastImage from 'react-native-fast-image';
 import { Toast } from '@ant-design/react-native'
 import DeviceInfo from 'react-native-device-info';
 import UpdateModal from '../../components/Home/UpdateModal'; // 引入组件
+import BannerCarousel from './components/BannerCarousel';
+
 
 
   const routes = [
@@ -427,25 +429,28 @@ const gettabslist = async () => {
     console.error(error);
   }
 };
- const handlegobanner = (e) => {  //banner点击操作
- console.log(e);
- if(e.linkType=="URL"){ //跳转网站
- Linking.openURL(e.linkValue)
- }else if(e.linkType=="GOODS"){ //跳转商品
+  const handlegobanner = useCallback((e) => {  //banner点击操作
   console.log(e);
-  if(e.goodsInfo!==undefined){
-  navigation.navigate('Shopinfo',{shopinfo:e.goodsInfo})
-  }else{
- Toast.show({
-  content: '该商品已下架，看看别的吧～',
-  duration: 2,
-  position: 'center',
-  mask: false,
- })
+  if(e.linkType=="URL"){ //跳转网站
+  Linking.openURL(e.linkValue)
+  }else if(e.linkType=="GOODS"){ //跳转商品
+    console.log(e);
+    if(e.goodsInfo!==undefined){
+    navigation.navigate('Shopinfo',{shopinfo:e.goodsInfo})
+    }else{
+  Toast.show({
+    content: '该商品已下架，看看别的吧～',
+    duration: 2,
+    position: 'center',
+    mask: false,
+  })
+    }
+  }else if(e.linkType=="STORE"){
+  console.log(1312);
+  navigation.navigate('ClubHome',{storeinfo:e.storeInfo})
   }
-
- }
-  };
+}, []);
+ 
     const [refreshing, setRefreshing] = useState(false);
 const onRefresh = async () => {
   if (refreshing) return;
@@ -508,7 +513,12 @@ const onRefresh = async () => {
   <HotServices shoplist={shoplist} navigation={navigation}></HotServices>
   }
   </View>
- <View style={{width: '100%',flexDirection: 'row',
+   
+  <BannerCarousel
+  data={bannerlist}
+  onPress={item => handlegobanner(item)}
+  />
+ {/* <View style={{width: '100%',flexDirection: 'row',
   justifyContent: 'center',marginTop: px(16),}}>
     <View style={styles.wrapper}>
       <Carousel
@@ -533,7 +543,7 @@ const onRefresh = async () => {
         )}
       /> 
  
-      {/* 自定义指示点 */}
+      
       <View style={styles.dots}>
         {data.map((_, i) => (
           <View
@@ -547,7 +557,8 @@ const onRefresh = async () => {
       </View>
 
     </View>
- </View>
+ </View> */}
+
      <View style={{paddingHorizontal:px(16),marginTop: px(16),}}>
     <StarClub storelist={storelist} navigation={navigation}></StarClub>  
 

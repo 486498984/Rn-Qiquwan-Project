@@ -193,6 +193,14 @@ useEffect(() => {
         if (response.data !== null && response.code == 0) {
         gethistory();
         setText('');
+        }else{
+          handleCloseAll();
+          Toast.fail({
+           content: response.data,
+           duration: 2,
+           position: 'center',
+           mask: false,
+         })
         }
     } catch (error) {
     console.error(error);

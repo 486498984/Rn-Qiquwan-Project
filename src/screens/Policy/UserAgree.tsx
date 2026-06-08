@@ -11,6 +11,7 @@ export default function UserAgree({navigation}) {
   const handleback = () => {  //返回上一页
    navigation.goBack();
      };
+        const url = TOTAL_URL + 'policy/user.html?t=' + new Date().getTime();
   return (
     <View style={styles.container}>
             <View style={{width: px(393),height: px(98),backgroundColor: '#fff',
@@ -29,7 +30,7 @@ export default function UserAgree({navigation}) {
              </View>
 
     <View style={{ flex: 1 }}>
-      <WebView source={{ uri: TOTAL_URL+'policy/user.html' }} 
+      <WebView source={{ uri: url }}
         //bounces={false}           // 禁止 iOS 边缘回弹
         scrollEnabled={true}      // 确保可滚动
         decelerationRate={Platform.OS === 'ios' ? 'normal' : 0.985}/>

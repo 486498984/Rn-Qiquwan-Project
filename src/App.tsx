@@ -420,7 +420,6 @@ useEffect(() => {
     console.log('新消息cccc:', event.data);
     getclubpermission();
     isNewmessageChanged();
-
   };
 
   // const onConversationListUpdated = function(event) {
@@ -835,8 +834,8 @@ const openWeChat = async () => {
       </Stack.Navigator>
        </NavigationContainer>
        <PrivacyModal
-        privacyUrl="https://s.tourok.com.cn/privacy.html"
-        termsUrl="https://s.tourok.com.cn/user.html"
+        privacyUrl="https://tourok.com.cn/policy/privacy.html"
+        termsUrl="https://tourok.com.cn/policy/user.html"
         sanfangUrl="https://jieqirili.com/sanfang.html"
         onAgree={() => handlagree()}
         showPrivacyModal={showPrivacy}

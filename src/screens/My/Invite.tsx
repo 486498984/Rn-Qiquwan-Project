@@ -68,7 +68,7 @@ export default function Invite({navigation}) {
   const handleshare = async() => {  //分享
     console.log(111);
   const userinfo = await Storage.get('userinfo');
-  const shareUrl = `https://admin.tourok.com.cn/share?code=${invitecode}`;
+  const shareUrl = `https://share.tourok.com.cn/share?code=${invitecode}`;
   Clipboard.setString(shareUrl);
   Toast.info({content:'复制成功,快去分享给朋友吧～',mask:false});
    };

@@ -1,7 +1,8 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
-
+apply plugin: 'com.huawei.agconnect'
+apply plugin: 'com.hihonor.mcs.asplugin'
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
@@ -82,8 +83,13 @@ android {
         applicationId "com.qiquwan.games"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0.0"
+        versionCode 106
+        versionName "1.1.0"
+        manifestPlaceholders = [
+          "VIVO_APPKEY" : "bd70357c0c56eb6de2c2f62a8cd42ee9",
+          "VIVO_APPID" : "106076664",
+          "HONOR_APPID" : "104566824"
+        ]
     }
     signingConfigs {
         debug {
@@ -134,4 +140,10 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+    implementation 'com.tencent.timpush:huawei:8.5.6864'
+    implementation 'com.tencent.timpush:xiaomi:8.5.6864'
+    implementation 'com.tencent.timpush:oppo:8.5.6864'
+    implementation 'com.tencent.timpush:vivo:8.5.6864'
+    implementation 'com.tencent.timpush:honor:8.5.6864'
+    implementation 'com.tencent.timpush:meizu:8.5.6864'
 }

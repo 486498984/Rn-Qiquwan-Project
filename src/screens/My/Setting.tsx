@@ -17,6 +17,8 @@ import {
 } from '@ant-design/react-native'
  import  chat  from '../../utils/im';
 import Push from '@tencentcloud/react-native-push';
+import DeviceInfo from 'react-native-device-info';
+
 
 
 
@@ -37,6 +39,10 @@ export default function Setting({navigation}) {
           const [uservisible, setUservisible] = useState(false);
           const [yinsivisible, setYinsivisible] = useState(false);
           const [editableinput, setEditableinput] = useState(true); //输入状态
+            const versionName = DeviceInfo.getVersion();   // "1.0.0"
+
+
+
        const handleback = () => {  //返回上一页
       navigation.goBack();
      };
@@ -317,14 +323,14 @@ onPress={()=>handlesetting(2)}>
    <Image source={require('../../../assets/images/my/right.png')} 
        style={{width:px(22),height:px(22)}}></Image>
 </TouchableOpacity>
-<Underline/>
+{/* <Underline/>
 <TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',
 justifyContent: 'space-between',width: '100%',paddingVertical:px(16)}}
 onPress={()=>handlesetting(3)}>
 <Text style={styles.smalltitle}>消息通知</Text>
    <Image source={require('../../../assets/images/my/right.png')} 
        style={{width:px(22),height:px(22)}}></Image>
-</TouchableOpacity>
+</TouchableOpacity> */}
 <Underline/>
 <TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',
 justifyContent: 'space-between',width: '100%',paddingTop:px(16)}}
@@ -358,7 +364,7 @@ onPress={()=>navigation.navigate('UserAgree')}>
     width: '100%',marginTop: px(16),
 }}>
 <Text style={styles.smalltitle}>当前版本</Text>
-   <Text style={styles.version}>V1.0.0</Text>
+   <Text style={styles.version}>V{versionName}</Text>
 </View>
         </View>
         {userinfo!==null&&

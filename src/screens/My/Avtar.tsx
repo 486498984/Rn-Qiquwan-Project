@@ -69,9 +69,9 @@ const handleavtar = async(e) => {  //上传头像
           const result = await check(PERMISSIONS.ANDROID.CAMERA)
           console.log(result);
           if(result!=="granted"){
-    Alert.alert(
+      Alert.alert(
       '相机权限申请',
-      '为了上传头像，我们需要使用您的相机权限。\n该权限仅用于上传头像，不会用于其他用途。',
+      '为了上传头像，我们需要使用您的相机、存储权限。\n该权限仅用于上传头像，不会用于其他用途。',
       [
       {
         text: '取消',
