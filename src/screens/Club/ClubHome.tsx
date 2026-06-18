@@ -228,7 +228,7 @@ const gettabslist = async () => {
                }
              });
              console.log(response);
-            if(response.data.list!==undefined&&response.code==0&&response.data.list.length!==0){
+            if(response.data.list!==null&&response.code==0){
               let res=response.data.list
                      // 根据不同类型存数据
       if (type === 'isNew') {
@@ -265,6 +265,9 @@ const gettabslist = async () => {
                     : [];
                   console.log(imgList);
                   setPhotolist(imgList)
+                  if(response.data?.openStatus=="CLOSED"){
+                  Toast.info({content:'该店铺已打烊',mask:false,duration:2});
+                  }
             }
            } catch (error) {
              console.error(error);

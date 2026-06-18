@@ -11,19 +11,25 @@ import { smsState } from '../../utils/global';
 import { BASE_URL } from '../../api/config';
 import Storage from '../../utils/storage';
 import useAuthStore from '../../utils/zustand'
-
+import { NativeModules } from 'react-native';
 
 export default function Confirm({ navigation,route }) {
+  const { OaidModule } = NativeModules;
   const [code, setCode] = useState(['', '', '', '']); // 四位验证码
   const hiddenInputRef = useRef(null); // 隐藏输入框
   const [timer, setTimer] = useState(60);
   const [isCounting, setIsCounting] = useState(true);
   const [visible, setVisible] = useState(false);
   const [count, setCount] = useState(0);
+  const [oaid, setOaid] = useState(""); //获取oaid
   //const route = useRoute();
   const { phonenum } = route.params || {};
   const loginChanged = useAuthStore(state => state.loginChanged);
+
+
+
 useEffect(() => {
+  getOAID();
   const timer = setInterval(() => {
     const left = Math.max(0, Math.floor((smsState.expireTime - Date.now()) / 1000));
     setCount(left);
@@ -99,8 +105,19 @@ navigation.dispatch(
        
   }
 };
+   const getOAID = async() => {
+  try {
+   console.log("getoaid");
+   await OaidModule.init();
+  const oaid = await OaidModule.getOAID();
+  console.log('oaid',oaid);
+  setOaid(oaid)
+  } catch (e) {
+    console.log(e);
+  }
+  };
 const getuserinfo = async(e) => { 
-      const res = await fetch(`${BASE_URL}/sms/login?phone=${phonenum}&code=${e}&deviceType=${Platform.OS}&deviceId=${1}`, {
+      const res = await fetch(`${BASE_URL}/sms/login?phone=${phonenum}&code=${e}&deviceType=${Platform.OS}&deviceId=${1}&oaid=${oaid}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

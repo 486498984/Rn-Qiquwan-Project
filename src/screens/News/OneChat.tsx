@@ -1682,7 +1682,7 @@ onPress={() => sendImage('camera')}>
   </View>
    <Text style={styles.bottomText}>拍摄</Text> 
 </TouchableOpacity>
-<TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',gap:px(8)}}>
+{/* <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',gap:px(8)}}>
   <View style={{flexDirection: 'row',alignItems: 'center',justifyContent: 'center',
     backgroundColor: '#fff',width:px(58),height:px(58),borderRadius: px(10),
   }}>
@@ -1690,7 +1690,7 @@ onPress={() => sendImage('camera')}>
            style={{width:px(26),height:px(26)}}></Image>
   </View>
    <Text style={styles.bottomText}>订单</Text> 
-</TouchableOpacity>
+</TouchableOpacity> */}
 </View>
 }
  

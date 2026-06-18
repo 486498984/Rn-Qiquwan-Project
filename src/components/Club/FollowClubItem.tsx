@@ -49,12 +49,12 @@ const  FollowClubItem =({navigation,status,item,type=1})=> {
         </View>
 <View style={{flexDirection: 'row',alignItems: 'center',}}>
     <Image   source={
-    item.openStatus === "OPEN"
+    item.businessStatus === "OPEN"
       ? require('../../../assets/images/club/open.png')
       : require('../../../assets/images/club/close.png')
     }
       style={{width:px(17),height:px(17),}}></Image>
-    <Text style={[styles.online,{color:item.openStatus=="OPEN"?'#FF9500':'#3CF15F'}]}>{item.openStatus=="OPEN"?'在线':'打烊'}</Text>
+    <Text style={[styles.online,{color:item.businessStatus=="OPEN"?'#FF9500':'#3CF15F'}]}>{item.businessStatus=="OPEN"?'在线':'打烊'}</Text>
 </View>
 </View>
 <View style={{flexDirection: 'row',alignItems: 'flex-start',

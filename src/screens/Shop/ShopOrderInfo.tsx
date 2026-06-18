@@ -240,6 +240,36 @@ Clipboard.setString(String(`1258${orderInfo.userId}`));
  }
 
 };
+const handleconnect = async() => {
+  console.log(orderInfo);
+  try {
+  const response = await request({
+    url: '/store/customer/initiate',
+    method: 'POST',
+    data: {
+      },
+     query: {
+      userId:orderInfo?.userId,
+      storeId:orderInfo?.storeId
+     },
+      }); 
+        console.log('connect',response);
+        if (response.data !== null && response.code == 0) {
+           let a={
+                userNickName: orderInfo?.userNickName,
+                userId: response.data.userId,
+                sessionId: response.data.sessionId,
+                storeId:response.data.storeId,
+              }
+              console.log(a);
+            navigation.navigate('OneChat',{item:a})
+        }else{
+        Toast.fail({content: response.data,mask:false,duration:2})
+        }
+        } catch (error) {
+        console.error(error);
+        }
+};
 
 
     if (!orderInfo) {
@@ -294,13 +324,14 @@ contentContainerStyle={{paddingBottom:px(110)}} showsVerticalScrollIndicator={fa
 }}>
 <View style={{flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',}}>
  <Text style={styles.clubname}>{orderInfo?.userNickName}</Text>
-    {(orderInfo.orderStatus === 'WAIT_SERVICE'||orderInfo.orderStatus === 'IN_SERVICE'||orderInfo.orderStatus === 'WAIT_CONFIRM') &&
-       <TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}>
+
+<TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}
+onPress={()=>handleconnect()}>
       {/* <Image source={require('../../../assets/images/my/kefu.png')} 
     style={{width:px(16),height:px(16)}}></Image> */}
     <Text style={[styles.yingfu,{color:'#FF9500'}]}>联系客户</Text>
-   </TouchableOpacity>
-    }
+</TouchableOpacity>
+  
 
 </View>
 <View style={{flexDirection: 'row',alignItems: 'center',marginTop: px(16),}}>

@@ -1,7 +1,7 @@
 import { NewAppScreen } from '@react-native/new-app-screen';
 import { StatusBar, StyleSheet, useColorScheme, View,
   TouchableOpacity,Image,Text,Platform,Vibration,ScrollView,Alert,
-  BackHandler
+  BackHandler,NativeModules,
  } from 'react-native';
 import {
   SafeAreaProvider,
@@ -105,9 +105,14 @@ import { useIMStore } from './store/imStore';
   import { navigationRef,navigate } from './api/navigationService';
   import request from './api/request';
   import Push from '@tencentcloud/react-native-push';
+  import notifee, {
+    AndroidImportance,
+  } from '@notifee/react-native';
+import DeviceInfo from 'react-native-device-info';
+import { trackOAID } from './utils/oaidTracker';
 
 
-  
+const { OaidModule } = NativeModules;
   const loginInfo =
   Platform.OS === 'ios'
     ? {
@@ -405,7 +410,30 @@ function App() {
 
  
 
+const showLocalNotification = async(e) => { 
+  // 请求权限
+  await notifee.requestPermission();
 
+  // 创建通知渠道（Android）
+  const channelId = await notifee.createChannel({
+    id: 'default',
+    name: '默认通知',
+    importance: AndroidImportance.HIGH,
+  });
+
+  // 显示通知
+  await notifee.displayNotification({
+    title: '您有新的消息',
+    body: e,
+    android: {
+      channelId,
+      pressAction: {
+        id: 'default',
+      },
+    },
+  });
+
+ };
 useEffect(() => {
 
   if (!privacyReady) return;
@@ -418,6 +446,12 @@ useEffect(() => {
      console.log(event);
     //Vibration.vibrate();
     console.log('新消息cccc:', event.data);
+    
+    if(event.data[0].from=="administrator"){ //支付订单通知
+      console.log('noticeyy',event.data[0].payload.text);
+      
+    showLocalNotification(event.data[0].payload.text);
+    }
     getclubpermission();
     isNewmessageChanged();
   };
@@ -579,7 +613,7 @@ useEffect(() => {
   };
   
 }, [privacyReady,isLogin]);
-  const ImLogin = async(e) => { 
+  const ImLogin = async(e) => {
     try {
       const response = await request({
         url: '/im/register',
@@ -607,10 +641,10 @@ useEffect(() => {
       console.error(error);
     }
  
-   };
+   }; 
   useEffect(() => {
  console.log('App render', isLogin);
-    
+
     const checkPrivacy = async () => {
       //await Storage.clear();
       const agreed = await Storage.get('privacyAgreed');
@@ -656,7 +690,7 @@ useEffect(() => {
 
 const SDKAppID = 1600137039; // 您的 SDKAppID
 const appKey = 'oL2Yk4JlJEZtu0GqtssWuCCguQdPoXPDU0hqBnlyRfOlSTCNNAWs6NyEtPRqytmi'; // 客户端密钥
-﻿
+
 if (Push) {
      const user = await Storage.get("userinfo");
    if(user!==null&&user){
@@ -704,8 +738,38 @@ if (Push) {
     console.log('message revoked', res);
   });
 }
-
+    //getOAID();
+   trackOAID();
   };
+   const getOAID = async() => { 
+    console.log("getoaid");
+    await OaidModule.init();
+    const oaid = await OaidModule.getOAID();
+    console.log('oaid',oaid);
+    adactivate(oaid)
+    const info = await OaidModule.getDeviceInfo();
+    console.log('info',info);
+    };
+    const adactivate = async(e) => { //上报激活
+    try {
+    const response = await request({
+      url: '/ad/activate',
+      method: 'POST',
+      data: {
+      //oaid:e
+      },
+      query: {
+        oaid:e
+        //type:'user'
+      },
+      });
+      console.log('adactivate',response);
+      if (response.data !== null && response.code == 0) {
+      }
+      } catch (error) {
+      console.error(error);
+      }
+     };
   const checkWeChat = async () => {
   const installed = await WeChat.isWXAppInstalled();
   console.log('是否安装微信:', installed);
@@ -753,17 +817,16 @@ const openWeChat = async () => {
     <SafeAreaProvider>
        <Provider
        theme={{
-
-    brand_primary: '#FF9500',     // 按钮背景颜色 <Button type="primary">
-
-}}>
-       <NavigationContainer ref={navigationRef}>
+        brand_primary: '#FF9500',     // 按钮背景颜色 <Button type="primary">
+       }}>
+      <NavigationContainer ref={navigationRef}>
      <StatusBar
         hidden={false}               // 显示状态栏
         translucent={true}           // 让状态栏背景透明
         backgroundColor="transparent" // 透明背景
         barStyle="dark-content"      // 字体颜色（dark-content / light-content）
       />
+      {/* <Text style={{marginTop: px(100),}}>{oaid}</Text> */}
       <Stack.Navigator screenOptions={{ headerShown: false,
      animation: 'simple_push',
     }}>

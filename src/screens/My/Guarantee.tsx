@@ -51,9 +51,9 @@ export default function Guarantee({navigation}) {
          style={{width:'100%',height: px(313),marginTop: px(30),}} resizeMode='contain'/>
                    <SafeFastImage source={{uri:IMG_URL+'protect3.png'}} 
          style={{width:'100%',height: px(362),marginTop: px(30),}} resizeMode='contain'/>
-                            <SafeFastImage source={{uri:IMG_URL+'protect4.png'}} 
+                   <SafeFastImage source={{uri:IMG_URL+'protect4.png'}} 
          style={{width:'100%',height: px(260),marginTop: px(30),}} resizeMode='contain'/>
-        </ScrollView>      
+        </ScrollView>
     </View>
   )
 }

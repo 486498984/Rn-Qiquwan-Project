@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View,ScrollView,TouchableOpacity,
-  RefreshControl,TextInput,Image,Animated,Vibration,
+  RefreshControl,TextInput,Image,Animated,Vibration,AppState,
  } from 'react-native'
 import React,{useState,useEffect,useRef,useCallback,} from 'react'
 import { px } from '../../utils/scaleUtils';
@@ -18,7 +18,7 @@ import {
 import Storage from '../../utils/storage';
 import { useFocusEffect } from '@react-navigation/native';
 import  chat  from '../../utils/im';
- import TencentCloudChat from '@tencentcloud/chat';
+import TencentCloudChat from '@tencentcloud/chat';
 
 
 
@@ -64,6 +64,33 @@ const [serviceList, setServiceList] = useState([]); //工作室会话列表
 const [userList, setUserList] = useState([]); //用户会话列表
 const [noticelist, setNoticelist] = useState({}); //公告列表
 
+
+const appState = useRef(AppState.currentState);
+
+useEffect(() => {
+  const subscription = AppState.addEventListener(
+    'change',
+    nextAppState => {
+
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        console.log('APP回到前台');
+ 
+        getclubpermission();
+        getuserinfo();
+        getnoticelist();
+      }
+
+      appState.current = nextAppState;
+    },
+  );
+
+  return () => {
+    subscription.remove();
+  };
+}, []);
 
    useFocusEffect(
      useCallback(() => {
@@ -318,7 +345,7 @@ console.log('cust2132131',customerServiceItem);
       if (hasCustomerService) {
         getuntotal(customerServiceItem)
         handlegetservice(customerServiceItem)
-      //setCurrentTab('service');
+        setCurrentTab('service');
       } else {
         setCurrentTab('user');
         getuntotal('user')
@@ -334,7 +361,8 @@ console.log('cust2132131',customerServiceItem);
       }
 
       }else{
-         setCurrentTab('user');
+        setIskefu(false)
+        setCurrentTab('user');
         getuntotal('user')
       }
       } catch (error) {

@@ -1,6 +1,32 @@
-pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
+pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin")
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+
+        // maven {
+        //     url 'https://developer.huawei.com/repo/'
+        // }
+                // JitPack 远程仓库
+        maven { url 'https://jitpack.io' }
+        // 华为官方广告标识服务SDK
+        maven { url 'https://developer.huawei.com/repo' }
+        // 荣耀官方广告标识服务SDK
+        maven { url 'https://developer.hihonor.com/repo' }
+    }
+     }
 plugins { id("com.facebook.react.settings") }
 extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
 rootProject.name = "QiquwanProject"
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
+dependencyResolutionManagement {
+    repositories {
+        google()
+        mavenCentral()
+
+        maven {
+            url 'https://developer.huawei.com/repo/'
+        }
+    }
+}

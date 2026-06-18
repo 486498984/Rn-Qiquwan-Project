@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View,Image,TouchableOpacity,ScrollView,
-Dimensions,Linking,RefreshControl,Platform,Alert,
+Dimensions,Linking,RefreshControl,Platform,Alert,Animated,
  } from 'react-native'
 import React,{useRef,useState,useEffect,useCallback,} from 'react'
 import { px } from '../../utils/scaleUtils';
@@ -286,7 +286,7 @@ console.log('fetchList2');
 
 useEffect(() => {
   const list = dataMap[tablist[tabIndex].key]?.list
-  console.log("list131",list,dataMap);
+  //console.log("list131",list,dataMap);
   
   if (Array.isArray(list) && list.length > 0) {
     setShopnumber(list.length)
@@ -306,7 +306,7 @@ const firstLoadDone = useRef(false);
         loading: true,
       }
     }))
-    console.log('请求了商品接口！');
+    //console.log('请求了商品接口！');
     
     const res = await request({
       url: "/goods/list",
@@ -363,7 +363,7 @@ const firstLoadDone = useRef(false);
         loadMore={() => {
            if (!firstLoadDone.current) return; // 🚨 首次禁止触底加载
           if (!data.hasMore || data.loading) return
-          console.log('fetchList3');
+         //console.log('fetchList3');
           fetchList(key, data.page + 1, true)
         }}
       />
@@ -371,13 +371,13 @@ const firstLoadDone = useRef(false);
   }
  
 const handleScrollEnd = (event) => {
-  console.log('打印handleScrollEnd');
+  //console.log('打印handleScrollEnd');
   const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
   if (
     layoutMeasurement.height + contentOffset.y >=
     contentSize.height - 20
   ) {
-    console.log("底部了！！！");
+    //console.log("底部了！！！");
     const key = tablist[tabIndex]?.key;
     const currentData = dataMap[key];
     if (!currentData?.hasMore || currentData?.loading) {
@@ -467,6 +467,20 @@ const onRefresh = async () => {
     setRefreshing(false);
   }
 };
+const handleTabChange = useCallback((i) => {
+  setTabIndex(i);
+}, []);
+const tabsLayoutY = useRef(0);
+const [isSticky, setIsSticky] = useState(false);
+const onScroll = (e) => {
+  const y = e.nativeEvent.contentOffset.y;
+
+  if (y > tabsLayoutY.current && !isSticky) {
+    setIsSticky(true);
+  } else if (y <= tabsLayoutY.current && isSticky) {
+    setIsSticky(false);
+  }
+};
   return (
     <View style={styles.container}>
          <View style={styles.topbox}> 
@@ -497,10 +511,18 @@ const onRefresh = async () => {
   </TouchableOpacity>
 </View>
   </View>
-
-  <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled={true}
-  stickyHeaderIndices={[3]} onMomentumScrollEnd={handleScrollEnd} 
+        {isSticky && (
+  <View style={styles.stickyTabs}>
+    <Tabs index={tabIndex} routes={tablist} onChange={handleTabChange} />
+  </View>
+)}
+  <Animated.ScrollView 
+  showsVerticalScrollIndicator={false} 
+  nestedScrollEnabled={true}
+  //stickyHeaderIndices={[3]} 
+  onMomentumScrollEnd={handleScrollEnd} 
   overScrollMode="never"
+    onScroll={onScroll}
      refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -605,14 +627,18 @@ const onRefresh = async () => {
 
   </View>
 
-  <View style={{marginTop: px(12),}}>
+  <View style={{marginTop: px(12),}} 
+    onLayout={(e) => {
+    tabsLayoutY.current = e.nativeEvent.layout.y;
+  }}>
   <Tabs  index={tabIndex} routes={tablist}
-     onChange={(i) => {
-     setTabIndex(i)
-    //pagerRef.current?.setPage(i) // 👈 关键
-  }}></Tabs>
+   onChange={handleTabChange}
+  >
+  </Tabs>
   </View>
  
+
+
 
  <View style={{paddingHorizontal:px(0),paddingTop: px(10),
     backgroundColor: '#fff',
@@ -630,7 +656,7 @@ const onRefresh = async () => {
   />
   </View>
 
-  </ScrollView>
+  </Animated.ScrollView>
               <UpdateModal
               updateContent={updateContent}
               updatename={updatename}
@@ -639,11 +665,19 @@ const onRefresh = async () => {
           apkUrl={apkUrl}
           onClose={() => setUpdateVisible(false)}
         />
+
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  stickyTabs: {
+  position: 'absolute',
+  top: px(98),
+  left: 0,
+  right: 0,
+  zIndex: 999,
+},
   pagerView: {
     backgroundColor: 'red',
     flex: 1,

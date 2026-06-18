@@ -14,10 +14,13 @@ import Storage from '../../utils/storage';
 import useAuthStore from '../../utils/zustand'
 import { BASE_URL } from '../../api/config';
 
+
+
+
 const sdkKey = Platform.OS === 'ios'
   ? 'dk4tqJZqC6XgvqGwFeg2bs1aNGsgMD72jBzac+he6GRPW08uV7qfrMioGtzDK1wDKoZ/rMGUCD06yGFYnb0CML7OvQZ+Mwhg+ljHkb/9rNn9swtPS/4ebltAAvfEtEsfWxtFojeJIgLPo6cCZTMzQiM3geOUdlNL8hou78VuQclSzYRAoyBBUOSsrSiirzuYDKcysNHYSk3Jsm9Yu52TZ3HLhrE0o7io/3vkkQUQiZPOzOzvWiqkj8HXdNnNAUvPb8Mf2IDcU8A='
   : 'xO7oZqhXc7ruvkCxEbbflaZLJ1O7ZWUoxbPnWYN/u9jz3g5B0bgJ8Bxuif6Xl8IItRyoSD2DnQ9Q8WiDUp21LqByV/jD73uUq2Ojyp44elJBSTHbRGfOVUhChBkqcx8v4KVD4MZg54zKmv4A9xYfMSbPEKLGvQEzIjgyrHwki21NeurYUX8efg0X5hdpVoQ33GJ+Kfq2Pxe7goMk8vS3sLPOgCJw9HhaY8fSjbQABnlsWhFIViaWpe9+RrVi6IUUIcdSduVTx49HrfWT1U5Nl8jJ/V9s0Af7f48b4bv9lMzUolxHz52AVw==';
-const { AliOnePassModule } = NativeModules;
+const { AliOnePassModule,OaidModule, } = NativeModules;
 export default function Login({navigation}) {
         const loginChanged = useAuthStore(state => state.loginChanged);
   const closeModal = () => {
@@ -55,6 +58,9 @@ export default function Login({navigation}) {
     const [radiostatus, setRadiostatus] = useState(false);
     const [visible, setVisible] = useState(false);
     const [yinsivisible, setYinsivisible] = useState(false);
+    const [oaid, setOaid] = useState(""); //获取oaid
+
+
 const handleLogin = async () => { //点击一键登陆
   //console.log(NativeModules)
   if(!radiostatus){
@@ -100,8 +106,32 @@ const handleLogin = async () => { //点击一键登陆
     //console.error('获取 Token 失败:', err);
   }
 };
-const getuserinfo = async(e) => { 
-      const res = await fetch(`${BASE_URL}/onekey/login?token=${e}&deviceType=${Platform.OS}&deviceId=${1}`, {
+useEffect(() => {
+  getOAID();
+}, [])
+   const getOAID = async() => {
+  try {
+   console.log("getoaid");
+   await OaidModule.init();
+  const oaid = await OaidModule.getOAID();
+  console.log('oaid',oaid);
+  setOaid(oaid)
+  } catch (e) {
+    console.log(e);
+  }
+  };
+//   const getOAID = async () => {
+//   try {
+//     const oaid = await OaidModule.getOAID();
+//   console.log('modliue',oaid);
+//   setOaid(oaid)
+//     console.log('OAID=', oaid);
+//   } catch (e) {
+//     console.log(e);
+//   }
+// };  
+const getuserinfo = async(e) => {
+      const res = await fetch(`${BASE_URL}/onekey/login?token=${e}&deviceType=${Platform.OS}&deviceId=${1}&oaid=${oaid}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

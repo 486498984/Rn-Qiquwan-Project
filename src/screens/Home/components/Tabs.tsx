@@ -62,7 +62,12 @@ const rotate = rotateAnim.interpolate({
       {routes.map((item, i) => (
         <TouchableOpacity
           key={i}
-          onPress={() => onChange(i)}
+     delayPressIn={0}
+  //activeOpacity={0.8}
+  onPress={() => {
+    console.log('点击Tab', i);
+    onChange(i);
+  }}
           style={{height: px(33),flexDirection: 'row',
             alignItems: 'center',justifyContent: 'center',paddingHorizontal:px(7)
           }}

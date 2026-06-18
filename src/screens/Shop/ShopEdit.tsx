@@ -74,7 +74,7 @@ shoptitleinputRef,shoptitle,bottomSafeHeight,scrollRef,setShoptitle,
 shopsortinputRef,setShopsort,shopsort,shoppurchaseinputRef,
 setShoplimit,shoplimit,headimages,setHeadimages,onChangeShopinfotx,
 shopinfotx,setShopinfoimages,shopinfoimages,handlesubmit,setVisiblehot,
-commitvalueshot,ishot,
+commitvalueshot,ishot,shopsales,setShopsales,shopshopsaleinputRef,
 
      }) => {
 
@@ -346,7 +346,7 @@ numberOfLines={1}>{serves?.length ? serves.join('、') : '请选择'}</Text>
         <Text style={styles.smalldes}>(一个用户总共能买多少，0代表无限购)</Text>
             </View>
 <View style={{flexDirection: 'row',alignItems: 'center',justifyContent: 'flex-end',}}>
- <TextInput
+ <TextInput 
   ref={shoppurchaseinputRef}
   //textAlign='right'
            style={[styles.shopnameinput, { textAlign: 'right',width: px(200)}]}
@@ -366,7 +366,7 @@ numberOfLines={1}>{serves?.length ? serves.join('、') : '请选择'}</Text>
             onFocus={() => {
               if (Platform.OS === 'ios') {   // 👈 只在 iOS 执行
                 scrollRef.current?.scrollTo({
-                    y: px(150),
+                    y: px(220),
                     animated: true,
                 });
                 }
@@ -375,6 +375,53 @@ numberOfLines={1}>{serves?.length ? serves.join('、') : '请选择'}</Text>
 </View>
 </View>
 </TouchableOpacity>
+
+<Line/>
+<TouchableOpacity style={{width: '100%',height: px(51),
+    flexDirection: 'column',justifyContent: 'center',
+}}   onPress={() => {
+    shopshopsaleinputRef.current?.focus();  // 👈 拉起键盘 + 获取焦点
+  }}>
+    <View style={{flexDirection: 'row',alignItems: 'center',
+        justifyContent: 'space-between',width: '100%',}}>
+            <View style={{flexDirection: 'column',alignItems: 'flex-start',}}>
+          <View style={{flexDirection: 'row',alignItems: 'center',}}>
+<Text style={styles.lefttitle}>初始销售量</Text>
+<Text style={[styles.lefttitle,{color:'red'}]}>*</Text>
+    </View>
+        <Text style={styles.smalldes}>(默认显示的销量)</Text>
+            </View>
+<View style={{flexDirection: 'row',alignItems: 'center',justifyContent: 'flex-end',}}>
+ <TextInput
+  ref={shopshopsaleinputRef}
+  //textAlign='right'
+           style={[styles.shopnameinput, { textAlign: 'right',width: px(200)}]}
+          allowFontScaling={false}
+          onChangeText={setShopsales}
+          value={shopsales}
+          selection={{ 
+          start: shopsales.length,
+          end: shopsales.length,
+          }}
+          placeholder="请输入初始销售量"
+           placeholderTextColor="#AAAAAA"
+            maxLength={8}
+            selectionColor='#FC9026'
+            //multiline
+            keyboardType="numeric" 
+            onFocus={() => {
+              if (Platform.OS === 'ios') {   // 👈 只在 iOS 执行
+                scrollRef.current?.scrollTo({
+                    y: px(250),
+                    animated: true,
+                });
+                }
+            }}
+        />
+</View>
+</View>
+</TouchableOpacity>
+
 <Line/>
     <View style={{width: '100%',paddingTop:px(16),
     flexDirection: 'column',justifyContent: 'center',
@@ -668,10 +715,12 @@ export default function ShopEdit({ navigation,route }) {
   const [shoptitle, setShoptitle] = useState(''); //商品标题
    const [shopsort, setShopsort] = useState('0'); //商品排序
   const [shoplimit, setShoplimit] = useState('0'); //商品限购
+   const [shopsales, setShopsales] = useState('0'); //商品初始销量
 const scrollRef = React.useRef(null);
 const shoptitleinputRef = React.useRef(null); //商品标题
 const shopsortinputRef = React.useRef(null); //商品排序
 const shoppurchaseinputRef = React.useRef(null); //商品限购
+const shopshopsaleinputRef = React.useRef(null); //商品初始销量
 const [headimages, setHeadimages] = useState([]); //头图列表
 const [shopinfoimages, setShopinfoimages] = useState([]); //商品详情图片
 const [skuList, setSkuList] = useState([]); //sku
@@ -838,6 +887,14 @@ console.log(result);
          setShoptitle(goodres.title)
          setShopsort(String(goodres.sortWeight))
          setShoplimit(String(goodres.userLimit))
+         console.log('goodsattr',goodres.attr);
+         
+         if(goodres.attr){
+          console.log(JSON.parse(goodres.attr)?.virtualSales);
+         setShopsales(String(JSON.parse(goodres.attr)?.virtualSales)) //设置初始销量
+         }else{
+          setShopsales('0')
+         }
 
 setShopplat(getIndexByLabel(goodres.platform,platform)) //设置平台
 setShopmode(getIndexByLabel(goodres.difficulty,difficulty)) //设置难度
@@ -1133,6 +1190,15 @@ const handlesubmit = async() => {  //保存
   })
   return
  }
+      if(shopsales==""){
+    Toast.show({
+     content: '请填写商品初始销售量',
+     duration: 2,
+     position: 'center',
+     mask: false,
+   })
+   return
+  }
   if(headimages.length==0){
    Toast.show({
     content: '请上传轮播图',
@@ -1194,7 +1260,7 @@ const response = await request({
     isHot: checkExist(commitvalueshot, 0),
     isNew: checkExist(commitvalueshot, 1),
     isRecommend: checkExist(commitvalueshot, 2),
-    attr: ""
+    attr: JSON.stringify({virtualSales:Number(shopsales)})
     },
    query: {},
     }); 
@@ -1311,8 +1377,11 @@ const onChangeShopinfotx = (e) => {  //修改商品详情
           setShopsort={setShopsort}
           shopsort={shopsort}
           shoppurchaseinputRef={shoppurchaseinputRef}
+          shopshopsaleinputRef={shopshopsaleinputRef}
           setShoplimit={setShoplimit}
+          setShopsales={setShopsales}
           shoplimit={shoplimit}
+          shopsales={shopsales}
           headimages={headimages}
           setHeadimages={setHeadimages}
           onChangeShopinfotx={onChangeShopinfotx}

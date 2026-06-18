@@ -11,6 +11,8 @@ import com.github.reactnativehero.umenganalytics.RNTUmengAnalyticsPackage
 import android.content.pm.PackageManager
 import com.theweflex.react.WeChatPackage
 import com.tencent.qcloud.rntimpush.TencentCloudPushApplication
+import com.qiquwan.games.oaid.OaidPackage
+import com.qiquwan.games.baidu.BaiduPackage
 
 
 class MainApplication : TencentCloudPushApplication(), ReactApplication {
@@ -24,6 +26,8 @@ class MainApplication : TencentCloudPushApplication(), ReactApplication {
           // add(MyReactNativePackage())
           add(WeChatPackage()) //微信SDK
           add(com.qiquwan.games.alionepass.AliOnePassPackage())
+          add(OaidPackage()) //获取oaid
+          add(BaiduPackage()) //百度埋点SDK
         },
     )
   }

@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View,Image,StatusBar,TouchableOpacity,ScrollView,
 Platform,BackHandler,Animated,ActivityIndicator,DeviceEventEmitter,AppState,
-TextInput,KeyboardAvoidingView,
+TextInput,KeyboardAvoidingView,NativeModules,
  } from 'react-native'
 import React,{useState,useEffect,useRef,useMemo} from 'react'
 import { px } from '../../utils/scaleUtils';
@@ -21,9 +21,9 @@ import PaymentLoadingModal from '../../components/Home/PaymentLoadingModal'; // 
 import SafeFastImage from '../../components/Home/SafeFastImage'
  import * as WeChat from 'react-native-wechat-lib';
  import useAuthStore from '../../utils/zustand';
+import { trackOAID } from '../../utils/oaidTracker';
 
-
-
+const { OaidModule } = NativeModules;
   const commnet=[{title:'东*******',content:'没毛病，很牛逼！！！'},
       {title:'西*******',content:'战绩可查，NB!'},
       {title:'南*******',content:'有打架的实力，带老板的思维差点意思，只知道自己冲，有点顾头不顾尾了。'},
@@ -49,7 +49,7 @@ export default function Shopinfo({navigation,route}) {
   const [yvisible, setYvisible] = useState(false); //优惠券弹窗
   const [chshoptype, setChshoptype] = useState(0); //选择商品类型
   const [chshoptypezz, setChshoptypezz] = useState(0); //选择增值服务
-  const [payways, setPayways] = useState(1); //支付方式
+  const [payways, setPayways] = useState(2); //支付方式
   const [coupon, setCoupon] = useState(0); //优惠券
   const [selectedCoupon, setSelectedCoupon] = useState(null);
   const [paynum, setPaynum] = useState(1); //购买数量
@@ -483,20 +483,21 @@ const handlecreatorder = async() => { //创建订单
     });
     console.log('创建订单',response);
     if (response.data !== undefined && response.code == 0) {
-      const res = response.data.payInfo
+    const res = response.data.payInfo
     if(payways==1){
     handlePay(response.data.payInfo.payInfo)
     }else if(payways==2){
-        let payload={
-        partnerId: res.payParams.partnerid,
-        prepayId: res.prepayId,
-        nonceStr: res.payParams.noncestr,
-        timeStamp: res.payParams.timestamp,
-        package: res.payParams.package,
-        sign: res.payParams.sign,
-          }
+    let payload={
+    partnerId: res.payParams.partnerid,
+    prepayId: res.prepayId,
+    nonceStr: res.payParams.noncestr,
+    timeStamp: res.payParams.timestamp,
+    package: res.payParams.package,
+    sign: res.payParams.sign,
+    }
     handlewechatpay(payload)
     }
+    trackOAID();
     }
   } catch (error) {
     console.error(error);
@@ -695,6 +696,24 @@ const handlecreatorder = async() => { //创建订单
              console.error(error);
            }
   };
+  const getTotalSales = () => {
+  let virtualSales = 0;
+
+  if (shopallinfo?.attr) {
+    try {
+      const attrData = JSON.parse(shopallinfo.attr);
+      virtualSales = Number(attrData?.virtualSales || 0);
+    } catch (error) {
+      console.log('attr解析失败:', error);
+    }
+  }
+
+  const salesCount = Number(shopallinfo?.salesCount || 0);
+
+  return virtualSales + salesCount;
+};
+
+const totalSales = getTotalSales();
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={()=>handleback()} style={{
@@ -743,7 +762,11 @@ style={{width:px(20),height:px(20)}}></Image>
         }
      </Text>
     </View>
-      <Text style={styles.salesnum}>销量{shopallinfo?.salesCount > 99 ? "99+" : shopallinfo?.salesCount || 0}</Text>
+{totalSales > 0 && (
+  <Text style={styles.salesnum}>
+    月销量{totalSales}+
+  </Text>
+)}
       </View>
       <Text style={[styles.shoptitle,{marginTop: px(10),}]}>{shopallinfo?.title}</Text>
    </View>
@@ -1062,8 +1085,11 @@ onPress={() => setVisible(true)}>
     </View>
   <View style={{flexDirection: 'column',gap:px(6)}}>
   {/* <Text style={styles.modalnum}>编号：219739012479102</Text> */}
-  <Stepper min={1} max={5}  
-  readOnly 
+  <Stepper min={1} max={1000}  
+  keyboardType="number-pad"
+    returnKeyType="done"
+
+  //readOnly 
   value={paynum}
   onChange={(value)=>handlechangenum(value)} 
   inputStyle={{
@@ -1075,7 +1101,7 @@ onPress={() => setVisible(true)}>
   textAlignVertical: 'center',
   }}
   styles={{
-  container: { flexDirection: 'row', alignItems: 'center',width: px(87),},
+  container: { flexDirection: 'row', alignItems: 'center',},
   stepWrap: { width:px(26), height: px(26), borderRadius: px(2), backgroundColor: 'rgba(170, 170, 170,0.2)', justifyContent: 'center', alignItems: 'center' },
   stepText: { color: '#333', fontSize: px(16) },
   stepDisabled: { backgroundColor: '#eee' },
@@ -1255,28 +1281,10 @@ backgroundColor: '#F8F8F8',}}></View>
 
 
 </View>
-<View style={{width: '100%',height: px(8),marginTop: px(16),
-backgroundColor: '#F8F8F8',}}></View>
+{/* <View style={{width: '100%',height: px(8),marginTop: px(16),
+backgroundColor: '#F8F8F8',}}></View> */}
 
-<View style={{flexDirection: 'column',marginTop: px(10),paddingHorizontal:px(16)}}>
-<Text style={styles.comment}>支付方式</Text>
-<View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
-  justifyContent: 'space-between',marginTop: px(10)
-}}>
-  <TouchableOpacity style={payways==1?styles.ispaybox:styles.paybox} activeOpacity={0.8}
-  onPress={()=>setPayways(1)}>
-  <Image source={require('../../../assets/images/home/zfb.png')} 
-         style={{width:px(32),height:px(32)}}></Image>
-      <Text style={styles.zfbtx}>支付宝支付</Text>
-  </TouchableOpacity>
-  <TouchableOpacity style={payways==2?styles.ispaybox:styles.paybox} activeOpacity={0.8}
-  onPress={()=>setPayways(2)}>
-  <Image source={require('../../../assets/images/home/wechat.png')} 
-         style={{width:px(32),height:px(32)}}></Image>
-           <Text style={styles.wechattx}>微信支付</Text>
-  </TouchableOpacity>
-</View>
-</View>
+
 
 </View> 
 
@@ -1284,10 +1292,31 @@ backgroundColor: '#F8F8F8',}}></View>
 </ScrollView>
 </KeyboardAvoidingView>
 
-
-<View  style={{paddingBottom: bottomSafeHeight,flexDirection: 'row',
+<View style={{flexDirection: 'column',marginTop: px(10),paddingHorizontal:px(16),
+  paddingBottom:px(8)
+}}>
+<Text style={styles.comment}>支付方式</Text>
+<View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
+  justifyContent: 'space-between',marginTop: px(10)
+}}>
+    <TouchableOpacity style={payways==2?styles.ispaybox:styles.paybox} activeOpacity={0.8}
+  onPress={()=>setPayways(2)}>
+  <Image source={require('../../../assets/images/home/wechat.png')} 
+         style={{width:px(32),height:px(32)}}></Image>
+           <Text style={styles.wechattx}>微信支付</Text>
+  </TouchableOpacity>
+  <TouchableOpacity style={payways==1?styles.ispaybox:styles.paybox} activeOpacity={0.8}
+  onPress={()=>setPayways(1)}>
+  <Image source={require('../../../assets/images/home/zfb.png')} 
+         style={{width:px(32),height:px(32)}}></Image>
+      <Text style={styles.zfbtx}>支付宝支付</Text>
+  </TouchableOpacity>
+</View>
+</View>
+<View  style={{paddingBottom: bottomSafeHeight || px(16),flexDirection: 'row',
   alignItems: 'flex-start',justifyContent: 'center',
 }}>
+  
   <TouchableOpacity
   onPress={()=>handlecreatorder()}>
  <LinearGradient

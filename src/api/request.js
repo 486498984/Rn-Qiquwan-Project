@@ -99,7 +99,7 @@ const isFormData = data instanceof FormData;
     });
      
     const result = await response.json();
-    console.log(result);
+    //console.log(result);
     
     // 响应处理
     if (result.code === 0) {

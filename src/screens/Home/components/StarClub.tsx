@@ -6,7 +6,7 @@ import { IMG_URL } from '../../../api/config';
 import SafeFastImage from '../../../components/Home/SafeFastImage'
 
 const StarClub = ({storelist,navigation}) => {
-    console.log(storelist);
+    //console.log(storelist);
     const [randomList, setRandomList] = React.useState([])
     const rotateAnim = useRef(new Animated.Value(0)).current
     const getRandomThree = (arr = []) => {

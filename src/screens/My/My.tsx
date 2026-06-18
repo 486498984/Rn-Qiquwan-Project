@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View,TouchableOpacity,ActivityIndicator,Image,
-ScrollView,Linking
+ScrollView,Linking,Platform,
  } from 'react-native'
 import React,{useEffect,useRef,useState,useCallback,} from 'react'
 import { px } from '../../utils/scaleUtils';
@@ -13,6 +13,15 @@ import { scheduleOnRN } from 'react-native-worklets';
 import { IMG_URL,TOTAL_URL } from '../../api/config';
 import StorePickerModal from '../../components/My/StorePickerModal'
 import { useFocusEffect } from '@react-navigation/native';
+import CustomerServiceModal from './components/CustomerServiceModal'
+import ReactNativeBlobUtil from 'react-native-blob-util';
+import {CameraRoll} from '@react-native-camera-roll/camera-roll';
+import {
+  Checkbox,
+  Modal as Modalitem,
+} from '@ant-design/react-native'
+import * as WeChat from 'react-native-wechat-lib';
+
 
 
 
@@ -32,6 +41,9 @@ export default function My({navigation}) {
   const [badge, setBadge] = useState(bages); //下标数字
   const [collect, setCollect] = useState(0); //收藏数字
   const [fllow, setFllow] = useState(0); //关注数字
+  const [storeauthst, setStoreauthst] = useState(false); //俱乐部权限
+const [visible, setVisible] = useState(false);
+
 
 
   useFocusEffect(
@@ -70,14 +82,41 @@ export default function My({navigation}) {
    getuserinfo(user) //获取用户信息
    getcollect() //获取收藏数字
    getfollwlist() //获取关注数字
-   //getclubpermission(user.user.userId)
+   //getclubpermission()
+   getclubauth();
    }else{
    setBadge(bages)
    setLoginstatus(false)
    setUserinfo(null)
    }
    console.log(user); // { name: 'Tom', age: 18 }
-   };
+   }; 
+
+const getclubauth = async() => {
+        try {
+        const response = await request({
+          url: '/store/role/auth',
+          method: 'GET',
+          data: {
+          },
+          query: {},
+        }); 
+        console.log('authstorew',response);
+      if (response.data !== null && response.code == 0) {
+        console.log(213);
+        if(response.data.length!==0){
+setStoreauthst(true)
+        }else{
+          setStoreauthst(false)
+        }
+      }else{
+setStoreauthst(false)
+      }
+      } catch (error) {
+        console.error(error);
+      }
+     };
+
        const getcollect = async() => { 
         const user = await Storage.get("userinfo");
         try {
@@ -234,7 +273,7 @@ export default function My({navigation}) {
           },
           query: {},
         }); 
-        console.log('auth',response);
+        console.log('authstore',response);
       if (response.data !== null && response.code == 0) {
         const storelist=response.data
         //console.log('storelist',storelist);
@@ -294,6 +333,58 @@ const openWechatLink = async () => {
     console.log('无法打开链接', e);
   }
 };
+const saveImage = async() => { 
+ console.log(2131);
+ const imageUrl='https://tourok.com.cn/image/wechatkf.jpg'
+       // 🌐 网络图片 → 下载
+       const urlParts = imageUrl.split('.');
+       let ext = urlParts[urlParts.length - 1];
+ 
+       if (!['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext.toLowerCase())) {
+         ext = 'png';
+       }
+ 
+       const dirs = ReactNativeBlobUtil.fs.dirs;
+ 
+       const path = `${dirs.CacheDir}/${Date.now()}.${ext}`;
+ 
+       const res = await ReactNativeBlobUtil.config({
+         fileCache: true,
+         appendExt: ext,
+         path,
+       }).fetch('GET', imageUrl);
+ 
+      const localPath = res.path();
+    console.log(localPath);
+        // 📸 保存到相册
+        const savedUri = await CameraRoll.save(
+          Platform.OS === 'android'
+            ? 'file://' + localPath
+            : localPath,
+          {
+            type: 'photo',
+            album: 'MyApp',
+          }
+        );
+        console.log(savedUri);
+        setVisible(false)
+    //   Toast.show({
+    //   content: '保存图片成功',
+    //   duration: 2,
+    //   position: 'center',
+    //   mask: false,
+    // })
+    Modalitem.alert('提示', '保存成功，是否跳转微信？', [
+      { text: '不了', onPress: () => console.log('cancel'), style: 'cancel' },
+      { text: '是的', onPress: () => handlegowechat(),
+       style: { color: '#FC9026' },
+       },   
+    ])
+ };
+const handlegowechat = () => { 
+ WeChat.openWXApp();
+ };
+
   return (
     <View style={styles.container}>
     <Image source={require('../../../assets/images/my/myback.png')} 
@@ -528,7 +619,7 @@ width: '25%',
 }} onPress={()=>handlegocoupon(2)}>
  <Image source={require('../../../assets/images/my/more8.png')} 
         style={{width:px(33),height:px(33)}}></Image>
-       <Text style={styles.moretext}>邀请有礼</Text> 
+       <Text style={styles.moretext}>分享赚钱</Text> 
 </TouchableOpacity>
 
 <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',gap:px(4),
@@ -554,12 +645,15 @@ width: '25%',
 </TouchableOpacity>
 <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',gap:px(4),
 width: '25%',
-}} onPress={openWechatLink}>
+}} 
+//onPress={openWechatLink}
+ onPress={() => setVisible(true)}
+>
  <Image source={require('../../../assets/images/my/more5.png')} 
         style={{width:px(33),height:px(33)}}></Image>
        <Text style={styles.moretext}>平台客服</Text> 
 </TouchableOpacity>
-{storeauth&&
+{storeauthst&&
 <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',gap:px(4),
 width: '25%',
 }} onPress={()=>handlegocoupon(3)}>
@@ -592,6 +686,12 @@ width: '25%',
     setVisiblestorec(false);
     goStore(store);
   }}
+/>
+<CustomerServiceModal
+  visible={visible}
+  imageUrl="https://tourok.com.cn/image/wechatkf.jpg"
+  onClose={() => setVisible(false)}
+  onSave={saveImage}
 />
     </View>
    

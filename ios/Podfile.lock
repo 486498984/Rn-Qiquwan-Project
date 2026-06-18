@@ -2253,6 +2253,11 @@ PODS:
     - ReactNativeDependencies
     - TOCropViewController (~> 2.8.0)
     - Yoga
+  - RNNotifee (9.1.8):
+    - React-Core
+    - RNNotifee/NotifeeCore (= 9.1.8)
+  - RNNotifee/NotifeeCore (9.1.8):
+    - React-Core
   - RNPermissions (5.5.1):
     - hermes-engine
     - RCTRequired
@@ -2648,6 +2653,7 @@ DEPENDENCIES:
   - RNFastImage (from `../node_modules/react-native-fast-image`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
+  - "RNNotifee (from `../node_modules/@notifee/react-native`)"
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
@@ -2864,6 +2870,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNImageCropPicker:
     :path: "../node_modules/react-native-image-crop-picker"
+  RNNotifee:
+    :path: "../node_modules/@notifee/react-native"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
   RNReactNativeHapticFeedback:
@@ -2979,6 +2987,7 @@ SPEC CHECKSUMS:
   RNFastImage: 462a183c4b0b6b26fdfd639e1ed6ba37536c3b87
   RNGestureHandler: 07de6f059e0ee5744ae9a56feb07ee345338cc31
   RNImageCropPicker: 7e6bd58550bcb942bfa48847247dbf62eda20c89
+  RNNotifee: 5e3b271e8ea7456a36eec994085543c9adca9168
   RNPermissions: 2ba177d8e529dc3660f8192bff3993deff89d575
   RNReactNativeHapticFeedback: 9c16ffd4f6df9e6ca03cb81b33015e2d9b64e21a
   RNReanimated: 66fa99647173f254f731e6aa59a0a2cc8c838ac1

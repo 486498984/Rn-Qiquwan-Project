@@ -119,7 +119,7 @@ const OrderItem=({item,navigation,refreshAllTabs})=> {
 
      };
      const handleaccept = () => {  //接单
-     console.log(ui.gradientText);
+     console.log('iteminfo',ui.gradientText,item,);
        Modalitem.alert('提示', '是否接单？', [
            { text: '取消', onPress: () => console.log('cancel'), style: 'cancel' },
            { text: '确定', onPress: () => handlesubaccept(),
@@ -129,7 +129,7 @@ const OrderItem=({item,navigation,refreshAllTabs})=> {
 
       };
       const handlesubaccept = async() => { 
-              const user = await Storage.get("userinfo");
+        const user = await Storage.get("userinfo");
            try {
              const response = await request({
                url: '/store/order/start',
@@ -147,19 +147,19 @@ const OrderItem=({item,navigation,refreshAllTabs})=> {
             if(response.data!==undefined&&response.code==0){
             refreshAllTabs();
             Toast.success({
-           content: '接单成功',
-           duration: 2,
-           position: 'center',
-           mask: false,
-           })
+            content: '接单成功',
+            duration: 2,
+            position: 'center',
+            mask: false,
+            })
             refreshAllTabs()
             }else{
             Toast.fail({
-           content: '接单失败，请稍后再试～',
-           duration: 2,
-           position: 'center',
-           mask: false,
-           })
+            content: '接单失败，请稍后再试～',
+            duration: 2,
+            position: 'center',
+            mask: false,
+            })
             }
            } catch (error) {
              console.error(error);

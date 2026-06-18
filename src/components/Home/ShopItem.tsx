@@ -27,14 +27,14 @@ const ShopItem=({item,navigation,type=1,})=> {
   return platformColortx[platform] || "#999999"; // 默认灰色
   };
   useEffect(() => {
-    console.log('contenttwqr',item);
+    //console.log('contenttwqr',item);
     
   }, [item])
   const getFirstImageUrl = (str) => {
   if (!str) return "";
   const domain = IMG_URL;
   const first = str.split(",")[0];
-    console.log(domain + first);
+    //console.log(domain + first);
   return domain + first;
 };
   const goshopinfo = () => {  //跳转商品详情页
@@ -52,6 +52,28 @@ const ShopItem=({item,navigation,type=1,})=> {
   navigation.navigate('Shopinfo',{shopinfo:item})
   };
    const imageUri = getFirstImageUrl(item.coverImage);
+
+// 组件顶部计算
+const getTotalSales = () => {
+  let virtualSales = 0;
+
+  if (item?.attr) {
+    try {
+      const attrData = JSON.parse(item.attr);
+      virtualSales = Number(attrData?.virtualSales || 0);
+    } catch (error) {
+      console.log('attr解析失败:', error);
+    }
+  }
+
+  const salesCount = Number(item?.salesCount || 0);
+
+  return virtualSales + salesCount;
+};
+
+const totalSales = getTotalSales();
+
+
   return (
    <TouchableOpacity style={styles.shopbox} activeOpacity={1}
    onPress={()=>goshopinfo()}>
@@ -129,7 +151,11 @@ const ShopItem=({item,navigation,type=1,})=> {
       : "-"
       }
      </Text>
-      <Text style={styles.salesnum}>销量{item?.salesCount > 99 ? "99+" : item?.salesCount || 0}</Text>
+{totalSales > 0 && (
+  <Text style={styles.salesnum}>
+    月销量{totalSales}+
+  </Text>
+)}
       </View>
    {/* <View style={{flexDirection: 'row',}}> 
       <Text style={[styles.onlinetext,{color:'#FF9500'}]}>在线</Text>

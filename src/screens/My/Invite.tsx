@@ -7,6 +7,11 @@ import Storage from '../../utils/storage';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {  Toast } from '@ant-design/react-native'
 import  request  from '../../api/request';
+import * as WeChat from 'react-native-wechat-lib';
+import {
+  Radio,Modal as Modalitem,
+} from '@ant-design/react-native'
+
 
 export default function Invite({navigation}) {
       const scrollY = useRef(new Animated.Value(0)).current;
@@ -70,8 +75,19 @@ export default function Invite({navigation}) {
   const userinfo = await Storage.get('userinfo');
   const shareUrl = `https://share.tourok.com.cn/share?code=${invitecode}`;
   Clipboard.setString(shareUrl);
-  Toast.info({content:'复制成功,快去分享给朋友吧～',mask:false});
+       Modalitem.alert('提示', '复制成功,是否跳转到微信？', [
+      { text: '不了', onPress: () => console.log('cancel'), style: 'cancel' },
+      { text: '是的', onPress: () => handlesubmits(),
+       style: { color: '#FC9026' },
+       },
+      ])
+  //Toast.info({content:'复制成功,快去分享给朋友吧～',mask:false});
+ 
    };
+   const handlesubmits = () => { 
+
+ WeChat.openWXApp();
+    };
    const changetuo = (phone) => { 
   if (!phone) return '无';
 

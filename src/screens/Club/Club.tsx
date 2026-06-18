@@ -12,6 +12,10 @@ import {
 import { px } from '../../utils/scaleUtils'
 import ClubItem from '../../components/Club/ClubItem'
 import request from '../../api/request'
+import { useFocusEffect } from '@react-navigation/native';
+
+
+
 
 export default function Club({ navigation }) {
 
@@ -98,7 +102,11 @@ export default function Club({ navigation }) {
   useEffect(() => {
     getstorelist()
   }, [])
-
+  useFocusEffect(
+     useCallback(() => {
+     getstorelist()
+     }, [])
+   );
   // 下拉刷新
   const onRefresh = async () => {
 
