@@ -22,6 +22,11 @@ import SafeFastImage from '../../components/Home/SafeFastImage'
  import * as WeChat from 'react-native-wechat-lib';
  import useAuthStore from '../../utils/zustand';
 import { trackOAID } from '../../utils/oaidTracker';
+import {
+  reportActivePay,
+} from '../../utils/bdConvert';
+
+
 
 const { OaidModule } = NativeModules;
   const commnet=[{title:'东*******',content:'没毛病，很牛逼！！！'},
@@ -485,8 +490,10 @@ const handlecreatorder = async() => { //创建订单
     if (response.data !== undefined && response.code == 0) {
     const res = response.data.payInfo
     if(payways==1){
-    handlePay(response.data.payInfo.payInfo)
+    handlePay(response.data.payInfo.payInfo,response.data.payAmount)
     }else if(payways==2){
+    console.log('shoplistdw',shopallinfo,paynum,response.data.payAmount);
+
     let payload={
     partnerId: res.payParams.partnerid,
     prepayId: res.prepayId,
@@ -495,9 +502,11 @@ const handlecreatorder = async() => { //创建订单
     package: res.payParams.package,
     sign: res.payParams.sign,
     }
-    handlewechatpay(payload)
+    handlewechatpay(payload,response.data.payAmount)
     }
+    if(Platform.OS=='android'){
     trackOAID();
+    }
     }
   } catch (error) {
     console.error(error);
@@ -539,7 +548,8 @@ const handlecreatorder = async() => { //创建订单
   return inWeekRange && inTimeRange;
 }
 
- const handlewechatpay = async(e) => { 
+ const handlewechatpay = async(e,payAmount) => { 
+  console.log('wechatpay',e,payAmount);
     try {
       // 检查微信是否安装
       const isInstalled = await WeChat.isWXAppInstalled();
@@ -555,9 +565,11 @@ const handlecreatorder = async() => { //创建订单
 
       // 调用支付
       const result = await WeChat.pay(e);
-      console.log(result);
+      console.log('result123:',result);
 
       if (result.errCode === 0) {
+        console.log('微信支付成功！');
+        
          setLoading(false)
          triggerListOrderRefresh();
         // 支付成功
@@ -568,8 +580,17 @@ const handlecreatorder = async() => { //创建订单
           position: 'center',
           mask: false,
         })
-     
+        await reportActivePay({
+          amount: payAmount,
+          currency: 'CNY',
+          paymentChannel: 'wechat',
+          contentId: JSON.stringify(shopallinfo?.id),
+          contentName: shopallinfo?.title,
+          success: true,
+        });
       } else {
+        console.log('shoplistdw',shopallinfo);
+        
          setLoading(false)
         // 支付失败或取消
 
@@ -590,7 +611,9 @@ const handlecreatorder = async() => { //创建订单
     }
 
   };
-  const handlePay = async (e) => {
+  const handlePay = async (e,payAmount) => {
+    console.log('alipay113',e,payAmount);
+    
     try {
       // 👉 这里应该从后端获取
       const orderString = e;
@@ -613,11 +636,19 @@ const handlecreatorder = async() => { //创建订单
           position: 'center',
           mask: false,
         })
+          await reportActivePay({
+          amount: payAmount,
+          currency: 'CNY',
+          paymentChannel: 'alipay',
+          contentId: JSON.stringify(shopallinfo?.id),
+          contentName: shopallinfo?.title,
+          success: true,
+        });
         console.log('支付成功');
       } else {
         console.log('支付未完成');
       }
- setLoading(false)
+     setLoading(false)
     } catch (err) {
       console.log('支付失败:', err);
       if (err.code === 6001) {
@@ -714,6 +745,33 @@ const handlecreatorder = async() => { //创建订单
 };
 
 const totalSales = getTotalSales();
+
+
+   const [isReady, setIsReady] = useState(false);
+       useEffect(() => {
+      const timer = setTimeout(() => {
+        setIsReady(true);
+      }, 1); // 0.5~1s 都可以
+  
+      return () => clearTimeout(timer);
+    }, []);
+    // ⭐ 1. 未就绪 -> 只渲染轻量 loading
+if (!isReady) {
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+      }}
+    >
+      <ActivityIndicator size="large" color="#FC9026" />
+    </View>
+  );
+} 
+
+
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={()=>handleback()} style={{
@@ -1085,10 +1143,9 @@ onPress={() => setVisible(true)}>
     </View>
   <View style={{flexDirection: 'column',gap:px(6)}}>
   {/* <Text style={styles.modalnum}>编号：219739012479102</Text> */}
-  <Stepper min={1} max={1000}  
+  <Stepper min={1} max={9999}  
   keyboardType="number-pad"
     returnKeyType="done"
-
   //readOnly 
   value={paynum}
   onChange={(value)=>handlechangenum(value)} 

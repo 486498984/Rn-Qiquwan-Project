@@ -1,25 +1,85 @@
 import { StyleSheet, Text, View,TouchableOpacity,Image,Linking,
-    
+    Platform,
  } from 'react-native'
 import React,{useState} from 'react'
 import { px } from '../../utils/scaleUtils';
 import LinearGradient from 'react-native-linear-gradient';
-
+import CustomerServiceModal from './components/CustomerServiceModal'
+import {
+  Checkbox,
+  Modal as Modalitem,
+} from '@ant-design/react-native'
+import * as WeChat from 'react-native-wechat-lib';
+import ReactNativeBlobUtil from 'react-native-blob-util';
+import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 
 export default function Join({navigation}) {
       const [mode, setMode] = useState(true); //1为俱乐部入驻
+      const [visible, setVisible] = useState(false);
       const handleback = () => {  //返回上一页
      navigation.goBack();
      };
 const openWechatLink = async () => {
-  const url = 'https://work.weixin.qq.com/ca/cawcdea2c4e121224f';
+  setVisible(true);
+  // const url = 'https://work.weixin.qq.com/ca/cawcdea2c4e121224f';
 
-  try {
-    await Linking.openURL(url);
-  } catch (e) {
-    console.log('无法打开链接', e);
-  }
+  // try {
+  //   await Linking.openURL(url);
+  // } catch (e) {
+  //   console.log('无法打开链接', e);
+  // }
 };
+const saveImage = async() => { 
+ console.log(2131);
+ const imageUrl='https://tourok.com.cn/image/wechatkf.jpg'
+       // 🌐 网络图片 → 下载
+       const urlParts = imageUrl.split('.');
+       let ext = urlParts[urlParts.length - 1];
+ 
+       if (!['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext.toLowerCase())) {
+         ext = 'png';
+       }
+ 
+       const dirs = ReactNativeBlobUtil.fs.dirs;
+ 
+       const path = `${dirs.CacheDir}/${Date.now()}.${ext}`;
+ 
+       const res = await ReactNativeBlobUtil.config({
+         fileCache: true,
+         appendExt: ext,
+         path,
+       }).fetch('GET', imageUrl);
+ 
+      const localPath = res.path();
+    console.log(localPath);
+        // 📸 保存到相册
+        const savedUri = await CameraRoll.save(
+          Platform.OS === 'android'
+            ? 'file://' + localPath
+            : localPath,
+          {
+            type: 'photo',
+            album: 'MyApp',
+          }
+        );
+        console.log(savedUri);
+        setVisible(false)
+    //   Toast.show({
+    //   content: '保存图片成功',
+    //   duration: 2,
+    //   position: 'center',
+    //   mask: false,
+    // })
+    Modalitem.alert('提示', '保存成功，是否跳转微信？', [
+      { text: '不了', onPress: () => console.log('cancel'), style: 'cancel' },
+      { text: '是的', onPress: () => handlegowechat(),
+       style: { color: '#FC9026' },
+       },   
+    ])
+ };
+ const handlegowechat = () => { 
+  WeChat.openWXApp();
+  };
   return (
     <View style={styles.container}>
            <LinearGradient
@@ -191,7 +251,12 @@ style={styles.smallBox}
               </LinearGradient>
 </TouchableOpacity>
 
-
+<CustomerServiceModal
+  visible={visible}
+  imageUrl="https://tourok.com.cn/image/wechatkf.jpg"
+  onClose={() => setVisible(false)}
+  onSave={saveImage}
+/>
     </View>
   )
 }

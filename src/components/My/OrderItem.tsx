@@ -11,7 +11,9 @@ import Storage from '../../utils/storage';
  import * as WeChat from 'react-native-wechat-lib';
 import TextRadioModal from '../../components/Shop/TextRadioModal';
 import useAuthStore from '../../utils/zustand';
-
+import {
+  reportActivePay,
+} from '../../utils/bdConvert';
 
 
 const TYPE_ICON = {
@@ -386,6 +388,8 @@ useEffect(() => {
          }
    };
  const Continuepaying = async() => { 
+  console.log('继续支付wechat');
+  
          try {
            const response = await request({
              url: '/order/repay',
@@ -396,20 +400,21 @@ useEffect(() => {
            console.log(response);
           if(response.data!==undefined&&response.code==0){
             console.log(item);
-              const res = response.data.payInfo
+            const res = response.data.payInfo
             if(response.data.paymentType=="WECHAT"){ //微信支付
-        let payload={
-        partnerId: res.payParams.partnerid,
-        prepayId: res.prepayId,
-        nonceStr: res.payParams.noncestr,
-        timeStamp: res.payParams.timestamp,
-        package: res.payParams.package,
-        sign: res.payParams.sign,
-          }
-          handlewechatpay(payload)
-            }else{
-              handlePay(res.payInfo)
+            let payload={
+            partnerId: res.payParams.partnerid,
+            prepayId: res.prepayId,
+            nonceStr: res.payParams.noncestr,
+            timeStamp: res.payParams.timestamp,
+            package: res.payParams.package,
+            sign: res.payParams.sign,
             }
+          console.log('wechat23131');
+          handlewechatpay(payload,response.data.payAmount)
+          }else{
+            handlePay(res.payInfo,response.data.payAmount)
+          }
           //handlePay(response.data.payInfo.payInfo)
           }else{
               Toast.show({
@@ -424,7 +429,7 @@ useEffect(() => {
          }
 
   };
-   const handlewechatpay = async(e) => { 
+   const handlewechatpay = async(e,payAmount) => { 
       try {
         // 检查微信是否安装
         const isInstalled = await WeChat.isWXAppInstalled();
@@ -451,7 +456,15 @@ useEffect(() => {
             position: 'center',
             mask: false,
           })
-       switchTab('toBeServed')
+         switchTab('toBeServed')
+          await reportActivePay({
+            amount: payAmount,
+            currency: 'CNY',
+            paymentChannel: 'wechat',
+            contentId: '888',
+            contentName: 'ceshi',
+            success: true,
+          });
         } else {
          
   
@@ -470,7 +483,7 @@ useEffect(() => {
       }
   
     };
-   const handlePay = async (e) => {
+   const handlePay = async (e,payAmount) => {
      try {
        // 👉 这里应该从后端获取
        const orderString = e;
@@ -495,6 +508,14 @@ useEffect(() => {
          })
          switchTab('toBeServed')
          console.log('支付成功');
+            await reportActivePay({
+            amount: payAmount,
+            currency: 'CNY',
+            paymentChannel: 'alipay',
+            contentId: '888',
+            contentName: 'ceshi',
+            success: true,
+          });
        } else {
          console.log('支付未完成');
        }

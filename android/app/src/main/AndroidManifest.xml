@@ -16,6 +16,9 @@
     android:name="android.permission.WRITE_EXTERNAL_STORAGE"
     android:maxSdkVersion="29"
     tools:replace="android:maxSdkVersion" />
+    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE" />
+
+
     
   <application
     android:name=".MainApplication"

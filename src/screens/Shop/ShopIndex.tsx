@@ -293,7 +293,7 @@ if (!hasPermission) {
                <Text style={styles.title}>俱乐部端</Text>
                   </View>
                 </View>
-     <ScrollView>
+     <ScrollView contentContainerStyle={{paddingBottom:px(60)}} showsVerticalScrollIndicator={false}>
     <View style={{paddingHorizontal:px(16)}}>
 <View style={{width: '100%',marginTop: px(0),}}>
 <View style={{flexDirection: 'row',alignItems: 'center',
@@ -486,14 +486,27 @@ marginTop: px(16),borderRadius: px(6),flexDirection: 'row',alignItems: 'center',
     </View>
 </TouchableOpacity>
 
-<View style={{width: px(361),height: px(112),backgroundColor: '#fff',
-    marginTop: px(16),borderRadius: px(8),
+<TouchableOpacity style={{width: px(361),height: px(64),backgroundColor: '#fff',
+marginTop: px(16),borderRadius: px(6),flexDirection: 'row',alignItems: 'center',
+}} onPress={()=>navigation.navigate('Playmateadd',{storeinfo:storeinfo})}>
+   <Image source={require('../../../assets/images/my/peiwan.png')} 
+    style={{width:px(48),height:px(48),marginLeft: px(8),}}></Image>
+    <View style={{height: px(48),flexDirection: 'column',
+        justifyContent: 'space-between',marginLeft: px(14),}}>
+  <Text style={[styles.entertx,{marginTop: px(4),}]}>+陪玩录入</Text>
+    <Text style={styles.pricedes}>点击快速录入陪玩～</Text>
+    </View>
+</TouchableOpacity>
+
+<View style={{width: px(361),backgroundColor: '#fff',
+    marginTop: px(16),borderRadius: px(8),paddingBottom:px(18)
 }}>
     <View style={{marginTop: px(8),marginLeft: px(8),}}>
 <Text style={styles.todaydata}>其它功能</Text>
     </View>
 <View style={{marginLeft: px(29),marginTop: px(16),flexDirection: 'row',
-    flexWrap: 'wrap',gap:px(35)
+    flexWrap: 'wrap',    columnGap:px(35), // 横向间距
+    rowGap:px(18),    // 纵向间距
 }}>
 <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',}}
  onPress={()=>navigation.navigate('ShopSetting',{storeinfo:storeinfo})}>
@@ -512,6 +525,12 @@ marginTop: px(16),borderRadius: px(6),flexDirection: 'row',alignItems: 'center',
   <Image source={require('../../../assets/images/my/other3.png')} 
     style={{width:px(33),height:px(33),}}></Image>
     <Text style={styles.bottomdes}>员工管理</Text>
+</TouchableOpacity>
+<TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',}}
+ onPress={()=>navigation.navigate('PlaymateList',{storeinfo:id})}>
+  <Image source={require('../../../assets/images/my/peiwanic.png')} 
+    style={{width:px(33),height:px(33),}}></Image>
+    <Text style={styles.bottomdes}>陪玩管理</Text>
 </TouchableOpacity>
 <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',}}
  onPress={()=>navigation.navigate('ShopNotice',{storeinfo:id})}>

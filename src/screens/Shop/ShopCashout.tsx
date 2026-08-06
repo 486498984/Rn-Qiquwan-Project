@@ -367,7 +367,8 @@ const [accountList, setAccountList] = useState([]); // 保存账户列表
           //   Toast.show('请先添加提现账户');
           //   return;
           // }
-          console.log('当前选择提现账户ID:', selectedAccount.id);
+          const applyAmount = Math.round(Number(withdmoney) * 100);
+          console.log('当前选择提现账户ID:', selectedAccount,id,withdmoney*100);
                       try {
                     const response = await request({
                       url: '/withdraw/apply',
@@ -375,7 +376,7 @@ const [accountList, setAccountList] = useState([]); // 保存账户列表
                       data: {
                       ownerId: id,
                       ownerType: "STORE",
-                      applyAmount: withdmoney*100,
+                      applyAmount: applyAmount,
                       payeeAccountId: selectedAccount.id
                       },
                       query: {},

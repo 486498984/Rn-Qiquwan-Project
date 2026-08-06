@@ -13,7 +13,9 @@ import  request  from '../../api/request';
 import Storage from '../../utils/storage';
 import useAuthStore from '../../utils/zustand'
 import { BASE_URL } from '../../api/config';
-
+import {
+  reportActiveRegister,
+} from '../../utils/bdConvert';
 
 
 
@@ -141,6 +143,7 @@ const getuserinfo = async(e) => {
         console.log(data);
         if(data.code==0&&data.data!==null&&data.data!==undefined){
         await Storage.set('userinfo', JSON.stringify(data.data));
+        await reportActiveRegister('phone', true);
         loginChanged();
         setTimeout(() => {
         navigation.goBack(); // 返回上一个页面

@@ -110,6 +110,8 @@ const isFormData = data instanceof FormData;
       //Alert.alert('提示', '登录已过期');
       // 跳转到登录页
       navigate('Login');
+      console.log('登陆失败',result);
+      
       Toast.show({
       content: '当前账号已经在其他设备登陆,请重新登陆～',
       duration: 2,

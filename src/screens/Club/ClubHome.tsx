@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View ,Image,TouchableOpacity,ScrollView,
     ActivityIndicator,FlatList,Dimensions,
 } from 'react-native'
-import React,{useState,useEffect,} from 'react'
+import React,{useState,useEffect,useRef,} from 'react'
 import { px } from '../../utils/scaleUtils';
 import StarRating from '../../components/Club/StarRating'
 import LinearGradient from 'react-native-linear-gradient';
@@ -20,6 +20,10 @@ import Storage from '../../utils/storage';
 import { Stepper, Toast } from '@ant-design/react-native'
 import { TabView } from "react-native-tab-view";
 import Content from './components/Content'
+import Newtab from '../Home/components/Newtab'
+
+
+
 const { width } = Dimensions.get("window");
 
 
@@ -58,7 +62,7 @@ const [reshop, setReshop] = useState([]) //推荐商品列表
   const [dataMap, setDataMap] = useState({});
   const [shopnumber, setShopnumber] = useState(8)
   const [notice, setNotice] = useState(null) //公告详情
-
+  const newtabLoadMoreRef = useRef(null);
 
           const handleback = () => {  //返回上一页
          navigation.goBack();
@@ -407,6 +411,57 @@ const gettabslist = async () => {
              console.error(error);
            }
   };
+
+const handleScrollEnsd = (event)=>{
+
+const {
+ layoutMeasurement,
+ contentOffset,
+ contentSize
+}=event.nativeEvent;
+
+
+if(
+ layoutMeasurement.height +
+ contentOffset.y >=
+ contentSize.height - 100
+){
+
+  if(newtabLoadMoreRef.current){
+
+    newtabLoadMoreRef.current();
+
+  }
+
+}
+
+};
+
+
+   const [isReady, setIsReady] = useState(false);
+       useEffect(() => {
+      const timer = setTimeout(() => {
+        setIsReady(true);
+      }, 1); // 0.5~1s 都可以
+  
+      return () => clearTimeout(timer);
+    }, []);
+    // ⭐ 1. 未就绪 -> 只渲染轻量 loading
+if (!isReady) {
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+      }}
+    >
+      <ActivityIndicator size="large" color="#FC9026" />
+    </View>
+  );
+} 
+
   return (
     <View style={styles.container}>
      <View style={styles.top}>
@@ -604,9 +659,13 @@ style={{width:px(251),height:px(18),}}></Image>
 </ScrollView>
 }
 {mode==2&&
-<ScrollView  contentContainerStyle={{paddingHorizontal:px(0),paddingBottom:px(120)}}
+<ScrollView  
+contentContainerStyle={{paddingHorizontal:px(0),paddingBottom:px(120)}}
 showsVerticalScrollIndicator={false}
-stickyHeaderIndices={[1]} onMomentumScrollEnd={handleScrollEnd}>
+//stickyHeaderIndices={[1]} 
+onMomentumScrollEnd={handleScrollEnsd}
+
+>
   <View style={{paddingHorizontal:px(16)}}>
 <View style={{flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',
     marginTop: px(16),
@@ -625,7 +684,7 @@ justifyContent: 'space-between',width: px(290),height: px(65),}}>
 <Image source={require('../../../assets/images/club/champion.png')} 
       style={{width:px(24),height:px(24),}}></Image>
 <Text style={styles.clubname} numberOfLines={2}>{storedata?.storeName}</Text>
-        </View>
+  </View>
 
 </View>
 <View style={{flexDirection: 'row',alignItems: 'flex-start',
@@ -709,14 +768,20 @@ justifyContent: 'space-between',width: px(290),height: px(65),}}>
 </View>
 }
 </View>
-    <View style={{marginTop: px(10),backgroundColor: '#F2F3F5',}}>
+<Newtab navigation={navigation} type={2}
+onLoadMore={(callback)=>{
+  newtabLoadMoreRef.current = callback;
+}}
+storedata={storedata}
+></Newtab>
+    {/* <View style={{marginTop: px(10),backgroundColor: '#F2F3F5',}}>
   <Tabs  index={tabIndex} routes={tablist}
      onChange={(i) => {
      setTabIndex(i)
     //pagerRef.current?.setPage(i) // 👈 关键
   }}></Tabs>
-    </View>
- <View style={{paddingHorizontal:px(0),paddingTop: px(10),
+    </View> */}
+ {/* <View style={{paddingHorizontal:px(0),paddingTop: px(10),
     backgroundColor: '#F2F3F5',
     height:px(52)+ px(136)*shopnumber,
   }}>
@@ -730,7 +795,7 @@ justifyContent: 'space-between',width: px(290),height: px(65),}}>
           lazy
           lazyPreloadDistance={1}
         />
-  </View>
+  </View> */}
 
 </ScrollView>
 }

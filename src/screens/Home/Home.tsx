@@ -6,6 +6,7 @@ import { px } from '../../utils/scaleUtils';
 import HotServices from './components/HotServices'
 import StarClub from './components/StarClub'
 import Tabs from './components/Tabs'
+import Newtab from './components/Newtab'
 import Content from './components/Content'
 import Carousel from 'react-native-reanimated-carousel'
 import { TabView } from "react-native-tab-view";
@@ -93,6 +94,10 @@ const online = !!state.isConnected
   const [updateways, setUpdateways] = useState(1); //0否，1是
   const [updatename, setUpdatename] = useState("1.0.0"); //更新版本号
   const [updateContent, setUpdaContent] = useState("是否立即下载？"); //更新内容
+  const newtabLoadMoreRef = useRef(null);
+const newtabRefreshRef = useRef(null);
+
+
     const updates = async() => { 
       console.log(999888,versionName,versionCode);
          
@@ -370,26 +375,29 @@ const firstLoadDone = useRef(false);
     )
   }
  
-const handleScrollEnd = (event) => {
-  //console.log('打印handleScrollEnd');
-  const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-  if (
-    layoutMeasurement.height + contentOffset.y >=
-    contentSize.height - 20
-  ) {
-    //console.log("底部了！！！");
-    const key = tablist[tabIndex]?.key;
-    const currentData = dataMap[key];
-    if (!currentData?.hasMore || currentData?.loading) {
-      return;
-    }
-    console.log('fetchList4');
-    fetchList(
-      key,
-      currentData.page + 1,
-      true
-    );
+const handleScrollEnd = (event)=>{
+
+const {
+ layoutMeasurement,
+ contentOffset,
+ contentSize
+}=event.nativeEvent;
+
+
+if(
+ layoutMeasurement.height +
+ contentOffset.y >=
+ contentSize.height - 100
+){
+
+  if(newtabLoadMoreRef.current){
+
+    newtabLoadMoreRef.current();
+
   }
+
+}
+
 };
 const isNoMore = (tabKey) => {
   return noMoreTabs.includes(tabKey);
@@ -410,7 +418,8 @@ const gettabslist = async () => {
       url: '/category/tree',
       method: 'GET',
     });
-
+    console.log(response);
+    
     if (response.data && response.code == 0) {
       const list = response.data[0].children;
 
@@ -452,34 +461,91 @@ const gettabslist = async () => {
 }, []);
  
     const [refreshing, setRefreshing] = useState(false);
-const onRefresh = async () => {
-  if (refreshing) return;
-  setRefreshing(true);
-  try {
-    await Promise.all([
-      gettabinfo(),
-      getHomeConfig(),
-    ]);
+const onRefresh = async()=>{
 
-  } catch (error) {
-    console.log(error);
-  } finally {
-    setRefreshing(false);
-  }
-};
+ if(refreshing)return;
+
+
+ setRefreshing(true);
+
+
+ try{
+
+
+ await getHomeConfig();
+
+
+
+ if(newtabRefreshRef.current){
+
+   newtabRefreshRef.current();
+
+ }
+
+
+ }catch(e){
+
+ console.log(e);
+
+ }finally{
+
+ setRefreshing(false);
+
+ }
+
+}
 const handleTabChange = useCallback((i) => {
   setTabIndex(i);
 }, []);
 const tabsLayoutY = useRef(0);
 const [isSticky, setIsSticky] = useState(false);
+const scrollY = useRef(new Animated.Value(0)).current;
+const scrollBackgroundColor =
+scrollY.interpolate({
+  inputRange:[
+    0,
+    300
+  ],
+  outputRange:[
+    'rgba(255,255,255,0)',
+    'rgba(255,255,255,1)'
+  ],
+  extrapolate:'clamp'
+});
+const [scrollWhite,setScrollWhite] = useState(false);
 const onScroll = (e) => {
-  const y = e.nativeEvent.contentOffset.y;
+
+  const y =
+    e.nativeEvent.contentOffset.y;
+
+
+  // 控制背景颜色
+  if(y > 100 && !scrollWhite){
+
+    setScrollWhite(true);
+
+  }else if(y <= 100 && scrollWhite){
+
+    setScrollWhite(false);
+
+  }
+
+
 
   if (y > tabsLayoutY.current && !isSticky) {
+
     setIsSticky(true);
-  } else if (y <= tabsLayoutY.current && isSticky) {
+
+  } else if (
+    y <= tabsLayoutY.current 
+    && 
+    isSticky
+  ) {
+
     setIsSticky(false);
+
   }
+
 };
   return (
     <View style={styles.container}>
@@ -488,41 +554,64 @@ const onScroll = (e) => {
          style={{width:px(393),height:px(185),position: 'absolute',top:0}}></Image>
         </View>
   <View style={styles.top}>
-    <View style={{flexDirection: 'row',gap:px(12)}}>
- <Text style={styles.sanjiao}>三角洲</Text>
-  <Text style={styles.sanother}>其他</Text>
+    <View style={{flexDirection: 'row'}}>
+            <Image source={require('../../../assets/images/home/qiquwanlogo.png')} 
+         style={{width:px(105),height:px(33)}}></Image>
+ {/* <Text style={styles.sanjiao}>柒趣玩</Text> */}
+  {/* <Text style={styles.sanother}>其他</Text> */}
     </View>
-<View style={{flexDirection: 'row',alignItems: 'center',gap:px(8)}}>
+<View style={{flexDirection: 'row',alignItems: 'center',marginRight: px(0),}}>
   <TouchableOpacity style={styles.parallelogram}
   onPress={()=>navigation.navigate('Searchlist',{type:1})}>
-       <Image source={require('../../../assets/images/home/searchbox.png')} 
-         style={{width:px(168),height:px(34),position: 'absolute',}}></Image>
-    <Image source={require('../../../assets/images/home/search.png')} 
+       <Image source={require('../../../assets/images/home/seabox.png')} 
+         style={{width:px(247),height:px(34),position: 'absolute',}}></Image>
+    <Image source={require('../../../assets/images/home/seaicon.png')} 
          style={{width:px(16),height:px(16),marginLeft: px(12),}}></Image>
          <Text style={styles.searchtext}>搜一搜</Text>
 </TouchableOpacity> 
-<TouchableOpacity onPress={()=>
+{/* <TouchableOpacity onPress={()=>
   navigation.navigate('MainTab', {
   screen: 'Lottery',
 })
 }>
    <Image source={require('../../../assets/images/home/newcomer.png')} 
          style={{width:px(34),height:px(34),}}></Image>
-  </TouchableOpacity>
+  </TouchableOpacity> */}
 </View>
   </View>
-        {isSticky && (
+        {/* {isSticky && (
   <View style={styles.stickyTabs}>
     <Tabs index={tabIndex} routes={tablist} onChange={handleTabChange} />
   </View>
-)}
+)} */}
   <Animated.ScrollView 
+ contentContainerStyle={{
+ paddingBottom:px(60),
+}}
+style={{
+ backgroundColor:
+ scrollBackgroundColor
+}}
   showsVerticalScrollIndicator={false} 
   nestedScrollEnabled={true}
   //stickyHeaderIndices={[3]} 
   onMomentumScrollEnd={handleScrollEnd} 
   overScrollMode="never"
-    onScroll={onScroll}
+onScroll={Animated.event(
+  [
+    {
+      nativeEvent:{
+        contentOffset:{
+          y:scrollY
+        }
+      }
+    }
+  ],
+  {
+    useNativeDriver:false,
+    listener:onScroll
+  }
+)}
      refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -624,10 +713,40 @@ const onScroll = (e) => {
          }}></Image>
 </View>
   </View> */}
+<View style={{flexDirection: 'row',justifyContent: 'space-between',width: '100%',
+  marginTop: px(10),
+}}>
+<View style={{flexDirection: 'column',gap:px(13)}}>
+   <TouchableOpacity onPress={()=>navigation.navigate('MobileGame',{type:'手游'})}>
+    <Image source={require('../../../assets/images/home/shouyou.png')} 
+    style={{width:px(174),height:px(58)}}></Image>
+    </TouchableOpacity>
 
+       <TouchableOpacity onPress={()=>navigation.navigate('MobileGame',{type:'端游'})}>
+    <Image source={require('../../../assets/images/home/duanyou.png')} 
+    style={{width:px(174),height:px(58)}}></Image>
+    </TouchableOpacity>
+</View>
+<TouchableOpacity onPress={()=>navigation.navigate('Playmate')}>
+    <Image source={require('../../../assets/images/home/peiwan.png')} 
+    style={{width:px(174),height:px(137)}}></Image>
+    </TouchableOpacity>
+</View>
   </View>
 
-  <View style={{marginTop: px(12),}} 
+<Newtab navigation={navigation} 
+onLoadMore={(callback)=>{
+  newtabLoadMoreRef.current = callback;
+}}
+onRefresh={(callback)=>{
+  newtabRefreshRef.current = callback;
+}}
+type={1}
+/>
+
+
+
+  {/* <View style={{marginTop: px(12),}} 
     onLayout={(e) => {
     tabsLayoutY.current = e.nativeEvent.layout.y;
   }}>
@@ -635,12 +754,9 @@ const onScroll = (e) => {
    onChange={handleTabChange}
   >
   </Tabs>
-  </View>
+  </View> */}
  
-
-
-
- <View style={{paddingHorizontal:px(0),paddingTop: px(10),
+ {/* <View style={{paddingHorizontal:px(0),paddingTop: px(10),
     backgroundColor: '#fff',
     height:px(52)+ px(136)*shopnumber,
   }}>
@@ -654,7 +770,7 @@ const onScroll = (e) => {
     lazy
     lazyPreloadDistance={1}
   />
-  </View>
+  </View> */}
 
   </Animated.ScrollView>
               <UpdateModal
@@ -671,6 +787,74 @@ const onScroll = (e) => {
 }
 
 const styles = StyleSheet.create({
+      nosequanbutitle:{
+ fontFamily: 'MiSans-Regular',
+        fontSize:px(12),
+        color:'#1A1A1A',
+        fontWeight:400,
+        lineHeight:px(16),
+  },
+  sequanbutitle:{
+ fontFamily: 'MiSans-Regular',
+        fontSize:px(12),
+        color:'#FF9500',
+        fontWeight:400,
+        lineHeight:px(16),
+  },
+    nosechoosebox:{
+  flexDirection: 'row',
+  backgroundColor: '#E6EAED',
+  height: px(27),
+  alignItems: 'center',
+  borderRadius: px(6),
+  paddingLeft:px(7),
+  paddingRight:px(12),
+  //paddingHorizontal:px(6),
+  gap:px(3)
+  },
+  sechoosebox:{
+  flexDirection: 'row',
+  backgroundColor: '#FEF7E0',
+  height: px(27),
+  alignItems: 'center',
+  borderRadius: px(6),
+  paddingLeft:px(7),
+  paddingRight:px(12),
+  //paddingHorizontal:px(6),
+  gap:px(3)
+  },
+    nochoosebox:{
+  flexDirection: 'row',
+  backgroundColor: '#E6EAED',
+  height: px(34),
+  alignItems: 'center',
+  borderRadius: px(6),
+  paddingHorizontal:px(6),
+  gap:px(3)
+  },
+  choosebox:{
+  flexDirection: 'row',
+  backgroundColor: '#FEF7E0',
+  height: px(34),
+  alignItems: 'center',
+  borderRadius: px(6),
+  paddingHorizontal:px(6),
+  gap:px(3)
+  },
+    noquanbutitle:{
+ fontFamily: 'MiSans-Regular',
+        fontSize:px(13),
+        color:'#1A1A1A',
+        fontWeight:400,
+        lineHeight:px(17),
+  },
+  quanbutitle:{
+ fontFamily: 'MiSans-Regular',
+        fontSize:px(13),
+        color:'#FF9500',
+        fontWeight:400,
+        lineHeight:px(17),
+  },
   stickyTabs: {
   position: 'absolute',
   top: px(98),
@@ -726,14 +910,14 @@ const styles = StyleSheet.create({
   searchtext:{
    fontFamily: 'MiSans-Regular',
         fontSize:px(12),
-        color:'rgba(255, 255, 255, 0.7)',
+        color:'#AAAAAA',
         fontWeight:400,
         lineHeight:px(16),
         marginLeft: px(4),
   },
 parallelogram: {
   position: 'relative',
-  width: px(168),
+  width: px(247),
   height: px(34),
   //backgroundColor: 'rgba(0, 0, 0, 0.1)',
   //transform: [{ skewX: '-20deg' }],
@@ -757,6 +941,7 @@ parallelogram: {
         lineHeight:px(34),
   },
   top:{
+    width: '100%',
     paddingBottom:px(8),
     //backgroundColor: 'red',
     justifyContent: 'space-between',
@@ -764,7 +949,7 @@ parallelogram: {
     //marginTop: px(56),
     flexDirection: 'row',
     alignItems: 'center',
- paddingHorizontal:px(16),
+    paddingHorizontal:px(16),
   },
     topbox:{
     paddingHorizontal:px(16),

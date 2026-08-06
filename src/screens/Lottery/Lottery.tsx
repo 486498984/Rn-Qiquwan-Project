@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View,Image,ScrollView,TouchableOpacity,
-  RefreshControl,
+  RefreshControl,ActivityIndicator,
  } from 'react-native'
 import React,{useEffect,useState,useCallback} from 'react'
 import { px } from '../../utils/scaleUtils';
@@ -229,8 +229,31 @@ export default function Lottery({navigation}) {
     return
       }
   navigation.navigate('Invite')
-
    };
+   const [isReady, setIsReady] = useState(false);
+       useEffect(() => {
+      const timer = setTimeout(() => {
+        setIsReady(true);
+      }, 1); // 0.5~1s 都可以
+  
+      return () => clearTimeout(timer);
+    }, []);
+    // ⭐ 1. 未就绪 -> 只渲染轻量 loading
+if (!isReady) {
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+      }}
+    >
+      <ActivityIndicator size="large" color="#FC9026" />
+    </View>
+  );
+}
+
   return (
       <LinearGradient
     colors={['#F9E7D2', '#F0CBA2', '#F0CA9E']}

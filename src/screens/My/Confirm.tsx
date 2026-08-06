@@ -12,6 +12,11 @@ import { BASE_URL } from '../../api/config';
 import Storage from '../../utils/storage';
 import useAuthStore from '../../utils/zustand'
 import { NativeModules } from 'react-native';
+import {
+  reportActiveRegister,
+} from '../../utils/bdConvert';
+
+
 
 export default function Confirm({ navigation,route }) {
   const { OaidModule } = NativeModules;
@@ -129,6 +134,7 @@ const getuserinfo = async(e) => {
         await Storage.set('userinfo', JSON.stringify(data.data));
         loginChanged();
         clearCode() 
+        await reportActiveRegister('phone', true);
         navigation.dispatch(
   CommonActions.reset({
     index: 0, // stack 的第0个路由

@@ -384,6 +384,30 @@ const saveImage = async() => {
 const handlegowechat = () => { 
  WeChat.openWXApp();
  };
+ 
+   const [isReady, setIsReady] = useState(false);
+       useEffect(() => {
+      const timer = setTimeout(() => {
+        setIsReady(true);
+      }, 1); // 0.5~1s 都可以
+  
+      return () => clearTimeout(timer);
+    }, []);
+    // ⭐ 1. 未就绪 -> 只渲染轻量 loading
+if (!isReady) {
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+      }}
+    >
+      <ActivityIndicator size="large" color="#FC9026" />
+    </View>
+  );
+} 
 
   return (
     <View style={styles.container}>

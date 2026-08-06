@@ -17,7 +17,10 @@ import { px } from './utils/scaleUtils';
  import Home from './screens/Home/Home';
 import Searchlist from './screens/Home/Searchlist';
 import Allcomments from './screens/Home/Allcomments';
- import Shopinfo from './screens/Home/Shopinfo';
+import Shopinfo from './screens/Home/Shopinfo';
+import MobileGame from './screens/Home/MobileGame';
+import PcGames from './screens/Home/PcGames';
+import Playmate from './screens/Home/Playmate';
 import Club from './screens/Club/Club';
 import ClubInfo from './screens/Club/ClubInfo';
 import ClubHome from './screens/Club/ClubHome';
@@ -74,6 +77,8 @@ import ShopEdit from './screens/Shop/ShopEdit';
 import ShopSale from './screens/Shop/ShopSale';
 import ShopSaleInfo from './screens/Shop/ShopSaleInfo';
 import ShopDetails from './screens/Shop/ShopDetails';
+import Playmateadd from './screens/Shop/Playmateadd';
+import PlaymateList from './screens/Shop/PlaymateList';
 import UserAgree from './screens/Policy/UserAgree';
 import PrivacyAgree from './screens/Policy/PrivacyAgree';
 
@@ -110,6 +115,13 @@ import { useIMStore } from './store/imStore';
   } from '@notifee/react-native';
 import DeviceInfo from 'react-native-device-info';
 import { trackOAID } from './utils/oaidTracker';
+import {
+  initBDConvertAfterPrivacyAgree,
+} from './utils/bdConvert';
+import {
+  KeyboardProvider
+} from 'react-native-keyboard-controller';
+
 
 
 const { OaidModule } = NativeModules;
@@ -181,7 +193,7 @@ function TabNavigator({ totalcount,unreadTotal }) {
           tabBarLabel: ({ focused, color }) => (
             <Text style={{
               fontSize: px(11),
-              color: focused ? '#1A1A1A' : '#AAAAAA',
+              color: focused ? '#FEC525' : '#AAAAAA',
               marginTop: px(4),
               fontWeight: focused ? 'normal' : 'normal',
               fontFamily:focused ?'MiSans-Medium':'MiSans-Regular',
@@ -198,8 +210,8 @@ function TabNavigator({ totalcount,unreadTotal }) {
               }
               //source={require('../assets/icons/index.png')} // 替换成你的图片
               style={{
-                width: px(34),
-                height: px(34),
+                width: px(28),
+                height: px(28),
                 //tintColor: focused ? '#007AFF' : '#222',
               }}
             />
@@ -213,7 +225,7 @@ function TabNavigator({ totalcount,unreadTotal }) {
           tabBarLabel: ({ focused, color }) => (
             <Text style={{
               fontSize: px(11),
-              color: focused ? '#1A1A1A' : '#AAAAAA',
+              color: focused ? '#FEC525' : '#AAAAAA',
               marginTop: px(4),
               fontWeight: focused ? 'normal' : 'normal',
               fontFamily:focused ?'MiSans-Medium':'MiSans-Regular',
@@ -229,8 +241,8 @@ function TabNavigator({ totalcount,unreadTotal }) {
               :require('../assets/icons/club.png')
               }
               style={{
-                width: px(34),
-                height: px(34),
+                width: px(28),
+                height: px(28),
                 //tintColor: focused ? '#007AFF' : '#222',
               }}
             />
@@ -272,20 +284,21 @@ function TabNavigator({ totalcount,unreadTotal }) {
         component={Lottery}
         options={{
           tabBarLabel: ({ focused, color }) => (
-           <Text style={{
-              fontSize: px(11),
-              color: focused ? '#1A1A1A' : '#AAAAAA',
-              marginTop: px(4),
-              fontWeight: focused ? 'normal' : 'normal',
-              fontFamily:focused ?'MiSans-Medium':'MiSans-Regular',
-              lineHeight:px(15)
-            }}>
-              活动
-            </Text>
+          //  <Text style={{
+          //     fontSize: px(11),
+          //     color: focused ? '#1A1A1A' : '#AAAAAA',
+          //     marginTop: px(4),
+          //     fontWeight: focused ? 'normal' : 'normal',
+          //     fontFamily:focused ?'MiSans-Medium':'MiSans-Regular',
+          //     lineHeight:px(15)
+          //   }}>
+          //     活动
+          //   </Text>
+          <></>
           ),
           tabBarIcon: ({ focused }) => (
           <View style={{position: 'relative',width: px(34),
-        height: px(34),}}>
+          height: px(34),}}>
           {/* {totalcount!==0&& 
              <View style={{height: px(16),borderRadius: px(8),zIndex: 1,
               backgroundColor: '#DE5452',position: 'absolute',right: -px(8),top:0,
@@ -294,17 +307,44 @@ function TabNavigator({ totalcount,unreadTotal }) {
           <Text style={styles.message}>{totalcount}</Text>
             </View>
           } */}
-          <Image
-            source={focused 
-              ?require('../assets/icons/slottery.png')
-              :require('../assets/icons/lottery.png')
-              }
-              style={{
-                width: px(34),
-                height: px(34),
-                //tintColor: focused ? '#007AFF' : '#222',
-              }}
-            />
+            <LinearGradient
+    colors={[
+      '#FC9026',
+      '#FEC525',
+    ]}
+    start={{
+      x: 0,
+      y: 1,
+    }}
+    end={{
+      x: 1,
+      y: 0,
+    }}
+    style={{
+      width: '100%',
+      height: '100%',
+      borderRadius: px(10),
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}
+  >
+    <Image
+      source={
+        // focused 
+        // ?require('../assets/icons/slottery.png')
+        // :
+        require('../assets/icons/lottery.png')
+        }
+        style={{
+          width: px(22),
+          height: px(22),
+          zIndex: 999,
+          //tintColor: focused ? '#007AFF' : '#222',
+        }}
+      />
+   </LinearGradient>
+
           </View>
           
           ),
@@ -318,7 +358,7 @@ function TabNavigator({ totalcount,unreadTotal }) {
           tabBarLabel: ({ focused, color }) => (
            <Text style={{
               fontSize: px(11),
-              color: focused ? '#1A1A1A' : '#AAAAAA',
+              color: focused ? '#FEC525' : '#AAAAAA',
               marginTop: px(4),
               fontWeight: focused ? 'normal' : 'normal',
               fontFamily:focused ?'MiSans-Medium':'MiSans-Regular',
@@ -328,8 +368,8 @@ function TabNavigator({ totalcount,unreadTotal }) {
             </Text>
           ),
           tabBarIcon: ({ focused }) => (
-          <View style={{position: 'relative',width: px(34),
-        height: px(34),}}>
+          <View style={{position: 'relative',width: px(28),
+        height: px(28),}}>
           {unreadTotal!==0&&
              <View style={{height: px(16),borderRadius: px(8),zIndex: 1,
               backgroundColor: '#DE5452',position: 'absolute',right: -px(8),top:0,
@@ -344,8 +384,8 @@ function TabNavigator({ totalcount,unreadTotal }) {
               :require('../assets/icons/news.png')
               }
               style={{
-                width: px(34),
-                height: px(34),
+                width: px(28),
+                height: px(28),
                 //tintColor: focused ? '#007AFF' : '#222',
               }}
             />
@@ -362,7 +402,7 @@ function TabNavigator({ totalcount,unreadTotal }) {
           tabBarLabel: ({ focused, color }) => (
             <Text style={{
               fontSize: px(11),
-              color: focused ? '#1A1A1A' : '#AAAAAA',
+              color: focused ? '#FEC525' : '#AAAAAA',
               marginTop: px(4),
               fontWeight: focused ? 'normal' : 'normal',
               fontFamily:focused ?'MiSans-Medium':'MiSans-Regular',
@@ -378,8 +418,8 @@ function TabNavigator({ totalcount,unreadTotal }) {
               :require('../assets/icons/my.png')
               }
               style={{
-                width: px(34),
-                height: px(34),
+                width: px(28),
+                height: px(28),
                 //tintColor: focused ? '#007AFF' : '#222',
               }}
             />
@@ -410,7 +450,7 @@ function App() {
 
  
 
-const showLocalNotification = async(e) => { 
+const showLocalNotification = async(e) => {
   // 请求权限
   await notifee.requestPermission();
 
@@ -448,14 +488,22 @@ useEffect(() => {
     console.log('新消息cccc:', event.data);
     
     if(event.data[0].from=="administrator"){ //支付订单通知
-      console.log('noticeyy',event.data[0].payload.text);
-      
+    console.log('noticeyy',event.data[0].payload.text);
+    
     showLocalNotification(event.data[0].payload.text);
+    deleteOneMessage(event.data[0].conversationID)
     }
     getclubpermission();
     isNewmessageChanged();
   };
-
+const deleteOneMessage = async (message) => {
+  try {
+    await chat.clearHistoryMessage(message);
+    console.log('删除成功');
+  } catch (e) {
+    console.log('删除失败', e);
+  }
+};
   // const onConversationListUpdated = function(event) {
   //   console.log(event);
     
@@ -614,6 +662,8 @@ useEffect(() => {
   
 }, [privacyReady,isLogin]);
   const ImLogin = async(e) => {
+    console.log('imlogin',e);
+    
     try {
       const response = await request({
         url: '/im/register',
@@ -653,6 +703,7 @@ useEffect(() => {
         setPrivacyReady(true);
         // 已同意，直接进入 App
         console.log("已经同意协议");
+        getAndroidId();
         goinit(); 
         setPrivacyAgreed(true);
         setShowPrivacy(false);
@@ -665,7 +716,17 @@ useEffect(() => {
     };
     checkPrivacy();
   }, [isLogin]);
+  async function getAndroidId() {
+  const androidId = await DeviceInfo.getAndroidId();
+  console.log('Android ID:', androidId);
+  return androidId;
+}
   const goinit = async() => {  //初始化sdk
+      //const totalUnreadCount = chat.getTotalUnreadMessageCount();
+        await initBDConvertAfterPrivacyAgree(); //巨量归因激活
+      //console.log('当前总未读数:', totalUnreadCount);
+        await notifee.setBadgeCount(0);
+        await notifee.cancelAllNotifications();
         WeChat.registerApp('wxa6e17fe1975fb8a6', 'https://tourok.com.cn').then((res) => {
       console.log("registerApp: " + res)
       WeChat.getApiVersion().then((num) => {
@@ -693,6 +754,8 @@ const appKey = 'oL2Yk4JlJEZtu0GqtssWuCCguQdPoXPDU0hqBnlyRfOlSTCNNAWs6NyEtPRqytmi
 
 if (Push) {
      const user = await Storage.get("userinfo");
+     console.log('userinfo123',user);
+     
    if(user!==null&&user){
     let userId=user.user.userId
     
@@ -722,7 +785,7 @@ if (Push) {
   Push.addPushListener(Push.EVENT.NOTIFICATION_CLICKED, (res) => {
     // res 为推送扩展信息
     //navigation.navigate('OneChat',)
-     navigate('News');
+     //navigate('News');
     console.log('notification clicked', res);
   });
   
@@ -739,7 +802,10 @@ if (Push) {
   });
 }
     //getOAID();
-   trackOAID();
+    if(Platform.OS=='android'){
+    trackOAID();
+    }
+
   };
    const getOAID = async() => { 
     console.log("getoaid");
@@ -815,6 +881,7 @@ const openWeChat = async () => {
   return (
     <GestureHandlerRootView>
     <SafeAreaProvider>
+      <KeyboardProvider>
        <Provider
        theme={{
         brand_primary: '#FF9500',     // 按钮背景颜色 <Button type="primary">
@@ -892,6 +959,11 @@ const openWeChat = async () => {
 <Stack.Screen name="Searchlist" component={Searchlist}/>
 <Stack.Screen name="Noticepla" component={Noticepla}/>
 <Stack.Screen name="Noticeinfo" component={Noticeinfo}/>
+<Stack.Screen name="MobileGame" component={MobileGame}/>
+<Stack.Screen name="PcGames" component={PcGames}/>
+<Stack.Screen name="Playmate" component={Playmate}/>
+<Stack.Screen name="Playmateadd" component={Playmateadd}/>
+<Stack.Screen name="PlaymateList" component={PlaymateList}/>
 
 
       </Stack.Navigator>
@@ -905,6 +977,7 @@ const openWeChat = async () => {
         ondisAgree={() => handldisagree()}
       />
     </Provider>
+    </KeyboardProvider>
     </SafeAreaProvider>
     </GestureHandlerRootView>
   );

@@ -15,4 +15,18 @@ chat.setLogLevel(0);
 chat.registerPlugin({ 'tim-upload-plugin': TIMUploadPlugin });
 chat.registerPlugin({ 'chat-network-monitor': NetInfo });
 
+
+/**
+ * 获取所有会话未读总数
+ */
+export function getTotalUnreadCount() {
+  try {
+    return chat.getTotalUnreadMessageCount();
+  } catch (error) {
+    console.log('获取未读总数失败:', error);
+    return 0;
+  }
+}
+
+
 export default chat;

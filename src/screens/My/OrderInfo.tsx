@@ -19,6 +19,11 @@ import { pay } from '@react-native-hero/alipay';
 import TextRadioModal from '../../components/Shop/TextRadioModal';
 import ImagePreviewer from '../../components/Shop/ImagePreviewer';
 import useAuthStore from '../../utils/zustand';
+import {
+  reportActivePay,
+} from '../../utils/bdConvert';
+
+
 
 const STATUS_CONFIG = {
 
@@ -482,9 +487,9 @@ const handlegocom = () => {
         package: res.payParams.package,
         sign: res.payParams.sign,
           }
-          handlewechatpay(payload)
+          handlewechatpay(payload,response.data.payAmount)
             }else{
-              handlePay(res.payInfo)
+              handlePay(res.payInfo,response.data.payAmount)
             }
           //handlePay(response.data.payInfo.payInfo)
           }else{
@@ -500,7 +505,7 @@ const handlegocom = () => {
          }
 
   };
-   const handlewechatpay = async(e) => { 
+   const handlewechatpay = async(e,payAmount) => { 
       try {
         // 检查微信是否安装
         const isInstalled = await WeChat.isWXAppInstalled();
@@ -528,7 +533,14 @@ const handlegocom = () => {
             position: 'center',
             mask: false,
           })
-       
+          await reportActivePay({
+            amount: payAmount,
+            currency: 'CNY',
+            paymentChannel: 'wechat',
+            contentId: '888',
+            contentName: 'ceshi',
+            success: true,
+          });
         } else {
          
   
@@ -547,7 +559,7 @@ const handlegocom = () => {
       }
   
     };
-   const handlePay = async (e) => {
+   const handlePay = async (e,payAmount) => {
      try {
        // 👉 这里应该从后端获取
        const orderString = e;
@@ -572,6 +584,14 @@ const handlegocom = () => {
            mask: false,
          })
          console.log('支付成功');
+                   await reportActivePay({
+                     amount: payAmount,
+                     currency: 'CNY',
+                     paymentChannel: 'wechat',
+                     contentId: '888',
+                     contentName: 'ceshi',
+                     success: true,
+                   });
        } else {
          console.log('支付未完成');
        }
