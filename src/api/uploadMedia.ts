@@ -90,90 +90,114 @@ async function getUploadParams() {
  *  type
  * }
  */
-export async function uploadAudio(
-  audio:any
-) {
+export async function uploadAudio(audio:any) {
 
-
-  // 没有音频直接返回空字符串
   if(!audio){
-
     return '';
-
   }
-
 
 
   try {
 
-
     const {
       appid,
       url
-    } =
-    await getUploadParams();
+    } = await getUploadParams();
+
+
+    const formData = new FormData();
+
+
+    // 获取文件后缀
+    const fileName =
+      audio.name ||
+      audio.fileName ||
+      `audio_${Date.now()}.m4a`;
+
+
+    const ext =
+      fileName
+      .split('.')
+      .pop()
+      ?.toLowerCase();
 
 
 
-    const formData =
-    new FormData();
+    let mimeType = 'audio/mpeg';
+
+
+    switch(ext){
+
+      case 'm4a':
+        mimeType = 'audio/mp4';
+        break;
+
+
+      case 'mp3':
+        mimeType = 'audio/mpeg';
+        break;
+
+
+      case 'wav':
+        mimeType = 'audio/wav';
+        break;
+
+
+      case 'aac':
+        mimeType = 'audio/aac';
+        break;
+
+
+      default:
+        mimeType =
+          audio.type ||
+          'audio/mpeg';
+
+    }
 
 
 
     formData.append(
       'img',
       {
+        uri: audio.uri,
 
-        uri:
-        audio.uri,
-
-
-        name:
-        audio.name ||
-        `audio_${Date.now()}.mp3`,
-
+        name:fileName,
 
         type:
-        audio.type ||
-        audio.nativeType ||
-        'audio/mpeg',
+          audio.type ||
+          audio.nativeType ||
+          mimeType,
 
       } as any
     );
 
 
 
-
     const response =
-    await fetch(
-      `${BASE_URL}/upload/image${url}`,
-      {
+      await fetch(
+        `${BASE_URL}/upload/image${url}`,
+        {
+          method:'POST',
 
-        method:'POST',
+          headers:{
+            appid:String(appid),
+          },
 
-        headers:{
-
-          appid:String(appid),
-
-        },
-
-        body:formData,
-
-      }
-    );
-
+          body:formData,
+        }
+      );
 
 
     const result =
-    await response.json();
+      await response.json();
 
 
 
-    // 上传成功
     if(
-      result.code === 0 &&
+      result.code===0 &&
       Array.isArray(result.data) &&
-      result.data.length > 0
+      result.data.length>0
     ){
 
       return result.data[0];
@@ -181,7 +205,6 @@ export async function uploadAudio(
     }
 
 
-    // 没有文件
     return '';
 
 
@@ -196,7 +219,6 @@ export async function uploadAudio(
     );
 
     throw error;
-
   }
 
 }

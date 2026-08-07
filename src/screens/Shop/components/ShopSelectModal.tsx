@@ -101,20 +101,13 @@ const renderItem=({item})=>{
  return (
 
 <TouchableOpacity
-
 activeOpacity={0.8}
-
 onPress={()=>{
  toggleSelect(item.id)
 }}
-
 style={styles.item}
-
 >
-
-
 <Image
-
 source={{
  uri:IMG_URL+item.coverImage
  ?
@@ -122,40 +115,24 @@ IMG_URL+item.coverImage
  :
  undefined
 }}
-
 style={styles.cover}
-
 />
-
-
 <View
 style={styles.info}
 >
-
-
 <Text
 style={styles.title}
 numberOfLines={1}
 >
-
 {item.title}
-
 </Text>
-
-
 <Text
 style={styles.desc}
 numberOfLines={1}
 >
-
 {item.platform || ''}
-
 </Text>
-
-
 </View>
-
-
 
 <View
 style={[
@@ -164,8 +141,6 @@ style={[
  styles.checked
 ]}
 >
-
-
 {
 checked &&
 <Text

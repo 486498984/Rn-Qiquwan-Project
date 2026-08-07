@@ -79,6 +79,9 @@ import ShopSaleInfo from './screens/Shop/ShopSaleInfo';
 import ShopDetails from './screens/Shop/ShopDetails';
 import Playmateadd from './screens/Shop/Playmateadd';
 import PlaymateList from './screens/Shop/PlaymateList';
+import Playmateedit from './screens/Shop/Playmateedit';
+import Productass from './screens/Shop/Productass';
+
 import UserAgree from './screens/Policy/UserAgree';
 import PrivacyAgree from './screens/Policy/PrivacyAgree';
 
@@ -964,6 +967,8 @@ const openWeChat = async () => {
 <Stack.Screen name="Playmate" component={Playmate}/>
 <Stack.Screen name="Playmateadd" component={Playmateadd}/>
 <Stack.Screen name="PlaymateList" component={PlaymateList}/>
+<Stack.Screen name="Playmateedit" component={Playmateedit}/>
+<Stack.Screen name="Productass" component={Productass}/>
 
 
       </Stack.Navigator>

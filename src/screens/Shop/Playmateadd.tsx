@@ -1058,7 +1058,7 @@ justifyContent: 'space-between',height: px(51),}}
   style={{width:px(19),height:px(19)}}></Image>
 </View>
 </TouchableOpacity>
-<Line/>
+{/* <Line/>
 <TouchableOpacity
 style={{
 flexDirection:'row',
@@ -1096,7 +1096,7 @@ height:px(19)
 }}
 />
 </View>
-</TouchableOpacity>
+</TouchableOpacity> */}
 
 
 

@@ -36,7 +36,9 @@ import request from '../../api/request';
 
 
 import PlayerItem from './components/PlayerItem';
-
+import {
+  useFocusEffect
+} from '@react-navigation/native';
 
 
 const STATUS_MAP:any={
@@ -70,7 +72,7 @@ const TabContent=({
  currentTab,
 
  onRefresh,
-
+ refreshing,
 }:any)=>{
 
 
@@ -90,65 +92,30 @@ keyExtractor={(item,index)=>
 renderItem={({item})=>(
 
 <PlayerItem
-
 item={item}
-
 navigation={navigation}
-
 />
-
 )}
-
-
 contentContainerStyle={{
-
 paddingHorizontal:px(16),
-
 paddingTop:px(10),
-
-paddingBottom:px(50)
-
+paddingBottom:px(50),
+gap:px(8)
 }}
-
-
-
 showsVerticalScrollIndicator={false}
-
-
-
 onEndReached={()=>{
-
  if(hasMore&&!loading){
-
    onLoadMore();
-
  }
-
 }}
-
-
-
 onEndReachedThreshold={0.3}
-
-
-
 refreshControl={
-
 <RefreshControl
-
-refreshing={loading}
-
+refreshing={!!refreshing}
 onRefresh={onRefresh}
-
 />
-
 }
-
-
-
 ListFooterComponent={()=>{
-
-
 if(data.length===0)
 return null;
 
@@ -262,7 +229,7 @@ useWindowDimensions();
 
 
 
-
+const [refreshing,setRefreshing] = useState(false);
 const [index,setIndex]=useState(0);
 
 const [username, setUsername] = useState("");
@@ -593,7 +560,21 @@ useEffect(()=>{
 },[username]);
 
 
+useFocusEffect(
+  useCallback(()=>{
 
+    const key =
+      routes[index].key;
+
+
+    fetchPlayerList(
+      key,
+      true
+    );
+
+ 
+  },[index, username])
+);
 
 const renderScene=({route}:any)=>{
 
@@ -629,12 +610,16 @@ route.key
 
 
 
-onRefresh={()=>{
+onRefresh={async()=>{
 
-fetchPlayerList(
-route.key,
-true
-)
+  setRefreshing(true);
+
+  await fetchPlayerList(
+    route.key,
+    true
+  );
+
+  setRefreshing(false);
 
 }}
 
