@@ -267,17 +267,10 @@ const {type}=route.params||{}
 
 
   const changeFirstTab=(item)=>{
-
-
     setFirstTab(item.key);
-
-
     if(item.key!=='delta'){
-
       setSecondTab('all');
-
     }
-
   };
 
 
@@ -287,168 +280,92 @@ const {type}=route.params||{}
 
 
   const renderHeader=()=>{
-
-
     return (
-
       <>
-
-
       <View style={styles.firstRow}>
-
-
       {
       firstTabs.map(item=>{
-
-
         const active =
         firstTab===item.key;
-
-
         return (
-
         <TouchableOpacity
-
         key={item.key}
-
         onPress={()=>
         changeFirstTab(item)
         }
-
-
         style={[
           styles.choosebox,
           !active &&
           styles.nochoosebox
         ]}
-
         >
-
         <Image
-
         source={item.icon}
-
         style={{
           width:px(28),
           height:px(28)
         }}
-
         />
-
-
         <Text
-
         style={[
           styles.quanbutitle,
           !active &&
           styles.noquanbutitle
         ]}
-
         >
-
         {item.title}
-
         </Text>
-
-
         </TouchableOpacity>
-
-
         )
-
       })
-
       }
-
-
-
       </View>
-
-
-
-
-
       {
       firstTab==='delta'
       &&
       <View style={styles.secondRow}>
-
-
       {
       secondTabs.map(item=>{
-
-
       const active =
       secondTab===item.key;
-
-
       return (
-
       <TouchableOpacity
-
       key={item.key}
-
       onPress={()=>
       setSecondTab(item.key)
       }
-
-
       style={[
         styles.sechoosebox,
         !active &&
         styles.nosechoosebox
       ]}
-
       >
-
-
       <Image
-
       source={item.icon}
-
       style={{
         width:px(17),
         height:px(17)
       }}
-
       />
-
-
       <Text
-
       style={[
         styles.sequanbutitle,
         !active &&
         styles.nosequanbutitle
       ]}
-
       >
-
       {item.title}
-
       </Text>
-
-
       </TouchableOpacity>
-
-
       )
-
       })
-
       }
-
-
       </View>
-
       }
-
-
       </>
-
     )
-
   };
+
   const handleback = () => {  //返回上一页
     navigation.goBack(); 
     };

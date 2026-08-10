@@ -7,71 +7,97 @@ import {
   Toast,
   Tooltip,
 } from '@ant-design/react-native'
+import request from '../../../api/request';
+
 
   const statusTextMap = {
-  online: '空闲',
-  offline: '离线',
-  busy:'在忙'
+  ONLINE: '空闲',
+  OFFLINE: '离线',
+  BUSY:'在忙'
 };
   const actions = [
     {
-      key: 'online',
+      key: 'ONLINE',
       text: '空闲',
     },
     {
-      key: 'offline',
+      key: 'OFFLINE',
       text: '离线',
     },
         {
-      key: 'busy',
+      key: 'BUSY',
       text: '在忙',
     },
   ];
   const statusStyleMap = {
-  online: {
+  ONLINE: {
     borderColor: '#3CF15F',
     textColor: '#3CF15F',
   },
 
-  offline: {
+  OFFLINE: {
     borderColor: '#D8D8D8',
     textColor: '#1A1A1A',
   },
 
-  busy: {
+  BUSY: {
     borderColor: '#FF9500',
     textColor: '#FF9500',
   },
 };
 export default function PlayerItem({navigation,item}) {
   const [visible, setVisible] = useState(false);
-  const [status, setStatus] = useState('online');
+  const [status, setStatus] = useState('ONLINE');
   const rotateAnim = useRef(new Animated.Value(0)).current;
-  useEffect(() => {
-    if(item){
-      console.log(item);
-      
-    }
-
-
-  }, [item])
+    useEffect(() => {
+      if(item){
+        console.log(item);
+        setStatus(item.workStatus)
+      }
+    }, [item])
       const handleAction = (item) => {
       console.log('当前状态:', item.key);
   
-      if (item.key === 'online') {
-        //online(1);
+      if (item.key === 'ONLINE') {
+        Settingstatus('ONLINE');
         Toast.show('已切换为客服在线');
-      } else {
-        //onlineoff();
+      } else if(item.key === 'OFFLINE') {
+        Settingstatus('OFFLINE');
         Toast.show('已切换为客服离线');
-      }
+      } else if(item.key === 'BUSY') {
+        Settingstatus('BUSY');
+        Toast.show('已切换为客服在忙');
+      } 
+    };
+    const Settingstatus = async(e) => { 
+    console.log(e);
+          try {
+            const response = await request({
+              url: '/store/player/work-status',
+              method: 'PUT',
+              data: {
+              },
+              query: {
+                id:item.id,
+                workStatus:e,
+                storeId:item.storeId,
+              },
+            }); 
+            console.log('status123',response);
+          if (response.data !== null && response.code == 0) {
+         
+          } 
+          } catch (error) {
+            console.error(error);
+          }
     };
     const rotate = rotateAnim.interpolate({
   inputRange: [0, 1],
   outputRange: ['0deg', '180deg'],
-});
-const currentStatusStyle =
-  statusStyleMap[status];
+    });
+    const currentStatusStyle =
+    statusStyleMap[status];
+
   return (
     <View style={styles.container}>
     <View style={{flexDirection: 'row',alignItems: 'center',}}>
@@ -116,7 +142,6 @@ style={{width:px(16),height:px(16)}}></Image>
     paddingHorizontal:px(12),}}>
 <Text style={styles.rank}>{item?.gameRank}</Text>
   </View>
-
 </LinearGradient>
 
 <View style={{flexDirection: 'row',alignItems: 'center',gap:px(4),flexWrap: 'wrap',}}>

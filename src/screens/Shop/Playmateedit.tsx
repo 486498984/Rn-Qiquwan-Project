@@ -128,7 +128,7 @@ const initialization = async() => {
     setGamecavalues(gameca);
     setRank(item.gameRank)
     const skilled = getSkilledValues(
-    "长弓溪谷,巴克什"
+    item.goodAt
     );
     setSkilledvalues(skilled)
     setInitial(String(item.virtualPayCount))

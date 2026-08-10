@@ -19,8 +19,9 @@ import Searchlist from './screens/Home/Searchlist';
 import Allcomments from './screens/Home/Allcomments';
 import Shopinfo from './screens/Home/Shopinfo';
 import MobileGame from './screens/Home/MobileGame';
-import PcGames from './screens/Home/PcGames';
 import Playmate from './screens/Home/Playmate';
+import PlayerInfo from './screens/Home/PlayerInfo';
+import VideoPlayer from './screens/Home/VideoPlayer';
 import Club from './screens/Club/Club';
 import ClubInfo from './screens/Club/ClubInfo';
 import ClubHome from './screens/Club/ClubHome';
@@ -963,12 +964,15 @@ const openWeChat = async () => {
 <Stack.Screen name="Noticepla" component={Noticepla}/>
 <Stack.Screen name="Noticeinfo" component={Noticeinfo}/>
 <Stack.Screen name="MobileGame" component={MobileGame}/>
-<Stack.Screen name="PcGames" component={PcGames}/>
 <Stack.Screen name="Playmate" component={Playmate}/>
 <Stack.Screen name="Playmateadd" component={Playmateadd}/>
 <Stack.Screen name="PlaymateList" component={PlaymateList}/>
 <Stack.Screen name="Playmateedit" component={Playmateedit}/>
 <Stack.Screen name="Productass" component={Productass}/>
+<Stack.Screen name="PlayerInfo" component={PlayerInfo}/>
+<Stack.Screen name="VideoPlayer" component={VideoPlayer}/>
+
+
 
 
       </Stack.Navigator>

@@ -135,6 +135,16 @@ const getshopinfo = async (e) => {
   console.log(response);
   
     if (response.data !== undefined && response.code == 0) {
+      if(response.data.skuList==null){
+            Toast.show({ 
+              content: '该商品暂时无法下单，请稍后重试～',
+              duration: 2,
+              position: 'center',
+              mask: false,
+            })
+        handleback();
+      return
+      }
       const infodata = response.data;
       setHeadimg(getImageData(infodata.coverImage));
       setHeadimgview(getImageList(infodata.coverImage));

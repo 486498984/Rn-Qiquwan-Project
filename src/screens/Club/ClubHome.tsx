@@ -799,18 +799,162 @@ storedata={storedata}
 
 </ScrollView>
 }
+{mode==3&&
+<ScrollView
+contentContainerStyle={{paddingHorizontal:px(0),paddingBottom:px(120)}}
+showsVerticalScrollIndicator={false}
+//stickyHeaderIndices={[1]} 
+onMomentumScrollEnd={handleScrollEnsd}
+
+>
+  <View style={{paddingHorizontal:px(16)}}>
+<View style={{flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',
+    marginTop: px(16),
+}}>
+<SafeFastImage source={{uri:IMG_URL+storedata?.storeLogo}} 
+style={{width:px(65),height:px(65),borderRadius: px(4),}}/>
+<View style={{flexDirection: 'row',alignItems: 'center',
+justifyContent: 'space-between',width: px(290),height: px(65),}}>
+
+ <View style={{flexDirection: 'column',justifyContent: 'space-between',
+  height: px(65),
+ }}>
+        <View style={{flexDirection: 'row',alignItems: 'flex-start',
+    justifyContent: 'space-between',}}>
+        <View style={{flexDirection: 'row',alignItems: 'flex-start',}}>
+<Image source={require('../../../assets/images/club/champion.png')} 
+      style={{width:px(24),height:px(24),}}></Image>
+<Text style={styles.clubname} numberOfLines={2}>{storedata?.storeName}</Text>
+  </View>
+
+</View>
+<View style={{flexDirection: 'row',alignItems: 'flex-start',
+   marginTop: px(0),}}>
+        <View style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}>
+<StarRating score={5}></StarRating>
+<Text style={styles.score}>5.0</Text>
+        </View>
+<Text style={[styles.score,{marginLeft: px(8),}]}>{storedata?.followCount}关注</Text>
+</View>
+
+
+
+        </View> 
+<TouchableOpacity onPress={()=>handlefollow()} style={{}}>
+    {follow&&
+     <LinearGradient
+    colors={['#FEC525', '#FC9026']} // 渐变颜色
+    start={{ x: 1, y: 0 }}   
+    end={{ x: 0, y: 0 }}
+    style={styles.gradientBox}
+    >
+    <View style={{flexDirection: 'row',alignItems: 'center',}}>
+    <Text style={styles.logintext}>关注</Text>
+    </View>
+    </LinearGradient>
+    }
+    {!follow&&
+<View style={{width: px(66),height: px(27),borderRadius: px(6),justifyContent: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',flexDirection: 'row',alignItems: 'center',}}>
+ <Text style={styles.logintext}>已关注</Text>
+</View>
+    }
+</TouchableOpacity>
+{/* <View style={{flexDirection: 'row',alignItems: 'center',
+    justifyContent: 'space-between',}}>
+<View style={{flexDirection: 'row',alignItems: 'flex-end',}}>
+<Text style={styles.price}>8</Text>
+<Text style={styles.yuan}>元</Text>
+<Text style={styles.yuandes}>最低起</Text>
+    </View>  
+<View style={{width: px(1),height: px(8),
+    backgroundColor: 'rgba(118, 118, 118,0.2)',}}></View>
+<View style={{flexDirection: 'row',alignItems: 'flex-end',}}>
+<Text style={styles.price}>98</Text>
+<Text style={styles.yuan}>%</Text>
+<Text style={styles.yuandes}>好评率</Text>
+    </View>  
+<View style={{width: px(1),height: px(8),
+    backgroundColor: 'rgba(118, 118, 118,0.2)',}}></View>
+<View style={{flexDirection: 'row',alignItems: 'flex-end',}}>
+<Text style={styles.price}>199</Text>
+<Text style={styles.yuan}>人</Text>
+<Text style={styles.yuandes}>最近下单</Text>
+    </View>  
+    <View style={{width: px(1),height: px(8),
+    backgroundColor: 'rgba(118, 118, 118,0.2)',}}></View>
+<View style={{flexDirection: 'row',alignItems: 'flex-end',}}>
+<Text style={styles.price}>99</Text>
+<Text style={styles.yuan}>件</Text>
+<Text style={styles.yuandes}>商品</Text>
+    </View>  
+</View> */}
+</View>
+</View>
+{storedata?.Notice!==null&&
+<View style={{marginTop: px(12),}}>
+     <NoticeBar marqueeProps={{ loop: true }}
+     icon={<Image source={require('../../../assets/images/club/notice.png')} 
+     style={{width:px(18),height:px(18),}}></Image>}
+      styles={{
+    font: { color: '#1A1A1A',},
+    marquee:{fontSize:px(13),fontFamily: 'MiSans-Medium',lineHeight:px(17)},
+    background: { backgroundColor: '#fff' },
+    iconWrap:{marginLeft: px(7),},
+    container:{borderRadius: px(8),},
+    }}
+    >
+  {storedata?.Notice?.content}
+</NoticeBar>
+</View>
+}
+</View>
+{/* <Newtab navigation={navigation} type={2}
+onLoadMore={(callback)=>{
+  newtabLoadMoreRef.current = callback;
+}}
+storedata={storedata}
+></Newtab> */}
+
+</ScrollView>
+}
 <View style={[styles.bottom,{}]}>
     <View style={{marginTop: px(8),flexDirection: 'row',
-        alignItems: 'center',gap:px(21)}}>
-<TouchableOpacity onPress={()=>handleChangeMode(1)} style={{paddingHorizontal:px(21),
-paddingBottom:bottomSafeHeight+px(16)
+        alignItems: 'center',}}>
+<TouchableOpacity onPress={()=>handleChangeMode(1)} style={{
+  //paddingHorizontal:px(21),
+  width: '25%',
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+  paddingBottom:bottomSafeHeight+px(16)
 }}>
 <Text style={mode==1?styles.bottomtx:styles.nobottomtx}>首页</Text>
 </TouchableOpacity>
+
 <View style={{width: px(1),height: px(9),marginBottom : bottomSafeHeight+px(16),
     backgroundColor: 'rgba(118, 118, 118,0.2)',}}></View>
 
-<TouchableOpacity onPress={()=>handleChangeMode(2)} style={{paddingHorizontal:px(21),
+<TouchableOpacity onPress={()=>handleChangeMode(3)} style={{
+   //paddingHorizontal:px(21),
+   width: '25%',
+     flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+   paddingBottom:bottomSafeHeight+px(16)
+}}>
+<Text style={mode==3?styles.bottomtx:styles.nobottomtx}>陪玩</Text>
+</TouchableOpacity>
+
+<View style={{width: px(1),height: px(9),marginBottom : bottomSafeHeight+px(16),
+    backgroundColor: 'rgba(118, 118, 118,0.2)',}}></View>
+
+<TouchableOpacity onPress={()=>handleChangeMode(2)} style={{
+  //paddingHorizontal:px(21),
+  width: '25%',
+    flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
    paddingBottom:bottomSafeHeight+px(16)
 }}>
 <Text style={mode==2?styles.bottomtx:styles.nobottomtx}>商品</Text>
@@ -819,7 +963,13 @@ paddingBottom:bottomSafeHeight+px(16)
 
 <View style={{width: px(1),height: px(9),marginBottom : bottomSafeHeight+px(16),
     backgroundColor: 'rgba(118, 118, 118,0.2)',}}></View>
-<TouchableOpacity style={{paddingHorizontal:px(21),
+<TouchableOpacity style={{
+  width: '25%',
+    flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+  //backgroundColor: 'red',
+  //paddingHorizontal:px(21),
 paddingBottom:bottomSafeHeight+px(16)
 }} onPress={()=>handlegokefu()}>
 <Text style={styles.nobottomtx}>客服</Text>
