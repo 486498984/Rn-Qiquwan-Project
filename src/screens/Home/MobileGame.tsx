@@ -319,6 +319,27 @@ const {type}=route.params||{}
         )
       })
       }
+            <View style={{
+                 flexDirection:'row',
+             backgroundColor:'#E6EAED',
+             height:px(34),
+             alignItems:'center',
+             borderRadius:px(6),
+             paddingHorizontal:px(6),
+             gap:px(3)
+            }}>
+            <View
+            style={{
+            width:px(28),
+            height:px(28),
+            backgroundColor:'#D8D8D8',
+            borderRadius:px(3),
+            }}
+            />
+            <Text style={styles.noquanbutitle}>
+            期待中
+            </Text>
+            </View>
       </View>
       {
       firstTab==='delta'

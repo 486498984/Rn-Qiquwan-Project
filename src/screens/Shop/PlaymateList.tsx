@@ -705,7 +705,7 @@ active
 >
 
 {route.title}
-
+({tabData[route.key]?.list?.length ?? 0})
 </Text>
 
 
@@ -760,7 +760,7 @@ borderRadius:px(10)
 
 },
 
-[]
+ [tabData]
 
 
 );

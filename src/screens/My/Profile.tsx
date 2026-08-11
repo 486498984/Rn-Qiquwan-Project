@@ -7,6 +7,9 @@ import LinearGradient from 'react-native-linear-gradient';
 import request from '../../api/request';
 import useAuthStore from '../../utils/zustand'
 import { IMG_URL } from '../../api/config';
+import TextRadioModal from '../../components/Shop/TextRadioModal';
+
+
 
  const Underline=()=>{
 return(
@@ -16,6 +19,15 @@ return(
 }}></View>
 )
  };
+ const gamesOptions = [
+  { label: '王者荣耀', value: 0 },
+  { label: '三角洲行动', value: 1 },
+];
+ const gamesquOptions = [
+  { label: '微信', value: 0 },
+  { label: 'QQ', value: 1 },
+  { label: 'Steam', value: 2 },
+];
 export default function Profile({navigation}) {
     const isLogin = useAuthStore(state => state.isLogin);
   const [userinfo, setUserinfo] = useState(null); //登陆状态
@@ -24,8 +36,13 @@ export default function Profile({navigation}) {
     const [disabled, setDisabled] = useState(true);
     const [userprofile, setUserprofile] = useState(null); //个人信息
     const [avatarError, setAvatarError] = useState(false);
-
-
+    const [config, setConfig] = useState({}); //个人偏好
+    const [games, setGames] = useState(gamesOptions); //游戏选择
+    const [gamesindex, setGamesindex] = useState(0); //选择游戏下标
+    const [gamesvs, setGamesvs] = useState(false) //游戏弹窗开关
+    const [gamesqu, setGamesqu] = useState(gamesquOptions); //游戏分区选择
+    const [gamesquindex, setGamesquindex] = useState(0); //选择游戏分区下标
+    const [gamesquvs, setGamesquvs] = useState(false) //游戏分区弹窗开关
     useEffect(() => {
     getloginstatus();//获取登陆状态
     }, [isLogin]);
@@ -39,27 +56,45 @@ export default function Profile({navigation}) {
    }
    console.log(user); // { name: 'Tom', age: 18 }
    };
-      const getuserinfo = async(e) => { 
-      console.log(e);
-           try {
-             const response = await request({
-               url: '/user/profile',
-               method: 'GET',
-               data:{},
-               query: { userId: e.user.userId }
-             });
-             console.log(response);
-            if(response.data!==undefined&&response.code==0){
-            setAvatarError(false);
-            setUserprofile(response.data.profile)
-            }
-           } catch (error) {
-             console.error(error);
-           }
-       };
-const avatarUrl = userprofile?.avatarUrl
-  ? `${IMG_URL}${userprofile.avatarUrl}`
-  : null;
+  const getuserinfo = async(e) => { 
+  console.log(e);
+        try {
+          const response = await request({
+            url: '/user/profile',
+            method: 'GET',
+            data:{},
+            query: { userId: e.user.userId }
+          });
+          console.log(response);
+        if(response.data!==undefined&&response.code==0){
+        setAvatarError(false);
+        setUserprofile(response.data.profile)
+        const config=JSON.parse(response.data.profile.config)
+        console.log(config);
+        setConfig(config)
+        if(config.games){
+        if(config.games=='三角洲行动'){
+        setGamesindex(1)
+        }
+        }
+        if(config.partition){
+        if(config.partition=='qq'){
+        setGamesquindex(1)
+        }else if(config.partition=='steam'){
+        setGamesquindex(2)
+        }
+        }
+
+
+
+        }
+        } catch (error) {
+          console.error(error);
+        }
+    };
+  const avatarUrl = userprofile?.avatarUrl
+    ? `${IMG_URL}${userprofile.avatarUrl}`
+    : null;
    useEffect(() => {
   if (!visible) return;
 
@@ -73,8 +108,8 @@ const avatarUrl = userprofile?.avatarUrl
   }, 1000);
 
   return () => clearTimeout(timer);
-}, [countdown, visible]);
- const handleback = () => {  //返回上一页
+  }, [countdown, visible]);
+  const handleback = () => {  //返回上一页
    navigation.goBack();
      };
      const logout = () => {  //注销账号
@@ -82,10 +117,68 @@ const avatarUrl = userprofile?.avatarUrl
   setCountdown(10);
   setDisabled(true);
       };
-const maskPhone = (phone) => {
-  if (!phone || phone.length < 7) return phone; // 防止异常
-  return phone.slice(0, 3) + '****' + phone.slice(-4);
+  const maskPhone = (phone) => {
+    if (!phone || phone.length < 7) return phone; // 防止异常
+    return phone.slice(0, 3) + '****' + phone.slice(-4);
+  };
+  const handlegames = async(e) => { 
+  console.log(e);
+  if(e==gamesindex){
+  return
+  }
+  console.log('sett');
+  try {
+    const response = await request({
+      url: '/user/preferences/set',
+      method: 'POST',
+      data:{
+      games:e==0?'王者荣耀':'三角洲行动'
+    },
+      query: {
+      
+      }
+    });
+    console.log(response);
+  if(response.data!==undefined&&response.code==0){
+  getloginstatus();
+  }
+  } catch (error) {
+    console.error(error);
+  }
+  };
+  const gameAreaMap = [
+  '微信',
+  'qq',
+  'steam'
+];
+const getGameArea = (index) => {
+  return gameAreaMap[index] || '';
 };
+    const handlegamesqu = async(e) => { 
+  console.log(e);
+  if(e==gamesquindex){
+  return
+  }
+  console.log('sett');
+  try {
+    const response = await request({
+      url: '/user/preferences/set',
+      method: 'POST',
+      data:{
+      partition:getGameArea(e)
+    },
+      query: {
+      
+      }
+    });
+    console.log(response);
+  if(response.data!==undefined&&response.code==0){
+  getloginstatus();
+  }
+  } catch (error) {
+    console.error(error);
+  }
+  };
   return (
     <View style={styles.container}>
   <View style={{width: px(393),height: px(98),backgroundColor: '#fff',
@@ -131,23 +224,66 @@ const maskPhone = (phone) => {
         <Underline/>
         <TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',
         justifyContent: 'space-between',width: '100%',paddingVertical:px(16)
-        }} onPress={()=>navigation.navigate('Name')}>
+        }} onPress={()=>navigation.navigate('Name',{type:1})}>
         <Text style={styles.smalltitle}>昵称</Text>
         <View style={{flexDirection: 'row',alignItems: 'center',}}>
      <Text style={styles.version}>{userprofile?.nickName}</Text>
            <Image source={require('../../../assets/images/my/right.png')} 
                style={{width:px(19),height:px(19)}}></Image>
         </View>
-    
         </TouchableOpacity>
         <Underline/>
         <View style={{flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',
-            width: '100%',marginTop: px(16),
+            width: '100%',paddingVertical: px(16),
         }}>
         <Text style={styles.smalltitle}>账号</Text>
           <Text style={styles.version}>{maskPhone(userinfo?.user?.phone)}</Text>
         </View>
-                </View>
+<Underline/>
+        <TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',
+        justifyContent: 'space-between',width: '100%',paddingVertical:px(16)
+        }} onPress={()=>setGamesvs(true)}>
+        <Text style={styles.smalltitle}>常玩游戏</Text>
+        <View style={{flexDirection: 'row',alignItems: 'center',}}>
+     <Text style={styles.version}>{config?.games}</Text>
+           <Image source={require('../../../assets/images/my/right.png')} 
+               style={{width:px(19),height:px(19)}}></Image>
+        </View>
+        </TouchableOpacity>
+<Underline/>
+        <TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',
+        justifyContent: 'space-between',width: '100%',paddingVertical:px(16)
+        }} onPress={()=>navigation.navigate('Name',{type:2})}>
+        <Text style={styles.smalltitle}>游戏ID</Text>
+        <View style={{flexDirection: 'row',alignItems: 'center',}}>
+     <Text style={styles.version}>{config?.gameId}</Text>
+           <Image source={require('../../../assets/images/my/right.png')} 
+               style={{width:px(19),height:px(19)}}></Image>
+        </View>
+        </TouchableOpacity>
+<Underline/>
+        <TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',
+        justifyContent: 'space-between',width: '100%',paddingVertical:px(16)
+        }} onPress={()=>navigation.navigate('Name',{type:3})}>
+        <Text style={styles.smalltitle}>游戏账号</Text>
+        <View style={{flexDirection: 'row',alignItems: 'center',}}>
+     <Text style={styles.version}>{config?.account}</Text>
+           <Image source={require('../../../assets/images/my/right.png')} 
+               style={{width:px(19),height:px(19)}}></Image>
+        </View>
+        </TouchableOpacity>
+<Underline/>
+        <TouchableOpacity style={{flexDirection: 'row',alignItems: 'center',
+        justifyContent: 'space-between',width: '100%',paddingTop:px(16)
+        }} onPress={()=>setGamesquvs(true)}>
+        <Text style={styles.smalltitle}>游戏分区</Text>
+        <View style={{flexDirection: 'row',alignItems: 'center',}}>
+     <Text style={styles.version}>{config?.partition}</Text>
+           <Image source={require('../../../assets/images/my/right.png')} 
+               style={{width:px(19),height:px(19)}}></Image>
+        </View>
+        </TouchableOpacity>
+        </View>
 
                         {/* <View style={{width: '100%',bottom:px(56),position: 'absolute',
                 flexDirection: 'row',alignItems: 'center',justifyContent: 'center',
@@ -194,6 +330,28 @@ const maskPhone = (phone) => {
   }
 </TouchableOpacity>
   </CustomModal> */}
+  <TextRadioModal
+    visible={gamesvs}
+    onClose={() => setGamesvs(false)}
+    data={games}
+    value={gamesindex}
+    onConfirm={(val) => {
+      setGamesindex(val);
+      setGamesvs(false);
+      handlegames(val);
+    }}
+    />
+      <TextRadioModal
+    visible={gamesquvs}
+    onClose={() => setGamesquvs(false)}
+    data={gamesqu}
+    value={gamesquindex}
+    onConfirm={(val) => {
+      setGamesquindex(val);
+      setGamesquvs(false);
+      handlegamesqu(val);
+    }}
+    />
     </View>
   )
 }

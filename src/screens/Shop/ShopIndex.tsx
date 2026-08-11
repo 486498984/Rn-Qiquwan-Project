@@ -521,16 +521,22 @@ marginTop: px(16),borderRadius: px(6),flexDirection: 'row',alignItems: 'center',
     <Text style={styles.bottomdes}>商品管理</Text>
 </TouchableOpacity>
 <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',}}
- onPress={()=>goemploye()}>
-  <Image source={require('../../../assets/images/my/other3.png')} 
-    style={{width:px(33),height:px(33),}}></Image>
-    <Text style={styles.bottomdes}>员工管理</Text>
-</TouchableOpacity>
-<TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',}}
  onPress={()=>navigation.navigate('PlaymateList',{storeinfo:id})}>
   <Image source={require('../../../assets/images/my/peiwanic.png')} 
     style={{width:px(33),height:px(33),}}></Image>
     <Text style={styles.bottomdes}>陪玩管理</Text>
+</TouchableOpacity>
+<TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',}}
+ onPress={()=>navigation.navigate('KefuManage',{storeinfo:id})}>
+  <Image source={require('../../../assets/images/my/kefuic.png')} 
+    style={{width:px(33),height:px(33),}}></Image>
+    <Text style={styles.bottomdes}>客服管理</Text>
+</TouchableOpacity>
+<TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',}}
+ onPress={()=>goemploye()}>
+  <Image source={require('../../../assets/images/my/other3.png')} 
+    style={{width:px(33),height:px(33),}}></Image>
+    <Text style={styles.bottomdes}>员工管理</Text>
 </TouchableOpacity>
 <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',}}
  onPress={()=>navigation.navigate('ShopNotice',{storeinfo:id})}>

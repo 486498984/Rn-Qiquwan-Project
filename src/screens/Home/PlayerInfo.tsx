@@ -1,11 +1,14 @@
 import { StyleSheet, Text, View,ScrollView,Image,TouchableOpacity, } from 'react-native'
-import React,{useEffect,useState} from 'react'
+import React,{useEffect,useState,useRef,} from 'react'
 import request from '../../api/request';
 import { px } from '../../utils/scaleUtils';
 import SafeFastImage from '../../components/Home/SafeFastImage'
 import { IMG_URL } from '../../api/config';
 import LinearGradient from 'react-native-linear-gradient';
 import DetailTab from "./components/DetailTab";
+import Sound from 'react-native-sound';
+
+
 
 const statusConfig = {
   ONLINE: {
@@ -27,13 +30,76 @@ const statusConfig = {
   },
 };
 export default function PlayerInfo({route,navigation,}) {
-      const [playinfo, setPlayinfo] = useState({}); //陪玩详情
+    const [playinfo, setPlayinfo] = useState({}); //陪玩详情
     const {item}=route.params||{}
+    const soundRef = useRef(null);
+    const timerRef = useRef(null);
+    const [isPlaying,setIsPlaying] = useState(false);
+    const [duration,setDuration] = useState(0);
+    const [showDuration,setShowDuration] = useState(0);
+
+
+
+useEffect(()=>{
+  const url =
+    IMG_URL + playinfo?.player?.audios;
+  if(!url){
+    return;
+  }
+  // 防止重复加载
+  if(soundRef.current){
+    return;
+  }
+  const sound = new Sound(
+    url,
+    null,
+    (error)=>{
+      if(error){
+        console.log(
+          '音频加载失败',
+          error
+        );
+
+        return;
+      }
+      soundRef.current = sound;
+      // 获取总时长
+      const time = sound.getDuration();
+      setDuration(time);
+      setShowDuration(time);
+      console.log(
+        '音频时长:',
+        time
+      );
+    }
+  );
+  return ()=>{
+    if(soundRef.current){
+      soundRef.current.stop();
+      soundRef.current.release();
+      soundRef.current=null;
+    }
+  };
+},[playinfo?.player?.audios]);
     useEffect(() => {
       if(item){
         console.log(item);
         getplayerinfo();
       }
+    return ()=>{
+    if(soundRef.current){
+      soundRef.current.stop();
+      soundRef.current.release();
+      soundRef.current=null;
+    }
+    if(timerRef.current){
+
+  clearInterval(timerRef.current);
+
+  timerRef.current=null;
+
+}
+  };
     }, [item])
     const getplayerinfo = async() => {
     try {
@@ -52,9 +118,106 @@ export default function PlayerInfo({route,navigation,}) {
       console.log(error);
     }
      };
-      const handleback = () => {
+    const handleback = () => {
     navigation.goBack();
-  };
+    };
+const handleAudio = ()=>{
+
+
+  if(!soundRef.current){
+    return;
+  }
+
+
+
+  if(isPlaying){
+
+
+    soundRef.current.pause();
+
+    setIsPlaying(false);
+
+
+
+    if(timerRef.current){
+
+      clearInterval(timerRef.current);
+
+      timerRef.current=null;
+
+    }
+
+
+    return;
+
+  }
+
+
+
+  soundRef.current.play((success)=>{
+
+
+    //播放完成
+
+    setIsPlaying(false);
+
+
+    setShowDuration(duration);
+
+
+
+    if(timerRef.current){
+
+      clearInterval(timerRef.current);
+
+      timerRef.current=null;
+
+    }
+
+
+  });
+
+
+
+  setIsPlaying(true);
+
+
+
+  timerRef.current = setInterval(()=>{
+
+
+    soundRef.current.getCurrentTime(
+      (currentTime)=>{
+
+
+        const remain =
+          Math.ceil(
+            duration - currentTime
+          );
+
+
+        setShowDuration(
+          remain > 0 ? remain : 0
+        );
+
+
+      }
+    );
+
+
+  },500);
+
+
+};
+const formatTime = (seconds) => {
+
+  if (!seconds) {
+    return '0';
+  }
+
+  return `${Math.round(seconds)}`;
+
+};
   const statusInfo =
   statusConfig[playinfo?.player?.workStatus] || statusConfig.OFFLINE;
   return (
@@ -108,15 +271,80 @@ export default function PlayerInfo({route,navigation,}) {
   </View>
 </LinearGradient>
 </View>
-<View style={{position: 'relative',width:px(89),height:px(57),flexDirection: 'row',alignItems: 'center',
-    gap:px(6)
+
+<TouchableOpacity
+ activeOpacity={0.8}
+ onPress={handleAudio}
+ style={{
+ position:'relative',
+ width:px(89),
+ height:px(57),
+ flexDirection:'row',
+ alignItems:'center',
+ gap:px(6)
+ }}
+  >
+<View style={{
+position: 'relative',
+width:px(89),
+height:px(57),
+flexDirection:'row',
+alignItems:'center',
+gap:px(6)
 }}>
-       <Image source={require('../../../assets/images/home/audios.png')}  
-       style={{width:px(89),height:px(57),position: 'absolute',}}></Image>
-          <Image source={require('../../../assets/images/home/play.png')}  
-       style={{width:px(25),height:px(25),marginLeft: px(8),}}></Image>
-       <Text style={styles.playtext}>播放</Text>
+
+<Image 
+source={require('../../../assets/images/home/audios.png')}  
+style={{
+width:px(89),
+height:px(57),
+position:'absolute'
+}}
+/>
+
+
+<Image 
+source={
+ isPlaying
+ ?
+ require('../../../assets/images/home/pause.png')
+ :
+ require('../../../assets/images/home/play.png')
+}
+style={{
+width:px(25),
+height:px(25),
+marginLeft:px(8),
+}}
+/>
+
+
+{/* <Text style={styles.playtext}>
+{
+ isPlaying
+ ?
+ '暂停'
+ :
+ '播放'
+}
+</Text> */}
+<Text
+style={{
+marginLeft:px(6),
+fontSize:px(14),
+color:'#FFFFFF',
+lineHeight:px(19),
+fontFamily:'MiSans-Medium',
+}}
+>
+{formatTime(showDuration)}"
+</Text>
+
 </View>
+</TouchableOpacity>
+
+
+
     </View>
     </View>
 

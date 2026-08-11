@@ -353,7 +353,7 @@ fontFamily: 'MiSans-Regular',
 fontFamily: 'MiSans-Medium',
         fontSize:px(16),
         color:'#1A1A1A',
-        fontWeight:500,
+        //fontWeight:500,
         lineHeight:px(21),
   },
   container:{

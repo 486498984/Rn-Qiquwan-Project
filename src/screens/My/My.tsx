@@ -21,7 +21,7 @@ import {
   Modal as Modalitem,
 } from '@ant-design/react-native'
 import * as WeChat from 'react-native-wechat-lib';
-
+import GuideModal from '../../components/My/GuideModal';
 
 
 
@@ -42,8 +42,8 @@ export default function My({navigation}) {
   const [collect, setCollect] = useState(0); //收藏数字
   const [fllow, setFllow] = useState(0); //关注数字
   const [storeauthst, setStoreauthst] = useState(false); //俱乐部权限
-const [visible, setVisible] = useState(false);
-
+  const [visible, setVisible] = useState(false);
+  const [showGuide,setShowGuide]=useState(false);
 
 
   useFocusEffect(
@@ -52,7 +52,7 @@ const [visible, setVisible] = useState(false);
     }, [])
   );
  
-    const orderListRefreshKey =
+  const orderListRefreshKey =
   useAuthStore(
     state => state.orderListRefreshKey
   );
@@ -74,6 +74,7 @@ const [visible, setVisible] = useState(false);
    console.log('isLogin:', isLogin);
    getloginstatus();//获取登陆状态
    }, [isLogin,orderListRefreshKey]);
+
    const getloginstatus = async() => {  //获取登陆状态
    const user = await Storage.get("userinfo");
    if(user!==null){
@@ -163,6 +164,19 @@ setStoreauthst(false)
          }
 
    };
+  const isWithinOneMinute = (timeString) => {
+  if (!timeString) {
+    return false;
+  }
+  // 兼容 iOS 的日期格式
+  const targetTime = new Date(
+    timeString.replace(/-/g, '/')
+  ).getTime();
+  const now = Date.now();
+  const diff = now - targetTime;
+  // 1分钟 = 60秒 = 60000毫秒
+  return diff >= 0 && diff <= 60000;
+};
    const getuserinfo = async(e) => { 
    console.log(e);
         try {
@@ -172,11 +186,16 @@ setStoreauthst(false)
             data:{},
             query: { userId: e.user.userId }
           });
-          console.log(response); 
+        console.log('apiuserinfo',response); 
          if(response.data!==undefined&&response.code==0){
          setAvatarError(false);
          setUserprofile(response.data.profile)
          getbadge(response.data.profile.userId)
+         const preferences = await Storage.get("preferences");
+         console.log(preferences);
+         if(isWithinOneMinute(response.data.profile.createdAt)&&!preferences){
+         setShowGuide(true);
+         }
          } 
         } catch (error) {
           console.error(error);
@@ -716,6 +735,17 @@ width: '25%',
   imageUrl="https://tourok.com.cn/image/wechatkf.jpg"
   onClose={() => setVisible(false)}
   onSave={saveImage}
+/>
+<GuideModal
+
+visible={showGuide}
+
+onClose={()=>{
+
+ setShowGuide(false);
+
+}}
+
 />
     </View>
    

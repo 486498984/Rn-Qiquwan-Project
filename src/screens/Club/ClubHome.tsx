@@ -21,7 +21,7 @@ import { Stepper, Toast } from '@ant-design/react-native'
 import { TabView } from "react-native-tab-view";
 import Content from './components/Content'
 import Newtab from '../Home/components/Newtab'
-
+import PlaymateList from './components/PlaymateList';
 
 
 const { width } = Dimensions.get("window");
@@ -800,14 +800,9 @@ storedata={storedata}
 </ScrollView>
 }
 {mode==3&&
-<ScrollView
-contentContainerStyle={{paddingHorizontal:px(0),paddingBottom:px(120)}}
-showsVerticalScrollIndicator={false}
-//stickyHeaderIndices={[1]} 
-onMomentumScrollEnd={handleScrollEnsd}
 
->
-  <View style={{paddingHorizontal:px(16)}}>
+<View style={{flex: 1,}}>
+<View style={{paddingHorizontal:px(16)}}>
 <View style={{flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',
     marginTop: px(16),
 }}>
@@ -915,8 +910,14 @@ onLoadMore={(callback)=>{
 }}
 storedata={storedata}
 ></Newtab> */}
-
-</ScrollView>
+<PlaymateList
+navigation={navigation}
+ storeId={
+   storedata?.id
+ }
+//storedata?.
+></PlaymateList>
+</View>
 }
 <View style={[styles.bottom,{}]}>
     <View style={{marginTop: px(8),flexDirection: 'row',

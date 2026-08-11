@@ -312,86 +312,70 @@ export default function Playmate({navigation}) {
 
 
   const renderHeader=()=>{
-
-
     return (
-
       <View
       style={styles.firstRow}
       >
-
       {
         firstTabs.map(item=>{
-
-
           const active =
           firstTab===item.key;
-
-
           return (
-
           <TouchableOpacity
-
           key={item.key}
-
           onPress={()=>
             changeFirstTab(item)
           }
-
           style={[
             styles.choosebox,
             !active &&
             styles.nochoosebox
           ]}
-
           >
-
-
           <Image
-
           source={item.icon}
-
           style={{
             width:px(28),
             height:px(28)
           }}
-
           />
-
-
           <Text
-
           style={[
             styles.quanbutitle,
             !active &&
             styles.noquanbutitle
           ]}
-
           >
-
           {item.title}
-
           </Text>
-
-
           </TouchableOpacity>
-
           )
-
         })
-
       }
-
-
+      <View style={{
+           flexDirection:'row',
+       backgroundColor:'#E6EAED',
+       height:px(34),
+       alignItems:'center',
+       borderRadius:px(6),
+       paddingHorizontal:px(6),
+       gap:px(3)
+      }}>
+      <View
+      style={{
+      width:px(28),
+      height:px(28),
+      backgroundColor:'#D8D8D8',
+      borderRadius:px(3),
+      }}
+      />
+      <Text style={styles.noquanbutitle}>
+      期待中
+      </Text>
       </View>
-
+      </View>
     )
-
   };
-
-
-
-
   /**
    * footer
    */
@@ -447,7 +431,6 @@ backgroundColor:'#fff',
 flexDirection:'row',
 alignItems:'flex-end',
 }}
-
 >
 
 
@@ -512,35 +495,20 @@ height:px(22)
 {/* tab */}
 
 <View
-
 style={{
-backgroundColor:'#fff',
+backgroundColor:'#F2F3F5',
 paddingHorizontal:px(16),
 paddingBottom:px(10),
 }}
-
 >
-
 {renderHeader()}
-
-
 </View>
 
-
-
-
-
-
 <FlatList
-
-
 data={list}
-
-
 keyExtractor={(item,index)=>
  `${item.id}_${index}`
 }
-
 style={{paddingHorizontal:px(16),}}
 contentContainerStyle={{gap:px(18),marginTop: px(10),}}
 /**
@@ -553,45 +521,25 @@ type={2}
 item={item}
 />
 )}
-
 showsVerticalScrollIndicator={false}
-
 onEndReached={
  handleLoadMore
 }
-
-
 onEndReachedThreshold={0.3}
-
-
-
 ListFooterComponent={
  renderFooter
 }
-
-
-
 refreshControl={
-
 <RefreshControl
-
 refreshing={refreshing}
-
 onRefresh={handleRefresh}
-
 />
-
 }
-
-
-
 /**
  * 空数据
  */
 ListEmptyComponent={
-
 !loading?
-
 <View
 style={{
 height:px(300),
@@ -599,33 +547,16 @@ alignItems:'center',
 justifyContent:'center'
 }}
 >
-
 <Text>
 暂无数据
 </Text>
-
 </View>
-
 :null
-
 }
-
-
-
  />
-
-
-
-
 </View>
-
   )
-
 }
-
-
-
-
 
 
 
@@ -696,30 +627,14 @@ firstRow:{
  gap:px(11),
 
 },
-
-
-
 title:{
-
  fontFamily:'MiSans-Medium',
-
  fontSize:px(16),
-
  color:'#1A1A1A',
-
  lineHeight:px(21),
-
 },
-
-
-
 container:{
-
  flex:1,
-
  backgroundColor:'#F2F3F5',
-
 },
-
-
 });

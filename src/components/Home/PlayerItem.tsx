@@ -92,8 +92,8 @@ style={{width:px(16),height:px(16)}}></Image>
 <Text style={styles.destext} numberOfLines={1}>{item?.intro}</Text>
 <View style={{flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',marginTop: px(3),}}>
 <View style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}>
-    <Text style={styles.price}>￥288</Text>
-    <Text style={styles.yuanprice}>￥388</Text>
+    <Text style={styles.price}>￥{Number(item?.minPrice)/100}</Text>
+    {/* <Text style={styles.yuanprice}>￥388</Text> */}
 </View>
 <Text style={styles.number}>{item.virtualPayCount}人付款</Text>
 </View>

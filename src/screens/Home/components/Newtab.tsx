@@ -324,7 +324,6 @@ styles.noquanbutitle
 
 
 <View style={styles.nochoosebox}>
-
 <View
 style={{
 width:px(28),
@@ -333,16 +332,10 @@ backgroundColor:'#D8D8D8',
 borderRadius:px(3),
 }}
 />
-
-
 <Text style={styles.noquanbutitle}>
 期待中
 </Text>
-
-
 </View>
-
-
 </View>
 
 

@@ -9,11 +9,28 @@ import { Toast } from '@ant-design/react-native';
 import request from '../../api/request';
 
 
-export default function Name({navigation}) {
+export default function Name({navigation,route}) {
+    const {type}=route.params||{}
     const isLogin = useAuthStore(state => state.isLogin);
       const loginChanged = useAuthStore(state => state.loginChanged);
     const [phonenum, setPhonenum] = useState("");
     const [userinfo, setUserinfo] = useState(null); //登陆状态
+        const editTypeMap = {
+    1: '修改昵称',
+    2: '修改游戏ID',
+    3: '修改游戏账号',
+    };
+    const getEditType = (type) => {
+      return editTypeMap[type] || '';
+    };
+        const editTypeMaps = {
+    1: '请输入昵称',
+    2: '请输入游戏ID',
+    3: '请输入游戏账号',
+    };
+    const getEditTypes = (type) => {
+      return editTypeMaps[type] || '';
+    };
     const onChangeText = (e) => { 
         console.log(e);
         setPhonenum(e)
@@ -44,24 +61,38 @@ export default function Name({navigation}) {
           });
           console.log(response);
          if(response.data!==undefined&&response.code==0){
-         setPhonenum(response.data.profile.nickName)
+          const config=JSON.parse(response.data.profile.config)
+          console.log(config);
+          
+          if(type==1){
+          setPhonenum(response.data.profile.nickName)
+          }else if(type==2){
+           if(config.gameId){
+          setPhonenum(config.gameId)
+           }
+          }else if(type==3){
+           if(config.account){
+          setPhonenum(config.account)
+           }
+          }
+
          setUserinfo(response.data.profile)
          }
         } catch (error) {
           console.error(error);
         }
     };
-const handlesave = async() => {  //保存
+    const handlesave = async() => {  //保存
     if(phonenum==""){
        Toast.show({
-          content: '请填写昵称',
+          content: getEditTypes(type),
           duration: 2,
           position: 'center',
           mask: false,
         })
         return;
       }
-
+      if(type==1){
           try {
           const response = await request({
             url: '/user/profile/update',
@@ -90,6 +121,60 @@ const handlesave = async() => {  //保存
         } catch (error) {
           console.error(error);
         } 
+      }else if(type==2){
+  try {
+    const response = await request({
+      url: '/user/preferences/set',
+      method: 'POST',
+      data:{
+      gameId: phonenum,
+      },
+      query: {
+      
+      }
+    });
+    console.log(response);
+  if(response.data!==undefined&&response.code==0){
+              loginChanged();
+            Toast.show({
+              content: '更新成功',
+              duration: 2,
+              position: 'center',
+              mask: false,
+            })
+            handleback();
+  }
+  } catch (error) {
+    console.error(error);
+  }
+    }else if(type==3){
+    try {
+    const response = await request({
+      url: '/user/preferences/set',
+      method: 'POST',
+      data:{
+      account: phonenum,
+      },
+      query: {
+      
+      }
+    });
+    console.log(response);
+  if(response.data!==undefined&&response.code==0){
+              loginChanged();
+            Toast.show({
+              content: '更新成功',
+              duration: 2,
+              position: 'center',
+              mask: false,
+            })
+            handleback();
+  }
+  } catch (error) {
+    console.error(error);
+  }
+      }
+
 
     //    Toast.show({
     //       content: '保存成功',
@@ -99,6 +184,7 @@ const handlesave = async() => {  //保存
     //     })
     //  handleback();
     };
+
   return (
      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
     <View style={styles.container}>
@@ -113,7 +199,7 @@ const handlesave = async() => {  //保存
          <Image source={require('../../../assets/images/my/left.png')} 
          style={{width:px(22),height:px(22)}}></Image>
          </TouchableOpacity>
-         <Text style={styles.title}>修改昵称</Text>
+         <Text style={styles.title}>{getEditType(type)}</Text>
             <TouchableOpacity onPress={handlesave} style={{  position: 'absolute',
         right: px(18),}}>
  <Text style={phonenum==""?styles.savetx:styles.issavetx}>保存</Text>
@@ -130,7 +216,7 @@ const handlesave = async() => {  //保存
           style={styles.inputbox}
           onChangeText={onChangeText}
           value={phonenum || ''}
-          placeholder="请输入昵称"
+          placeholder={getEditTypes(type)}
           //keyboardType="number-pad"
           placeholderTextColor="#AAAAAA"
           maxLength={12}
@@ -148,7 +234,9 @@ const handlesave = async() => {  //保存
          <View style={{width: '100%',flexDirection: 'row',justifyContent: 'flex-end',
             paddingHorizontal:px(18),marginTop: px(8),
          }}>
-<Text style={styles.destext}>*仅支持汉字、字母、数字(最多12个字符)</Text>
+          {type==1&&
+          <Text style={styles.destext}>*仅支持汉字、字母、数字(最多12个字符)</Text>
+          }
          </View>
     </View>
        </TouchableWithoutFeedback>

@@ -82,6 +82,7 @@ import Playmateadd from './screens/Shop/Playmateadd';
 import PlaymateList from './screens/Shop/PlaymateList';
 import Playmateedit from './screens/Shop/Playmateedit';
 import Productass from './screens/Shop/Productass';
+import KefuManage from './screens/Shop/KefuManage';
 
 import UserAgree from './screens/Policy/UserAgree';
 import PrivacyAgree from './screens/Policy/PrivacyAgree';
@@ -971,7 +972,7 @@ const openWeChat = async () => {
 <Stack.Screen name="Productass" component={Productass}/>
 <Stack.Screen name="PlayerInfo" component={PlayerInfo}/>
 <Stack.Screen name="VideoPlayer" component={VideoPlayer}/>
-
+<Stack.Screen name="KefuManage" component={KefuManage}/>
 
 
 
