@@ -11,6 +11,7 @@ import {
   Image,
   FlatList,
   StyleSheet,
+  TouchableWithoutFeedback,
 } from 'react-native';
 
 import {px} from '../../../utils/scaleUtils';
@@ -180,11 +181,13 @@ statusBarTranslucent
 >
 
 
-<View
-style={styles.mask}
+<TouchableOpacity
+  activeOpacity={1}
+  style={styles.mask}
+  onPress={onClose}
 >
 
-
+<TouchableWithoutFeedback>
 <View
 style={styles.container}
 >
@@ -246,40 +249,44 @@ style={styles.confirm}
 
 
 <FlatList
-
 data={data}
-
 keyExtractor={(item)=>
 String(item.id)
 }
-
 renderItem={renderItem}
+ListEmptyComponent={()=>(
 
+<View
+style={{
+  flex:1,
+  alignItems:'center',
+  justifyContent:'center',
+  paddingTop:px(80)
+}}
+>
+
+<Text
+style={{
+ color:'#999',
+ fontSize:px(14)
+}}
+>
+暂无可关联商品
+</Text>
+
+</View>
+
+)}
 showsVerticalScrollIndicator={false}
-
 />
-
-
-
-
 </View>
-
-
-</View>
-
-
+</TouchableWithoutFeedback>
+</TouchableOpacity>
 </Modal>
-
 )
-
 }
 
-
-
-
-
 const styles=StyleSheet.create({
-
 mask:{
  flex:1,
  backgroundColor:'rgba(0,0,0,0.4)',

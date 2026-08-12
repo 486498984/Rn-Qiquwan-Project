@@ -204,7 +204,7 @@ style={{width:px(20),height:px(20)}}></Image>
 </View>
 <View style={{width: px(1),height: px(28),backgroundColor: "rgba(118, 118, 118,0.2)",}}></View>
 <View style={{flexDirection: 'column',alignItems: 'center',}}>
-<Text style={styles.desone}>难度</Text>
+<Text style={styles.desone}>模式</Text>
 <Text style={styles.destwo}>{shopallinfo?.difficulty}</Text>
 </View>
 <View style={{width: px(1),height: px(28),backgroundColor: "rgba(118, 118, 118,0.2)",}}></View>

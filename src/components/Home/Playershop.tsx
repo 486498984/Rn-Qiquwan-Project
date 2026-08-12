@@ -17,7 +17,7 @@ const platformColortx = {
   '端游': "#008CFF",
   '双端': "#FF2E2E",
 };
-const Playershop=({item,navigation,type=1,})=> {
+const Playershop=({item,navigation,type=1,playinfo})=> {
   const [imgError, setImgError] = useState(false);
 
   const getPlatformColor = (platform) => {
@@ -50,7 +50,7 @@ const Playershop=({item,navigation,type=1,})=> {
     id:item.goodsId,
     };
   
-  navigation.navigate('Shopinfo',{shopinfo:newItem})
+  navigation.navigate('Shopinfo',{shopinfo:newItem,playinfo})
   };
    const imageUri = getFirstImageUrl(item.goodsCover);
 

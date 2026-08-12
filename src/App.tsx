@@ -374,13 +374,13 @@ function TabNavigator({ totalcount,unreadTotal }) {
           ),
           tabBarIcon: ({ focused }) => (
           <View style={{position: 'relative',width: px(28),
-        height: px(28),}}>
+          height: px(28),}}>
           {unreadTotal!==0&&
              <View style={{height: px(16),borderRadius: px(8),zIndex: 1,
-              backgroundColor: '#DE5452',position: 'absolute',right: -px(8),top:0,
+              backgroundColor: '#DE5452',position: 'absolute',right: -px(8),top:-px(4),
               flexDirection: 'row',alignItems: 'center',justifyContent: 'center',
               paddingHorizontal:px(4),minWidth: px(16),}}>
-          <Text style={styles.message}>{unreadTotal}</Text>
+             <Text style={styles.message}>{unreadTotal}</Text>
             </View>
           }
           <Image

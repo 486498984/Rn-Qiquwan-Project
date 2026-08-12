@@ -23,7 +23,10 @@ import { IMG_URL } from '../../api/config';
 import useAuthStore from '../../utils/zustand';
 
 
-
+const gameOptions = [
+  { label: '三角洲', value: 0 },
+  { label: '王者荣耀', value: 1 },
+];
   const ishot=[
     { label: '热销', value: 0 },
     { label: '新品', value: 1 },
@@ -66,6 +69,10 @@ const serviceids=[
     { label: '炸单包赔', value: 2 },
     { label: '不满意包换', value: 3 },
   ]
+  const caOptions = [
+  { label: '普通', value: 0 },
+  { label: '陪玩', value: 1 },
+];
     const GoodsRoute = React.memo(({ shoptype, category, setVisibletype, 
         maplist, shopmap, setVisiblemap, difficulty, setVisibletag,
         shopmode, setVisiblemode, platform, shopplat, setVisibleplat,
@@ -75,6 +82,7 @@ shopsortinputRef,setShopsort,shopsort,shoppurchaseinputRef,
 setShoplimit,shoplimit,headimages,setHeadimages,onChangeShopinfotx,
 shopinfotx,setShopinfoimages,shopinfoimages,handlesubmit,setVisiblehot,
 commitvalueshot,ishot,shopsales,setShopsales,shopshopsaleinputRef,
+setVisiblecatype,catype,catypeindex
 
      }) => {
 
@@ -149,6 +157,22 @@ const getLabels = (values, data) => {
     </View>
 <View style={{flexDirection: 'row',alignItems: 'center',}}>
 <Text style={styles.lefttitle}>{platform[shopplat].label}</Text>
+      <Image source={require('../../../assets/images/my/right.png')} 
+       style={{width:px(19),height:px(19)}}></Image>
+</View>
+</TouchableOpacity>
+
+<Line/>
+<TouchableOpacity style={{width: '100%',height: px(51),
+    flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',
+    marginTop: px(0),
+}}  onPress={()=>setVisiblecatype(true)}>
+    <View style={{flexDirection: 'row',alignItems: 'center',}}>
+<Text style={styles.lefttitle}>类型</Text>
+<Text style={[styles.lefttitle,{color:'red'}]}>*</Text>
+    </View>
+<View style={{flexDirection: 'row',alignItems: 'center',}}>
+<Text style={styles.lefttitle}>{catype[catypeindex].label}</Text>
       <Image source={require('../../../assets/images/my/right.png')} 
        style={{width:px(19),height:px(19)}}></Image>
 </View>
@@ -768,6 +792,15 @@ const [toastApi, contextHolder] = Toast.useToast();
 const [hotlist, setHotlist] = useState(ishot); //热销、新品、推荐
 const [visiblehot, setVisiblehot] = useState(false); //热销、新品、推荐开关
 const [commitvalueshot, setCommitvalueshot] = useState<(number | string)[]>([0]); //热销、新品、推荐内容
+const [catype, setCatype] = useState(caOptions); //陪玩、普通
+const [visiblecatype, setVisiblecatype] = useState(false) //分类弹窗开关
+const [catypeindex, setCatypeindex] = useState(0); //分类弹窗下标
+const [categorygame, setCategorygame] = useState(gameOptions); //游戏分类列表
+const [visibletypegame, setVisibletypegame] = useState(false) //游戏分类弹窗开关
+const [shoptypegame, setShoptypegame] = useState(0); //游戏分类
+const [categoryall, setCategoryall] = useState(typeOptions); //所有商品分类列表
+
+
 
   const handleback = () => {  //返回上一页
     navigation.goBack(); 
@@ -870,18 +903,17 @@ const [commitvalueshot, setCommitvalueshot] = useState<(number | string)[]>([0])
             data:{},
             query: {id:e.id}
           });
-          console.log(response);
+          console.log('shopinfo123',response);
          if(response.data!==undefined&&response.code==0){
          let goodres=response.data.goods
          let skulist=response.data.skus
          console.log(goodres);
- const map = ['isHot', 'isNew', 'isRecommend'];
-
-const result = map
-  .map((key, index) => goodres[key] ? index : -1)
-  .filter(index => index !== -1);
-setCommitvalueshot(result)
-console.log(result);
+          const map = ['isHot', 'isNew', 'isRecommend'];
+          const result = map
+            .map((key, index) => goodres[key] ? index : -1)
+            .filter(index => index !== -1);
+          setCommitvalueshot(result)
+          console.log(result);
 
 
          setShoptitle(goodres.title)
@@ -891,7 +923,11 @@ console.log(result);
          
          if(goodres.attr){
           console.log(JSON.parse(goodres.attr)?.virtualSales);
-         setShopsales(String(JSON.parse(goodres.attr)?.virtualSales)) //设置初始销量
+          let config=JSON.parse(goodres.attr)
+         setShopsales(String(config?.virtualSales)) //设置初始销量
+         if(config.isplayer){
+         setCatypeindex(config.isplayer)
+         }
          }else{
           setShopsales('0')
          }
@@ -1048,7 +1084,7 @@ const getIndexByLabel = <T extends { label: string }>(
     const initPage = async () => {
   await Promise.all([
     getcategory(),
-    getcategorytree(),
+    //getcategorytree(),
   ]);
 
   if (shopinfo) {
@@ -1063,27 +1099,46 @@ const getIndexByLabel = <T extends { label: string }>(
                 data:{},
                 query: {}
               });
-              console.log(response);
+              console.log('category/tree1',response);
              if(response.data!==undefined&&response.code==0){
-          const categoryList = response.data[0].children.map((item, index) => ({
-            label: item.name,
-            value: index,
-            id: item.id
-          }));
-          setCategory(categoryList)
-          console.log(categoryList);
-             }
-            } catch (error) {
-              console.error(error);
-            }
+      const secondCategoryMap = response.data.reduce((prev,item,index)=>{
+        prev[index] = (item.children || []).map((child,childIndex)=>({
+          label: child.name,
+          value: childIndex,
+          id: child.id,
+        }));
+        return prev;
+      },{});
+      console.log(secondCategoryMap);
+      const firstCategory = response.data.map((item,index)=>({
+        label:item.name,
+        value:index,
+        id:item.id
+      }));
+      const childId = shopinfo.categoryId;
+      const parentId = response.data
+      .find(parent =>
+        parent.children?.some(child => child.id === childId)
+      )?.id;
+      getcategorytree(parentId)
+      console.log('parentId',parentId);
+      console.log('一级分类:',firstCategory);
+      //getcategorytree(firstCategory[0].id);
+      setCategorygame(firstCategory)
+      setCategory(secondCategoryMap[0])
+      setCategoryall(secondCategoryMap)
+      }
+      } catch (error) {
+        console.error(error);
+      }
      };
-     const getcategorytree = async() => { 
+     const getcategorytree = async(e) => { 
             try {
               const response = await request({
                 url: '/category/attribute/by-category',
                 method: 'GET',
                 data:{},
-                query: {categoryId:1}
+                query: {categoryId:e}
               });
               console.log(response);
              if(response.data!==null&&response.code==0&&response.data!==undefined){
@@ -1237,6 +1292,10 @@ const handleaddshop = async(finalStr,finaimgStr) => {
   console.log(checkExist(commitvalueshot, 1));
   console.log(checkExist(commitvalueshot, 2));
   //return
+    const att = {
+    virtualSales: Number(shopsales),
+    isplayer: catype[catypeindex].value,
+  };
 try {
 const response = await request({
   url: '/store/goods/spu/update',
@@ -1260,7 +1319,7 @@ const response = await request({
     isHot: checkExist(commitvalueshot, 0),
     isNew: checkExist(commitvalueshot, 1),
     isRecommend: checkExist(commitvalueshot, 2),
-    attr: JSON.stringify({virtualSales:Number(shopsales)})
+    attr: JSON.stringify(att)
     },
    query: {},
     }); 
@@ -1392,6 +1451,9 @@ const onChangeShopinfotx = (e) => {  //修改商品详情
           setVisiblehot={setVisiblehot}
           commitvalueshot={commitvalueshot}
           ishot={ishot}
+          setVisiblecatype={setVisiblecatype}
+          catype={catype}
+          catypeindex={catypeindex}
         />
       );
     case 'Skus':
@@ -1868,6 +1930,16 @@ const response = await request({
       onConfirm={(val) => {
         setShopplat(val);
         setVisibleplat(false);
+      }}
+    />
+    <TextRadioModal
+      visible={visiblecatype}
+      onClose={() => setVisiblecatype(false)}
+      data={catype} 
+      value={catypeindex}
+      onConfirm={(val) => {
+        setCatypeindex(val);
+        setVisiblecatype(false);
       }}
     />
      <TagInputModal

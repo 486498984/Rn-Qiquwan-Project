@@ -973,6 +973,11 @@ source={{uri:IMG_URL+goodsinfo?.goods?.coverImage.split(',')[0]}}
 </View>
 <View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
     justifyContent: 'space-between',}}>
+    <Text style={styles.shopdesnames}>陪玩</Text>
+      <Text style={styles.yingfu}>{ JSON.parse(orderinfo?.attr || '{}')?.nickName||'-'}</Text>
+</View>
+<View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
+    justifyContent: 'space-between',}}>
     <Text style={styles.shopdesnames}>下单时间</Text>
       <Text style={styles.yingfu}>{orderinfo?.createdAt}</Text>
 </View>

@@ -67,19 +67,20 @@ useEffect(() => {
     getassshoplist();
   }
 }, [item])
-const getshoplist = async() => { 
+const getshoplist = async() => {
           try {
         const response = await request({
-          url: '/store/goods/list',
+          url: '/store/player/goods/options',
           method: 'GET',
           data: {
           },
           query: {
-            status:"PUBLISHED",
+            //status:"ONLINE",
             storeId:item.storeId,
+            playerId:item.id,
           },
         }); 
-        console.log('storeauth',response);
+        console.log('storeauth666',response);
       if (response.data !== null && response.code == 0) {
       setShopList(
       response.data.list || []
@@ -112,7 +113,8 @@ const handleaddshop = async(values) => {
         }); 
         console.log('addreult',response);
       if (response.data !== null && response.code == 0) {
-     getassshoplist();
+      getassshoplist();
+      getshoplist();
       } 
       } catch (error) {
         console.error(error);
@@ -173,6 +175,7 @@ console.log(e);
         console.log('shoplist',response);
       if (response.data !== null && response.code == 0) {
        getassshoplist();
+       getshoplist();
       } 
       } catch (error) {
         console.error(error);

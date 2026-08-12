@@ -47,7 +47,7 @@ export default function Shopinfo({navigation,route}) {
     useAuthStore(
         state => state.triggerListOrderRefresh
     );
-  const { shopinfo } = route.params || {};
+  const { shopinfo,playinfo,isopen } = route.params || {};
   const insets = useSafeAreaInsets();
   const bottomSafeHeight = insets.bottom; // 底部安全区高度（数值）
   const [visible, setVisible] = useState(false); //下单弹窗
@@ -111,6 +111,9 @@ useEffect(() => {
   });
 }, [conimage]);
   useEffect(() => {
+    if(isopen){
+    setVisible(isopen)
+    }
     console.log('详情123',shopinfo);
     if(shopinfo!==null&&shopinfo!==undefined){
       getshopinfo(shopinfo.id) //获取商品详情
@@ -478,6 +481,14 @@ const handlecreatorder = async() => { //创建订单
       store:'',
       platform:'',
     }
+  const attrData:any = {
+    source: "app",
+  };
+  if(playinfo?.player){
+    attrData.playerId = playinfo.player.id;
+    attrData.nickName = playinfo.player.nickName;
+  }
+  console.log(attrData);
   try {
     const response = await request({
       url: '/order/create',
@@ -492,7 +503,7 @@ const handlecreatorder = async() => { //创建订单
       paymentType:payways==1? "ALIPAY":'WECHAT',
       couponReceiveIds: selectedCoupon ? [selectedCoupon.userCouponId] : [],
       remark: JSON.stringify(remark),
-      attr: "{\"source\":\"app\"}"
+      attr: JSON.stringify(attrData),
       },
       query: {},
     });
@@ -846,7 +857,7 @@ style={{width:px(20),height:px(20)}}></Image>
 </View>
 <View style={{width: px(1),height: px(28),backgroundColor: "rgba(118, 118, 118,0.2)",}}></View>
 <View style={{flexDirection: 'column',alignItems: 'center',}}>
-<Text style={styles.desone}>难度</Text>
+<Text style={styles.desone}>模式</Text>
 <Text style={styles.destwo}>{shopallinfo?.difficulty}</Text>
 </View>
 <View style={{width: px(1),height: px(28),backgroundColor: "rgba(118, 118, 118,0.2)",}}></View>

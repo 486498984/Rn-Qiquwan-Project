@@ -34,18 +34,53 @@ export default function Confirm({ navigation,route }) {
 
 
 useEffect(() => {
-  getOAID();
+
+  if(Platform.OS=='android'){
+    getOAID();
+  }
+
+
+  // 延迟获取焦点
+  const focusTimer = setTimeout(() => {
+
+    hiddenInputRef.current?.focus();
+
+  }, 500);
+
+
   const timer = setInterval(() => {
-    const left = Math.max(0, Math.floor((smsState.expireTime - Date.now()) / 1000));
+
+    const left =
+      Math.max(
+        0,
+        Math.floor(
+          (smsState.expireTime - Date.now()) / 1000
+        )
+      );
+
     setCount(left);
+
   }, 1000);
-  return () => clearInterval(timer);
+
+
+
+  return () => {
+
+    clearTimeout(focusTimer);
+
+    clearInterval(timer);
+
+  };
+
+
 }, []);
   // 输入逻辑：逐位输入/删除
 const verifyTimer = useRef(null);
 const hasVerifiedRef = useRef(false);
 
 const handleChange = (text) => {
+  console.log(text);
+  
   const digits = text.replace(/\D/g, '');
 
   const newCode = ['', '', '', ''];
@@ -273,7 +308,8 @@ const clearCode = () => {
         keyboardType="number-pad"
         textContentType="oneTimeCode"
         maxLength={4}
-        autoFocus
+        //autoFocus
+        caretHidden
       />
 
       {/* 倒计时 / 重新获取 */}

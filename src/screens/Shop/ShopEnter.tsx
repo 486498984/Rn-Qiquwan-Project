@@ -20,8 +20,17 @@ import request from '../../api/request';
 import SkuModal from './components/SkuModal';
 import AddonModal from './components/AddonModal';
 import  {uploadImage}  from '../../api/uploadImage';
+import {
+KeyboardAwareScrollView
+} from "react-native-keyboard-controller";
 
 
+
+
+const gameOptions = [
+  { label: '三角洲', value: 0 },
+  { label: '王者荣耀', value: 1 },
+];
 const typeOptions = [
   { label: '护航', value: 0 },
   { label: '陪玩', value: 1 },
@@ -46,6 +55,10 @@ const platOptions = [
   { label: '手游', value: 0 },
   { label: '端游', value: 1 },
   { label: '双端', value: 2 },
+];
+const caOptions = [
+  { label: '普通', value: 0 },
+  { label: '陪玩', value: 1 },
 ];
 const serviceids=[
     { label: '纯绿护航', value: 0 },
@@ -114,6 +127,7 @@ const [tags, setTags] = useState(['24小时服务','情绪价值拉满','售后�
 const [visibleserves, setVisibleserves] = useState(false); //商品标签弹窗开关
 const [serves, setServes] = useState(['全图物资优先', '包通所有道卡', '免费开所有桥']); //商品标签
 const [category, setCategory] = useState(typeOptions); //商品分类列表
+const [categoryall, setCategoryall] = useState(typeOptions); //所有商品分类列表
 const [platform, setPlatform] = useState(platOptions); //平台列表
 const [maplist, setMaplist] = useState(mapOptions); //地图列表
 const [difficulty, setDifficulty] = useState(modeOptions); //难度列表
@@ -122,11 +136,19 @@ const [hotlist, setHotlist] = useState(ishot); //热销、新品、推荐
 const [visiblehot, setVisiblehot] = useState(false); //热销、新品、推荐开关
 const [commitvalueshot, setCommitvalueshot] = useState<(number | string)[]>([0]); //热销、新品、推荐内容
 const [toastApi, contextHolder] = Toast.useToast();
+const [catype, setCatype] = useState(caOptions); //陪玩、普通
+const [visiblecatype, setVisiblecatype] = useState(false) //分类弹窗开关
+const [catypeindex, setCatypeindex] = useState(0); //分类弹窗下标
+const [categorygame, setCategorygame] = useState(gameOptions); //游戏分类列表
+const [visibletypegame, setVisibletypegame] = useState(false) //游戏分类弹窗开关
+const [shoptypegame, setShoptypegame] = useState(0); //游戏分类
+
+
 
 
 useEffect(() => {
    getcategory(); //获取分类列表
-   getcategorytree(); //获取默认值
+   //getcategorytree(); //获取默认值
 }, [])
 useEffect(() => {
   if(storeinfo){
@@ -144,27 +166,40 @@ const getcategory = async() => {
           });
           console.log(response);
          if(response.data!==undefined&&response.code==0){
-      const categoryList = response.data[0].children.map((item, index) => ({
-        label: item.name,
-        value: index,
-        id: item.id
+      const secondCategoryMap = response.data.reduce((prev,item,index)=>{
+        prev[index] = (item.children || []).map((child,childIndex)=>({
+          label: child.name,
+          value: childIndex,
+          id: child.id,
+        }));
+        return prev;
+      },{});
+      console.log(secondCategoryMap);
+      const firstCategory = response.data.map((item,index)=>({
+        label:item.name,
+        value:index,
+        id:item.id
       }));
-      setCategory(categoryList)
-      console.log(categoryList);
-         }
-        } catch (error) {
-          console.error(error);
-        }
+      console.log('一级分类:',firstCategory);
+      getcategorytree(firstCategory[0].id);
+      setCategorygame(firstCategory)
+      setCategory(secondCategoryMap[0])
+      setCategoryall(secondCategoryMap)
+      }
+      } catch (error) {
+        console.error(error);
+      }
  };
- const getcategorytree = async() => { 
+ const getcategorytree = async(e) => { 
+  console.log(e);
         try {
           const response = await request({
             url: '/category/attribute/by-category',
             method: 'GET',
             data:{},
-            query: {categoryId:1}
-          });
-          console.log(response);
+            query: {categoryId:e}
+          }); 
+          console.log('attribute',response);
          if(response.data!==null&&response.code==0&&response.data!==undefined){
           const res=response.data
           for(let i=0;i<res.length-1;i++){
@@ -526,7 +561,11 @@ handleaddshop(finalStr,finaimgStr)
 //Toast.fail('保存失败')
  };
 
- const handleaddshop = async(finalStr,finalimgStr) => { 
+const handleaddshop = async(finalStr,finalimgStr) => {
+  const att = {
+    virtualSales: Number(shopsales),
+    isplayer: catype[catypeindex].value,
+  };
 try {
 const response = await request({
   url: '/store/goods/add',
@@ -551,7 +590,7 @@ const response = await request({
     isHot: checkExist(commitvalueshot, 0),
     isNew: checkExist(commitvalueshot, 1),
     isRecommend: checkExist(commitvalueshot, 2),
-    attr: JSON.stringify({virtualSales:Number(shopsales)})
+    attr: JSON.stringify(att)
   },
   skus: formatSkuList(skuList),
   addons: formatAddonList(addonList)
@@ -659,11 +698,35 @@ function formatSkuList(list) { // 处理sku
        <Text style={styles.title}>商品录入</Text>
            </View>
          </View>
-<ScrollView contentContainerStyle={{paddingBottom:px(150)+bottomSafeHeight,paddingTop:px(16),flexGrow: 1}}
- ref={scrollRef} keyboardDismissMode="on-drag">
-<View style={{width: '100%',backgroundColor: '#fff',paddingHorizontal:px(16),
-   
-}}>
+    <KeyboardAwareScrollView 
+  bottomOffset={30}
+  extraKeyboardSpace={20}
+  mode="insets"
+  showsVerticalScrollIndicator={false}
+  keyboardShouldPersistTaps="handled"
+  contentContainerStyle={{
+      paddingBottom:px(120),
+      paddingTop:px(16),
+  }}
+    >
+<View style={{width: '100%',backgroundColor: '#fff',paddingHorizontal:px(16),marginBottom: px(16),}}>
+<TouchableOpacity style={{width: '100%',backgroundColor: '#fff',height: px(51),
+    flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',
+    paddingHorizontal:px(0),
+}} onPress={()=>setVisibletypegame(true)}>
+    <View style={{flexDirection: 'row',alignItems: 'center',}}>
+<Text style={styles.lefttitle}>游戏分类</Text>
+<Text style={[styles.lefttitle,{color:'red'}]}>*</Text>
+    </View>
+<View style={{flexDirection: 'row',alignItems: 'center',}}>
+<Text style={styles.lefttitle}>{categorygame[shoptypegame].label}</Text>
+      <Image source={require('../../../assets/images/my/right.png')} 
+       style={{width:px(19),height:px(19)}}></Image>
+</View> 
+</TouchableOpacity>
+</View>
+
+<View style={{width: '100%',backgroundColor: '#fff',paddingHorizontal:px(16),}}>
 <TouchableOpacity style={{width: '100%',backgroundColor: '#fff',height: px(51),
     flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',
     paddingHorizontal:px(0),
@@ -728,6 +791,22 @@ function formatSkuList(list) { // 处理sku
     </View>
 <View style={{flexDirection: 'row',alignItems: 'center',}}>
 <Text style={styles.lefttitle}>{platform[shopplat].label}</Text>
+      <Image source={require('../../../assets/images/my/right.png')} 
+       style={{width:px(19),height:px(19)}}></Image>
+</View>
+</TouchableOpacity>
+
+<Line/>
+<TouchableOpacity style={{width: '100%',height: px(51),
+    flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',
+    marginTop: px(0),
+}}  onPress={()=>setVisiblecatype(true)}>
+    <View style={{flexDirection: 'row',alignItems: 'center',}}>
+<Text style={styles.lefttitle}>类型</Text>
+<Text style={[styles.lefttitle,{color:'red'}]}>*</Text>
+    </View>
+<View style={{flexDirection: 'row',alignItems: 'center',}}>
+<Text style={styles.lefttitle}>{catype[catypeindex].label}</Text>
       <Image source={require('../../../assets/images/my/right.png')} 
        style={{width:px(19),height:px(19)}}></Image>
 </View>
@@ -1301,7 +1380,7 @@ function formatSkuList(list) { // 处理sku
         onChange={setShopinfoimages}
         />
 </View>
-</ScrollView>
+</KeyboardAwareScrollView>
 
 <View style={{position: 'absolute',bottom:0,width: '100%',backgroundColor: '#fff',
    flexDirection: 'row',justifyContent: 'center',
@@ -1345,6 +1424,19 @@ function formatSkuList(list) { // 处理sku
   }}
 />
 <TextRadioModal
+  visible={visibletypegame}
+  onClose={() => setVisibletypegame(false)}
+  data={categorygame}
+  value={shoptypegame}
+  onConfirm={(val) => {
+    console.log(val);
+    setCategory(categoryall[val])
+    getcategorytree(categorygame[val].id);
+    setShoptypegame(val);
+    setVisibletypegame(false);
+  }}
+/>
+<TextRadioModal
   visible={visiblemap}
   onClose={() => setVisiblemap(false)}
   data={maplist}
@@ -1372,6 +1464,16 @@ function formatSkuList(list) { // 处理sku
   onConfirm={(val) => {
     setShopplat(val);
     setVisibleplat(false);
+  }}
+/>
+<TextRadioModal
+  visible={visiblecatype}
+  onClose={() => setVisiblecatype(false)}
+  data={catype} 
+  value={catypeindex}
+  onConfirm={(val) => {
+    setCatypeindex(val);
+    setVisiblecatype(false);
   }}
 />
 <TextCheckboxModal

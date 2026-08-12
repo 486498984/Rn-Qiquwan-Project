@@ -388,12 +388,12 @@ const gettabslist = async () => {
                 storeId:storedata.id
               }
              });
-             console.log(response);
+             console.log('storeinfo123',response);
             if(response.data!==undefined&&response.code==0){
-              console.log(response.data.userId);
+              console.log(response.data.userId,storedata);
                 
               let a={
-                storeName: '123',
+                storeName: storedata.storeName,
                 storeId: response.data.keeper.storeId,
                 id: response.data.keeper.sessionId,
               }

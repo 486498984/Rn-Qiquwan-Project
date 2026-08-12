@@ -45,7 +45,7 @@ import request from '../../../api/request';
     textColor: '#FF9500',
   },
 };
-export default function PlayerItem({navigation,item}) {
+export default function PlayerItem({navigation,item,onRefresh,}) {
   const [visible, setVisible] = useState(false);
   const [status, setStatus] = useState('ONLINE');
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -60,13 +60,13 @@ export default function PlayerItem({navigation,item}) {
   
       if (item.key === 'ONLINE') {
         Settingstatus('ONLINE');
-        Toast.show('已切换为客服在线');
+        Toast.show('已切换为陪玩在线');
       } else if(item.key === 'OFFLINE') {
         Settingstatus('OFFLINE');
-        Toast.show('已切换为客服离线');
+        Toast.show('已切换为陪玩离线');
       } else if(item.key === 'BUSY') {
         Settingstatus('BUSY');
-        Toast.show('已切换为客服在忙');
+        Toast.show('已切换为陪玩在忙');
       } 
     };
     const Settingstatus = async(e) => { 
@@ -85,7 +85,7 @@ export default function PlayerItem({navigation,item}) {
             }); 
             console.log('status123',response);
           if (response.data !== null && response.code == 0) {
-         
+         onRefresh?.();
           } 
           } catch (error) {
             console.error(error);

@@ -46,6 +46,11 @@ const STATUS_UI = {
     rightText: '已取消',
     actions: [],
   },
+    CREATED: {
+    label: '待付款',
+    rightText: '待付款',
+    actions: [],
+  },
 };
 const OrderItem=({item,navigation,refreshAllTabs})=> {
  const [addons, setAddons] = useState(""); //增值服务
@@ -56,6 +61,8 @@ const OrderItem=({item,navigation,refreshAllTabs})=> {
     };
     useEffect(() => {
       if(item){
+        console.log(item);
+        
        const goods=JSON.parse(item.goodsSnapshot)
         console.log(goods.addons);
     const addonTitles = goods.addons
@@ -348,10 +355,12 @@ const OrderItem=({item,navigation,refreshAllTabs})=> {
 </View>
 <View style={{flexDirection:'row',justifyContent:'flex-end',gap:px(6),marginTop: px(13),}}>
 
-
-    <TouchableOpacity style={styles.cannelbox} onPress={()=>handleaddremake()}>
+   {status!=='CREATED'&&
+       <TouchableOpacity style={styles.cannelbox} onPress={()=>handleaddremake()}>
       <Text style={styles.canneltext}>添加备注</Text>
     </TouchableOpacity>
+   }
+
   {/* {ui.actions?.includes('contact') && (
     <TouchableOpacity style={styles.cannelbox}>
       <Text style={styles.canneltext}>联系客户</Text>

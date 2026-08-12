@@ -108,6 +108,7 @@ const getStatus = () => {
       label: '待评价',
       leftText: '申请售后',
       rightText: '前往评论',
+      xudantext:'续单'
     };
   }
 
@@ -117,6 +118,7 @@ const getStatus = () => {
       label: '已完成',
       leftText: '',
       rightText: '申请售后',
+      xudantext:'续单'
     };
   }
 
@@ -232,6 +234,9 @@ useEffect(() => {
      getorderinfo();
      return
      navigation.navigate('Refund',{orderinfo:item});
+    }else if(e=="续单"){
+    console.log(1231);
+    goshopinfo(JSON.parse(item.goodsSnapshot).goods)
     }
 
 
@@ -533,7 +538,7 @@ useEffect(() => {
        }
      }
    };
- const goshopinfo = async(e) => { 
+ const goshopinfo = async(e) => {
  console.log(e);
          try {
            const response = await request({
@@ -544,7 +549,7 @@ useEffect(() => {
            });
            console.log(response);
           if(response.data!==undefined&&response.code==0&&response.data.minPrice!==0){
-          navigation.navigate('Shopinfo',{shopinfo:response.data})
+          navigation.navigate('Shopinfo',{shopinfo:response.data,isopen:true})
           }else{
           Toast.info({content:'该商品已被删除，无法下单',mask:false,duration:2});
           }
@@ -661,7 +666,22 @@ useEffect(() => {
             </TouchableOpacity>
           </>
         )}
- {status.rightText!==""&&
+        {status.xudantext&&
+         <TouchableOpacity onPress={()=>handlerightbutton(status.xudantext)}>
+          <LinearGradient
+            colors={['#FEC525', '#FC9026']}
+            start={{ x: 1, y: 0 }}
+            end={{ x: 0, y: 0 }}
+            style={styles.primaryBtn}
+          >
+            <Text style={styles.primaryText}>
+              {status.xudantext}
+            </Text>
+          </LinearGradient>
+        </TouchableOpacity>
+       }
+
+       {status.rightText!==""&&
          <TouchableOpacity onPress={()=>handlerightbutton(status.rightText)}>
           <LinearGradient
             colors={['#FEC525', '#FC9026']}
@@ -674,7 +694,7 @@ useEffect(() => {
             </Text>
           </LinearGradient>
         </TouchableOpacity>
- }
+       }
 
 
       </View>

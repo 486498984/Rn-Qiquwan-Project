@@ -71,6 +71,7 @@ const TabContent=({
 
  onRefresh,
  refreshing,
+ onItemRefresh,
 }:any)=>{
 
 
@@ -92,6 +93,7 @@ renderItem={({item})=>(
 <KefuItem
 item={item}
 navigation={navigation}
+onRefresh={onItemRefresh}
 />
 )}
 contentContainerStyle={{
@@ -160,7 +162,7 @@ color:'#999',
 fontSize:px(13)
 }}
 >
-暂无陪玩
+暂无客服
 </Text>
 </View>
 )
@@ -307,6 +309,12 @@ console.log(response);
 if(response.code===0){
 const newList=
 response?.data?.list||[];
+console.log(
+ '接口返回数量:',
+ newList.length,
+ 'tab:',
+ tabKey
+);
 setTabData((prev:any)=>{
 const list=
 refresh
@@ -317,6 +325,12 @@ newList
 ...prev[tabKey].list,
 ...newList
 ];
+console.log(
+ '刷新前:',
+ prev[tabKey].list.length,
+ '刷新后:',
+ newList.length
+);
 const unique=
 Array.from(
 new Map(
@@ -338,6 +352,7 @@ loading:false
 }
 }
 });
+
 }else{
 setTabData((prev:any)=>({
 ...prev,
@@ -441,8 +456,19 @@ onRefresh={async()=>{
   setRefreshing(false);
 
 }}
+      // ✅ 传给 KefuItem
+onItemRefresh={async()=>{
 
+  routes.forEach(item=>{
 
+    fetchPlayerList(
+      item.key,
+      true
+    );
+
+  });
+
+}}
 />
 
 
@@ -457,60 +483,39 @@ onRefresh={async()=>{
 
 
 const renderTabBar=useCallback(
-
 ({navigationState,jumpTo}:any)=>{
-
-
+  console.log('wqeqweqeqeqweq1213131',tabData);
+  
 return (
-
 <View
 style={{
 height:px(50),
 backgroundColor:'#fff'
 }}
 >
-
-
 <ScrollView
-
 horizontal
-
 showsHorizontalScrollIndicator={false}
-
 contentContainerStyle={{
 alignItems:'center'
 }}
-
 >
-
-
 {
 navigationState.routes.map(
 (route:any,i:number)=>{
-
-
 const active=
 navigationState.index===i;
-
-
 return (
-
 <TouchableOpacity
-
 key={route.key}
-
 style={{
 width:px(90),
 height:px(50),
 alignItems:'center',
 justifyContent:'center'
 }}
-
 onPress={()=>jumpTo(route.key)}
-
 >
-
-
 <Text
 style={{
 fontSize:px(14),
@@ -522,66 +527,32 @@ active
 '#1A1A1A'
 }}
 >
-
 {route.title}
 ({tabData[route.key]?.list?.length ?? 0})
 </Text>
-
-
-
 {
 active&&
-
 <View
-
 style={{
-
 position:'absolute',
-
 bottom:px(5),
-
 width:px(22),
-
 height:px(3),
-
 backgroundColor:'#FF9500',
-
 borderRadius:px(10)
-
 }}
-
 />
-
 }
-
-
-
 </TouchableOpacity>
-
 )
-
-
 }
-
 )
-
 }
-
-
-
 </ScrollView>
-
-
 </View>
-
-
 )
-
 },
-
  [tabData]
-
-
 );
 
 
@@ -689,7 +660,8 @@ height:px(22)
 
 navigationState={{
 index,
-routes
+routes,
+tabData
 }}
 
 renderScene={renderScene}

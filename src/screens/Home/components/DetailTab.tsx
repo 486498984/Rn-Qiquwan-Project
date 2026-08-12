@@ -121,6 +121,7 @@ useState('');
             item={item}
             navigation={navigation}
             type={1}
+            playinfo={playinfo}
             />
             )}
               </View>

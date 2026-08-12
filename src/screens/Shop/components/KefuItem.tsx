@@ -38,7 +38,7 @@ const statusStyleMap = {
   },
 
 };
-export default function KefuItem({navigation,item}) {
+export default function KefuItem({navigation,item,onRefresh,}) {
   const [visible, setVisible] = useState(false);
   const [status, setStatus] = useState(1);
   const rotateAnim = useRef(new Animated.Value(0)).current;
@@ -87,7 +87,7 @@ if(item.key===1){
             }); 
             console.log('status123',response);
           if (response.data !== null && response.code == 0) {
-         
+         onRefresh?.();
           } 
           } catch (error) {
             console.error(error);

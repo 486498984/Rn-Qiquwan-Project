@@ -193,7 +193,9 @@ setStoreauthst(false)
          getbadge(response.data.profile.userId)
          const preferences = await Storage.get("preferences");
          console.log(preferences);
-         if(isWithinOneMinute(response.data.profile.createdAt)&&!preferences){
+         let config=JSON.parse(response.data.profile.config)
+         console.log(config);
+         if(!config.account&&!preferences){
          setShowGuide(true);
          }
          } 
@@ -737,15 +739,10 @@ width: '25%',
   onSave={saveImage}
 />
 <GuideModal
-
 visible={showGuide}
-
 onClose={()=>{
-
  setShowGuide(false);
-
 }}
-
 />
     </View>
    

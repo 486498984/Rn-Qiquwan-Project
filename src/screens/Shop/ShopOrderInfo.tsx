@@ -51,6 +51,11 @@ const ORDER_STATUS_MAP = {
     desc: '订单已取消',
     image: require('../../../assets/images/my/cannelo.png'),
   },
+    CREATED: {
+    title: '待付款',
+    desc: '等待用户付款中',
+    image: require('../../../assets/images/my/clock.png'),
+  },
 };
 const imgMap = {
   0: require('../../../assets/images/my/clock.png'),
@@ -550,6 +555,11 @@ processList.map((item,index)=>{
       }
     })()}
   </Text>
+</View>
+<View style={{width: '100%',flexDirection: 'row',alignItems: 'center',
+    justifyContent: 'space-between',}}>
+    <Text style={styles.shopdesnames}>陪玩</Text>
+      <Text style={styles.yingfu}>{ JSON.parse(orderInfo?.attr || '{}')?.nickName||'-'}</Text>
 </View>
 
 <View

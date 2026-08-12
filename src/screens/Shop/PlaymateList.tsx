@@ -73,6 +73,7 @@ const TabContent=({
 
  onRefresh,
  refreshing,
+ onItemRefresh,
 }:any)=>{
 
 
@@ -94,6 +95,7 @@ renderItem={({item})=>(
 <PlayerItem
 item={item}
 navigation={navigation}
+onRefresh={onItemRefresh}
 />
 )}
 contentContainerStyle={{
@@ -327,7 +329,7 @@ const current=
 tabData[tabKey];
 
 
-if(current.loading)
+if(current.loading && !refresh)
 return;
 
 
@@ -623,7 +625,20 @@ onRefresh={async()=>{
 
 }}
 
+onItemRefresh={async()=>{
 
+  await Promise.all(
+    routes.map(item=>{
+
+      return fetchPlayerList(
+        item.key,
+        true
+      );
+
+    })
+  );
+
+}}
 />
 
 

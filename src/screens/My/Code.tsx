@@ -147,11 +147,11 @@ export default function Code({navigation}) {
                        style={{width: px(17),height: px(17)}}></Image></TouchableOpacity>}
                    <Text style={styles.text}>
                  阅读并同意
-                 <Text style={styles.link} onPress={handleUserAgreement}>
+                 <Text style={styles.link} onPress={()=> navigation.navigate('UserAgree')}>
                    《用户协议》
                  </Text>
                  和
-                 <Text style={styles.link} onPress={handlePrivacyPolicy}>
+                 <Text style={styles.link} onPress={()=>navigation.navigate('PrivacyAgree')}>
                    《隐私政策》
                  </Text>
                

@@ -5,6 +5,26 @@ import { IMG_URL } from '../../api/config';
 import SafeFastImage from '../../components/Home/SafeFastImage'
 import LinearGradient from 'react-native-linear-gradient';
 
+
+const statusConfig = {
+  ONLINE: {
+    text: '空闲',
+    color: '#3CF15F',
+    icon: require('../../../assets/images/home/online.png'),
+  },
+
+  OFFLINE: {
+    text: '离线',
+    color: '#AAAAAA',
+    icon: require('../../../assets/images/home/offline.png'),
+  },
+
+  BUSY: {
+    text: '在忙',
+    color: '#FF9500',
+    icon: require('../../../assets/images/home/busy.png'),
+  },
+};
 function PlayerItem({item,navigation,type}) {
 
   const getFirstImageUrl = (str) => {
@@ -15,6 +35,8 @@ function PlayerItem({item,navigation,type}) {
   return domain + first;
 };
 const imageUri = getFirstImageUrl(item.avatar);
+  const statusInfo =
+  statusConfig[item.workStatus] || statusConfig.OFFLINE;
   return (
     <TouchableOpacity style={styles.config} activeOpacity={1}
     onPress={()=>navigation.navigate('PlayerInfo',{item:item})}>
@@ -35,16 +57,28 @@ const imageUri = getFirstImageUrl(item.avatar);
        </View>
  </View>
 <View style={styles.rightbox}>
-    <View style={{flexDirection: 'row',alignItems: 'center',gap:px(6)}}>
-<Text style={styles.nickname}>{item.nickName}</Text>
-{item.gender==1&&
-<Image source={require('../../../assets/images/my/man.png')} 
-style={{width:px(16),height:px(16)}}></Image>
-}
-{item.gender==2&&
-<Image source={require('../../../assets/images/my/woman.png')} 
-style={{width:px(16),height:px(16)}}></Image>
-}
+    <View style={{flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',}}>
+      <View style={{flexDirection: 'row',alignItems: 'center',gap:px(6)}}>
+    <Text style={styles.nickname}>{item.nickName}</Text>
+    {item.gender==1&&
+    <Image source={require('../../../assets/images/my/man.png')} 
+    style={{width:px(16),height:px(16)}}></Image>
+    }
+    {item.gender==2&&
+    <Image source={require('../../../assets/images/my/woman.png')} 
+    style={{width:px(16),height:px(16)}}></Image>
+    }
+      </View>
+<View style={{flexDirection: 'row',alignItems: 'center',gap:px(3)}}>
+    <Image  source={statusInfo.icon}
+       style={{width:px(17),height:px(17)}}></Image>
+       <Text   style={{
+      fontSize:px(13),
+      color:statusInfo.color,
+      fontFamily:'MiSans-Regular',
+    }}>{statusInfo.text}</Text>
+</View>
+
     </View>
 <LinearGradient
   colors={[
