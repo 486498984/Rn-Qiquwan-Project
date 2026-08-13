@@ -21,7 +21,9 @@ import {
 } from '@ant-design/react-native'
 import { IMG_URL } from '../../api/config';
 import useAuthStore from '../../utils/zustand';
-
+import {
+KeyboardAwareScrollView
+} from "react-native-keyboard-controller";
 
 const gameOptions = [
   { label: '三角洲', value: 0 },
@@ -82,7 +84,8 @@ shopsortinputRef,setShopsort,shopsort,shoppurchaseinputRef,
 setShoplimit,shoplimit,headimages,setHeadimages,onChangeShopinfotx,
 shopinfotx,setShopinfoimages,shopinfoimages,handlesubmit,setVisiblehot,
 commitvalueshot,ishot,shopsales,setShopsales,shopshopsaleinputRef,
-setVisiblecatype,catype,catypeindex
+setVisiblecatype,catype,catypeindex,setVisibletypegame,categorygame,
+shoptypegame,
 
      }) => {
 
@@ -94,9 +97,36 @@ const getLabels = (values, data) => {
 };
   return (
     <View>
-    <ScrollView contentContainerStyle={{paddingBottom:px(150)+bottomSafeHeight,paddingTop:px(0),flexGrow: 1}}
-     ref={scrollRef} keyboardDismissMode="on-drag" showsVerticalScrollIndicator={false}
-    overScrollMode="never" bounces={false}>
+  <KeyboardAwareScrollView 
+  bottomOffset={30}
+  extraKeyboardSpace={20}
+  mode="insets"
+  showsVerticalScrollIndicator={false}
+  keyboardShouldPersistTaps="handled"
+  contentContainerStyle={{
+  paddingBottom:px(120),
+  //paddingTop:px(16),
+  }}
+  >
+
+      <View style={{width: '100%',backgroundColor: '#fff',paddingHorizontal:px(16),}}>
+    <TouchableOpacity style={{height: px(51),
+        flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',
+        paddingHorizontal:px(0),
+    }} onPress={()=>setVisibletypegame(true)}>
+        <View style={{flexDirection: 'row',alignItems: 'center',}}>
+    <Text style={styles.lefttitle}>游戏分类</Text>
+    <Text style={[styles.lefttitle,{color:'red'}]}>*</Text>
+        </View>
+    <View style={{flexDirection: 'row',alignItems: 'center',}}>
+    <Text style={styles.lefttitle}>{categorygame[shoptypegame]?.label}</Text>
+          <Image source={require('../../../assets/images/my/right.png')} 
+           style={{width:px(19),height:px(19)}}></Image>
+    </View> 
+    </TouchableOpacity>
+    <Line/>
+</View>
+
   <View style={{width: '100%',backgroundColor: '#fff',paddingHorizontal:px(16),}}>
     <TouchableOpacity style={{height: px(51),
         flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',
@@ -107,7 +137,9 @@ const getLabels = (values, data) => {
     <Text style={[styles.lefttitle,{color:'red'}]}>*</Text>
         </View>
     <View style={{flexDirection: 'row',alignItems: 'center',}}>
-    <Text style={styles.lefttitle}>{category[shoptype].label}</Text>
+  <Text style={styles.lefttitle}>
+  {category?.[shoptype]?.label || '请选择'}
+</Text>
           <Image source={require('../../../assets/images/my/right.png')} 
            style={{width:px(19),height:px(19)}}></Image>
     </View> 
@@ -126,7 +158,7 @@ const getLabels = (values, data) => {
 <Text style={[styles.lefttitle,{color:'red'}]}>*</Text>
     </View>
 <View style={{flexDirection: 'row',alignItems: 'center',}}>
-<Text style={styles.lefttitle}>{maplist[shopmap].label}</Text>
+<Text style={styles.lefttitle}>{maplist[shopmap]?.label}</Text>
       <Image source={require('../../../assets/images/my/right.png')} 
        style={{width:px(19),height:px(19)}}></Image>
 </View>
@@ -141,7 +173,7 @@ const getLabels = (values, data) => {
 <Text style={[styles.lefttitle,{color:'red'}]}>*</Text>
     </View>
 <View style={{flexDirection: 'row',alignItems: 'center',}}>
-<Text style={styles.lefttitle}>{difficulty[shopmode].label}</Text>
+<Text style={styles.lefttitle}>{difficulty[shopmode]?.label}</Text>
       <Image source={require('../../../assets/images/my/right.png')} 
        style={{width:px(19),height:px(19)}}></Image>
 </View>
@@ -156,7 +188,7 @@ const getLabels = (values, data) => {
 <Text style={[styles.lefttitle,{color:'red'}]}>*</Text>
     </View>
 <View style={{flexDirection: 'row',alignItems: 'center',}}>
-<Text style={styles.lefttitle}>{platform[shopplat].label}</Text>
+<Text style={styles.lefttitle}>{platform[shopplat]?.label}</Text>
       <Image source={require('../../../assets/images/my/right.png')} 
        style={{width:px(19),height:px(19)}}></Image>
 </View>
@@ -172,7 +204,7 @@ const getLabels = (values, data) => {
 <Text style={[styles.lefttitle,{color:'red'}]}>*</Text>
     </View>
 <View style={{flexDirection: 'row',alignItems: 'center',}}>
-<Text style={styles.lefttitle}>{catype[catypeindex].label}</Text>
+<Text style={styles.lefttitle}>{catype[catypeindex]?.label}</Text>
       <Image source={require('../../../assets/images/my/right.png')} 
        style={{width:px(19),height:px(19)}}></Image>
 </View>
@@ -519,7 +551,7 @@ numberOfLines={1}>{serves?.length ? serves.join('、') : '请选择'}</Text>
         />
 </View>
 
-    </ScrollView>
+</KeyboardAwareScrollView>
 
 <View style={{position: 'absolute',bottom:0,width: '100%',backgroundColor: '#fff',
    flexDirection: 'row',justifyContent: 'center',
@@ -544,6 +576,7 @@ numberOfLines={1}>{serves?.length ? serves.join('、') : '请选择'}</Text>
 </View>
 </View>
 </View>  
+
 </View>
 
   );
@@ -889,13 +922,13 @@ const [categoryall, setCategoryall] = useState(typeOptions); //所有商品分�
     useEffect(() => {
     if(shopinfo){
         console.log(shopinfo);
-        getdefaultinfo(shopinfo)
+        //getdefaultinfo(shopinfo)
         getskulist(shopinfo)
         getAddonList(shopinfo)
     }
     }, [shopinfo])
-
-    const getdefaultinfo = async(e) => {  //获取初始商品信息
+    
+    const getdefaultinfo = async(e,attrOptions) => {  //获取初始商品信息
         try {
           const response = await request({
             url: '/store/goods/detail',
@@ -905,6 +938,12 @@ const [categoryall, setCategoryall] = useState(typeOptions); //所有商品分�
           });
           console.log('shopinfo123',response);
          if(response.data!==undefined&&response.code==0){
+          const {
+          platformList,
+          mapList,
+          difficultyList,
+          serviceList,
+        } = attrOptions;
          let goodres=response.data.goods
          let skulist=response.data.skus
          console.log(goodres);
@@ -914,13 +953,10 @@ const [categoryall, setCategoryall] = useState(typeOptions); //所有商品分�
             .filter(index => index !== -1);
           setCommitvalueshot(result)
           console.log(result);
-
-
          setShoptitle(goodres.title)
          setShopsort(String(goodres.sortWeight))
          setShoplimit(String(goodres.userLimit))
          console.log('goodsattr',goodres.attr);
-         
          if(goodres.attr){
           console.log(JSON.parse(goodres.attr)?.virtualSales);
           let config=JSON.parse(goodres.attr)
@@ -931,40 +967,46 @@ const [categoryall, setCategoryall] = useState(typeOptions); //所有商品分�
          }else{
           setShopsales('0')
          }
-
-setShopplat(getIndexByLabel(goodres.platform,platform)) //设置平台
-setShopmode(getIndexByLabel(goodres.difficulty,difficulty)) //设置难度
-setShopmap(getIndexByLabel(goodres.map,maplist)) //地图
-setShoptype(getIndexById(goodres.categoryId,category)) //分类
-const productarr = goodres.productTag.split(',');
-const freeservicearr = goodres.freeService.split(',');
-setTags(productarr) //商品标签
-setServes(freeservicearr) //免费服务
-setCommitvalues(getIndexesByLabels(goodres.serviceIds, services)) //承诺保障
-setShopinfotx(goodres.content)
-//console.log(commitvalues, services); 
-//console.log(getIndexesByLabels(goodres.serviceIds, services));
-//console.log(getIndexById(goodres.categoryId,category));
-//console.log(headimages,getImageArray(goodres.coverImage, ""));
-setHeadimages(getImageArray(goodres.coverImage, IMG_URL))
-setShopinfoimages(getImageArray(goodres.images, IMG_URL))
-// console.log(skulist);
-// if(skulist!==null){
-// const result = skulist.map(item => ({
-//   id: String(item.id),                // id 转字符串
-//   title: item.title,                  // title → title
-//   content: item.subTitle || "",       // subTitle → content
-//   minStock: String(item.guarantee ?? ""), // guarantee → minStock
-//   price: String(item.price / 100),    // 分转元（9900 → 99）
-//   originPrice: String(item.originalPrice / 100), // 同上
-//   stock: String(item.quantity),       // quantity → stock
-// }));
-// setSkuList(result)
-// console.log(result);
-// }
-
-
-
+        //setShopplat(getIndexByLabel(goodres.platform,platform)) //设置平台
+        console.log(getIndexByLabel(goodres.difficulty,difficulty));
+        console.log(goodres.difficulty,difficulty);
+        
+        //setShopmode(getIndexByLabel(goodres.difficulty,difficulty)) //设置难度
+        //setShopmap(getIndexByLabel(goodres.map,maplist)) //地图
+        setShopplat(
+        getIndexByLabel(
+          goodres.platform,
+          platformList
+        )
+        );
+        setShopmode(
+        getIndexByLabel(
+          goodres.difficulty,
+          difficultyList
+        )
+        );
+        setShopmap(
+        getIndexByLabel(
+          goodres.map,
+          mapList
+        )
+        );
+        setShoptype(getIndexById(goodres.categoryId,category)) //分类
+        const productarr = goodres.productTag.split(',');
+        const freeservicearr = goodres.freeService.split(',');
+        setTags(productarr) //商品标签
+        setServes(freeservicearr) //免费服务
+        console.log(getIndexesByLabels(goodres.serviceIds, services));
+        setCommitvalues(
+          getIndexesByLabels(
+            goodres.serviceIds,
+            serviceList
+          )
+        );
+        //setCommitvalues(getIndexesByLabels(goodres.serviceIds, services)) //承诺保障
+        setShopinfotx(goodres.content)
+        setHeadimages(getImageArray(goodres.coverImage, IMG_URL))
+        setShopinfoimages(getImageArray(goodres.images, IMG_URL))
 
          }
         } catch (error) {
@@ -1081,14 +1123,23 @@ const getIndexByLabel = <T extends { label: string }>(
        initPage(); //获取分类列表
        //getcategorytree(); //获取默认值
     }, [])
-    const initPage = async () => {
-  await Promise.all([
-    getcategory(),
-    //getcategorytree(),
-  ]);
-
-  if (shopinfo) {
-    await getdefaultinfo(shopinfo);
+const initPage = async () => {
+  const parentId = await getcategory();
+  let attrOptions = {
+    platformList: [],
+    mapList: [],
+    difficultyList: [],
+    serviceList: [],
+  };
+  if(parentId){
+    attrOptions =
+      await getcategorytree(parentId);
+  }
+  if(shopinfo){
+    await getdefaultinfo(
+      shopinfo,
+      attrOptions
+    );
   }
 };
     const getcategory = async() => { 
@@ -1116,81 +1167,152 @@ const getIndexByLabel = <T extends { label: string }>(
         id:item.id
       }));
       const childId = shopinfo.categoryId;
+      const parentIndex = response.data.findIndex(parent =>
+        parent.children?.some(child => child.id === childId)
+      );
       const parentId = response.data
       .find(parent =>
         parent.children?.some(child => child.id === childId)
       )?.id;
-      getcategorytree(parentId)
-      console.log('parentId',parentId);
+     setShoptypegame(parentIndex) //设置游戏分类
+      console.log('parentId',parentId,parentIndex);
       console.log('一级分类:',firstCategory);
       //getcategorytree(firstCategory[0].id);
-      setCategorygame(firstCategory)
-      setCategory(secondCategoryMap[0])
-      setCategoryall(secondCategoryMap)
+     setCategorygame(firstCategory)
+     setCategory(secondCategoryMap[parentIndex])
+     setCategoryall(secondCategoryMap)
+     return parentId; // ⭐关键
+      //getcategorytree(parentId) //获取分类
       }
       } catch (error) {
         console.error(error);
       }
      };
-     const getcategorytree = async(e) => { 
-            try {
-              const response = await request({
-                url: '/category/attribute/by-category',
-                method: 'GET',
-                data:{},
-                query: {categoryId:e}
-              });
-              console.log(response);
-             if(response.data!==null&&response.code==0&&response.data!==undefined){
-              const res=response.data
-              for(let i=0;i<res.length-1;i++){
-               if(res[i].attrKey=="platform"){
-                console.log(res[i]);
-                let str=res[i].options
-                const platOptions = JSON.parse(str).map((item, index) => ({
-                  label: item,
-                  value: index
-                }));
-                setPlatform(platOptions)
-                console.log(platOptions);
-               }else if(res[i].attrKey=="map"){
-               let str=res[i].options
-               const mapOptions = JSON.parse(str).map((item, index) => ({
-                  label: item,
-                  value: index
-                }));
-                setMaplist(mapOptions)
-                console.log(mapOptions);
-               }else if(res[i].attrKey=="difficulty"){
-               let str=res[i].options
-               const mapOptions = JSON.parse(str).map((item, index) => ({
-                  label: item,
-                  value: index
-                }));
-               setDifficulty(mapOptions)
-               }else if(res[i].attrKey=="productTag"){
-               let str=res[i].options
-               const arr = JSON.parse(str);
-               //setTags(arr)
-               //setTags(res[i].options) 
-               }else if(res[i].attrKey=="freeService"){
-                let str=res[i].options
-               const arr = JSON.parse(str);
-               //setServes(arr)
-               }else if(res[i].attrKey=="serviceIds"){
-               let str=res[i].options
-               const serviceOptions = JSON.parse(str).map((item, index) => ({
-                  label: item,
-                  value: index
-                }));
-               setServices(serviceOptions)
-               }
-              }
-             }
-            } catch (error) {
-              console.error(error);
-            }
-      };
+const getcategorytree = async(e) => {
+      Toast.loading({
+      content: '加载中',
+      mask: true,
+      duration: 5,
+    })
+  try {
+    const response = await request({
+      url:'/category/attribute/by-category',
+      method:'GET',
+      data:{},
+      query:{categoryId:e}
+    });
+    let serviceOptionsResult:any[] = [];
+    let platOptionsResult:any[] = [];
+    let mapOptionsResult:any[] = [];
+    let difficultyOptionsResult:any[] = [];
+    if(
+      response.data !== null &&
+      response.code === 0 &&
+      response.data !== undefined
+    ){
+
+      const res=response.data;
+
+
+      for(let i=0;i<res.length;i++){
+
+
+        if(res[i].attrKey=="platform"){
+
+          platOptionsResult =
+          JSON.parse(res[i].options)
+          .map((item,index)=>({
+            label:item,
+            value:index
+          }));
+
+          setPlatform(platOptionsResult);
+
+
+        }else if(res[i].attrKey=="map"){
+
+          mapOptionsResult =
+          JSON.parse(res[i].options)
+          .map((item,index)=>({
+            label:item,
+            value:index
+          }));
+          setMaplist(mapOptionsResult);
+        }else if(res[i].attrKey=="difficulty"){
+          difficultyOptionsResult =
+          JSON.parse(res[i].options)
+          .map((item,index)=>({
+            label:item,
+            value:index
+          }));
+          setDifficulty(difficultyOptionsResult);
+        }else if(res[i].attrKey=="serviceIds"){
+          serviceOptionsResult =
+          JSON.parse(res[i].options)
+          .map((item,index)=>({
+            label:item,
+            value:index
+          }));
+          setServices(serviceOptionsResult);
+        }
+      }
+    }
+    // 重置下标
+    resetCategoryIndexes({
+      platformList:platOptionsResult,
+      mapList:mapOptionsResult,
+      difficultyList:difficultyOptionsResult,
+      serviceList:serviceOptionsResult,
+    });
+    //return serviceOptionsResult;
+    return {
+  platformList: platOptionsResult,
+  mapList: mapOptionsResult,
+  difficultyList: difficultyOptionsResult,
+  serviceList: serviceOptionsResult,
+};
+  } catch(error){
+
+    console.error(error);
+    return [];
+
+  }finally{
+    Toast.removeAll()
+  }
+};
+/**
+ * 分类切换后，重置所有动态属性下标
+ */
+const resetCategoryIndexes = ({
+  platformList=[],
+  mapList=[],
+  difficultyList=[],
+  categoryList=[],
+}:any)=>{
+  setShopplat(prev =>
+    prev < platformList.length
+      ? prev
+      : 0
+  );
+  setShopmap(prev =>
+    prev < mapList.length
+      ? prev
+      : 0
+  );
+  setShopmode(prev =>
+    prev < difficultyList.length
+      ? prev
+      : 0
+  );
+    // 商品分类
+  setShoptype(prev =>
+    prev < categoryList.length
+      ? prev
+      : 0
+  );
+  // 多选直接清空
+  setCommitvalues([]);
+};
       function checkExist(arr, value) {
   return arr.includes(value) ? 1 : 0;
 }
@@ -1296,6 +1418,7 @@ const handleaddshop = async(finalStr,finaimgStr) => {
     virtualSales: Number(shopsales),
     isplayer: catype[catypeindex].value,
   };
+  console.log(platform,shopplat);
 try {
 const response = await request({
   url: '/store/goods/spu/update',
@@ -1454,6 +1577,9 @@ const onChangeShopinfotx = (e) => {  //修改商品详情
           setVisiblecatype={setVisiblecatype}
           catype={catype}
           catypeindex={catypeindex}
+          setVisibletypegame={setVisibletypegame}
+          categorygame={categorygame}
+          shoptypegame={shoptypegame}
         />
       );
     case 'Skus':
@@ -1902,6 +2028,19 @@ const response = await request({
         setVisibletype(false);
       }}
     /> 
+    <TextRadioModal
+      visible={visibletypegame}
+      onClose={() => setVisibletypegame(false)}
+      data={categorygame}
+      value={shoptypegame}
+      onConfirm={(val) => {
+        console.log(val);
+        setCategory(categoryall[val])
+        getcategorytree(categorygame[val].id);
+        setShoptypegame(val);
+        setVisibletypegame(false);
+      }}
+    />
     <TextRadioModal
       visible={visiblemap}
       onClose={() => setVisiblemap(false)}
