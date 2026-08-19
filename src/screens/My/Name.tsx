@@ -61,20 +61,32 @@ export default function Name({navigation,route}) {
           });
           console.log(response);
          if(response.data!==undefined&&response.code==0){
-          const config=JSON.parse(response.data.profile.config)
-          console.log(config);
-          
-          if(type==1){
-          setPhonenum(response.data.profile.nickName)
-          }else if(type==2){
-           if(config.gameId){
-          setPhonenum(config.gameId)
-           }
-          }else if(type==3){
-           if(config.account){
-          setPhonenum(config.account)
-           }
+          const configStr = response.data.profile.config;
+
+          let config = {};
+
+          if (configStr) {
+            try {
+              config = JSON.parse(configStr);
+            } catch (error) {
+              console.log('config JSON解析失败:', error);
+              config = {};
+            }
           }
+
+          console.log(config);
+
+          if (type === 1) {
+            setPhonenum(response.data.profile.nickName);
+          } else if (type === 2) {
+            if (config?.gameId) {
+              setPhonenum(config.gameId);
+            }
+          } else if (type === 3) {
+            if (config?.account) {
+              setPhonenum(config.account);
+            }
+}
 
          setUserinfo(response.data.profile)
          }

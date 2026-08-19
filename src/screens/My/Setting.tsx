@@ -136,6 +136,11 @@ const logoutlogin = async() => {
  const hideName = (name) => {
   if (!name) return '';
 
+  // 1个字：原样显示
+  if (name.length === 1) {
+    return name;
+  }
+
   // 2个字：张*
   if (name.length === 2) {
     return name[0] + '*';

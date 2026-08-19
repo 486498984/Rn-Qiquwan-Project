@@ -192,12 +192,20 @@ setStoreauthst(false)
          setUserprofile(response.data.profile)
          getbadge(response.data.profile.userId)
          const preferences = await Storage.get("preferences");
-         console.log(preferences);
-         let config=JSON.parse(response.data.profile.config)
-         console.log(config);
-         if(!config.account&&!preferences){
-         setShowGuide(true);
-         }
+         console.log('preferences',preferences);
+        const configStr = response.data.profile.config;
+        let config = null;
+        if (configStr) {
+          try {
+            config = JSON.parse(configStr);
+          } catch (error) {
+            console.log('config JSON解析失败:', error);
+          }
+        }
+        console.log('config:', config);
+        if (!config?.account&&!preferences) {
+          setShowGuide(true);
+        }
          } 
         } catch (error) {
           console.error(error);

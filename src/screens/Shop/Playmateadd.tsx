@@ -382,15 +382,15 @@ const handlesubmit = async() => {  //正式提交
     })
     return
    }
-    if(audioFile==null){
-     Toast.show({
-      content: '请上传音频介绍',
-      duration: 2,
-      position: 'center',
-      mask: false,
-    })
-    return
-   }
+  //   if(audioFile==null){
+  //    Toast.show({
+  //     content: '请上传音频介绍',
+  //     duration: 2,
+  //     position: 'center',
+  //     mask: false,
+  //   })
+  //   return
+  //  }
     if(gamecavalues.length==0){
      Toast.show({
       content: '请选择游戏分类',
@@ -675,7 +675,7 @@ justifyContent: 'space-between',height: px(51),}}
    <View style={{flexDirection: 'column',paddingBottom:px(16)}}>
     <View style={{flexDirection: 'row',alignItems: 'center',}}>
 <Text style={styles.lefttitle}>音频介绍</Text>
-<Text style={[styles.lefttitle,{color:'red'}]}>*</Text>
+{/* <Text style={[styles.lefttitle,{color:'red'}]}>*</Text> */}
     </View>
       <Text style={styles.smalldes}>(限1段，时长小于等于3分钟)</Text>
 <View

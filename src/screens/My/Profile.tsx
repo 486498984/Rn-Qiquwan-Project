@@ -69,24 +69,26 @@ export default function Profile({navigation}) {
         if(response.data!==undefined&&response.code==0){
         setAvatarError(false);
         setUserprofile(response.data.profile)
-        const config=JSON.parse(response.data.profile.config)
+        const configStr = response.data.profile.config;
+        let config = {};
+        if (configStr) {
+          try {
+            config = JSON.parse(configStr);
+          } catch (error) {
+            console.log('config JSON解析失败:', error);
+            config = {};
+          }
+        }
         console.log(config);
-        setConfig(config)
-        if(config.games){
-        if(config.games=='三角洲行动'){
-        setGamesindex(1)
+        setConfig(config);
+        if (config?.games === '三角洲行动') {
+          setGamesindex(1);
         }
+        if (config?.partition === 'qq') {
+          setGamesquindex(1);
+        } else if (config?.partition === 'steam') {
+          setGamesquindex(2);
         }
-        if(config.partition){
-        if(config.partition=='qq'){
-        setGamesquindex(1)
-        }else if(config.partition=='steam'){
-        setGamesquindex(2)
-        }
-        }
-
-
-
         }
         } catch (error) {
           console.error(error);
@@ -245,7 +247,7 @@ const getGameArea = (index) => {
         }} onPress={()=>setGamesvs(true)}>
         <Text style={styles.smalltitle}>常玩游戏</Text>
         <View style={{flexDirection: 'row',alignItems: 'center',}}>
-     <Text style={styles.version}>{config?.games}</Text>
+     <Text style={styles.version}>{config?.games ? config.games : '请选择'}</Text>
            <Image source={require('../../../assets/images/my/right.png')} 
                style={{width:px(19),height:px(19)}}></Image>
         </View>
@@ -256,7 +258,7 @@ const getGameArea = (index) => {
         }} onPress={()=>navigation.navigate('Name',{type:2})}>
         <Text style={styles.smalltitle}>游戏ID</Text>
         <View style={{flexDirection: 'row',alignItems: 'center',}}>
-     <Text style={styles.version}>{config?.gameId}</Text>
+     <Text style={styles.version}>{config?.gameId || '请填写'}</Text>
            <Image source={require('../../../assets/images/my/right.png')} 
                style={{width:px(19),height:px(19)}}></Image>
         </View>
@@ -267,7 +269,7 @@ const getGameArea = (index) => {
         }} onPress={()=>navigation.navigate('Name',{type:3})}>
         <Text style={styles.smalltitle}>游戏账号</Text>
         <View style={{flexDirection: 'row',alignItems: 'center',}}>
-     <Text style={styles.version}>{config?.account}</Text>
+     <Text style={styles.version}>{config?.account || '请填写'}</Text>
            <Image source={require('../../../assets/images/my/right.png')} 
                style={{width:px(19),height:px(19)}}></Image>
         </View>
@@ -278,7 +280,7 @@ const getGameArea = (index) => {
         }} onPress={()=>setGamesquvs(true)}>
         <Text style={styles.smalltitle}>游戏分区</Text>
         <View style={{flexDirection: 'row',alignItems: 'center',}}>
-     <Text style={styles.version}>{config?.partition}</Text>
+     <Text style={styles.version}>{config?.partition ? config.partition : '请选择'}</Text>
            <Image source={require('../../../assets/images/my/right.png')} 
                style={{width:px(19),height:px(19)}}></Image>
         </View>

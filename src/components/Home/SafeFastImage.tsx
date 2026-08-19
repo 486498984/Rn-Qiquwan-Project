@@ -1,4 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+
+import {
+  View,
+} from 'react-native';
+
 import FastImage from 'react-native-fast-image';
 
 const SafeFastImage = ({
@@ -7,38 +16,107 @@ const SafeFastImage = ({
   ...props
 }) => {
 
-  const [imgError, setImgError] = useState(false);
-  const [retryKey, setRetryKey] = useState(0);
+  // 是否为网络图片
+  const isRemoteImage =
+    typeof source === 'object' &&
+    source !== null &&
+    !!source.uri;
+
+  const imageUri =
+    isRemoteImage
+      ? source.uri
+      : null;
+
+  const [failed, setFailed] =
+    useState(false);
+
+  const [reloadKey, setReloadKey] =
+    useState(0);
+
+  const retryCountRef =
+    useRef(0);
+
+  const timerRef =
+    useRef(null);
 
   useEffect(() => {
- 
-    setImgError(false);
-    setRetryKey(0);
 
-  }, [source?.uri]);
+    retryCountRef.current = 0;
+
+    setFailed(false);
+
+    setReloadKey(0);
+
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+
+  }, [imageUri, source]);
 
   const handleError = () => {
 
-    // 先重试一次
-    if (retryKey < 1) {
+    /**
+     * 本地图片加载失败，
+     * 没必要进行网络重试。
+     */
+    if (!isRemoteImage) {
+      setFailed(true);
+      return;
+    }
 
-      setTimeout(() => {
-        setRetryKey(prev => prev + 1);
-      }, 1000);
+    /**
+     * 网络图片最多重试3次
+     */
+    if (retryCountRef.current < 3) {
+
+      retryCountRef.current += 1;
+
+      const delay =
+        retryCountRef.current * 600;
+
+      timerRef.current =
+        setTimeout(() => {
+
+          setReloadKey(prev =>
+            prev + 1,
+          );
+
+        }, delay);
 
       return;
     }
 
-    // 真失败才显示默认图
-    setImgError(true);
+    setFailed(true);
   };
+
+  /**
+   * source完全为空
+   */
+  if (!source) {
+    return (
+      <View
+        style={props.style}
+      />
+    );
+  }
 
   return (
     <FastImage
-      key={retryKey}
+      key={
+        isRemoteImage
+          ? `${imageUri}_${reloadKey}`
+          : `local_${String(source)}`
+      }
       {...props}
       source={
-        imgError
+        failed
           ? fallbackSource
           : source
       }

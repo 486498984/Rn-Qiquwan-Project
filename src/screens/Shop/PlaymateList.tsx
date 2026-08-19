@@ -788,13 +788,7 @@ borderRadius:px(10)
 
 return (
 
-<TouchableWithoutFeedback
 
-onPress={Keyboard.dismiss}
-
-accessible={false}
-
->
 
 
 <View
@@ -905,7 +899,7 @@ renderTabBar={renderTabBar}
 </View>
 
 
-</TouchableWithoutFeedback>
+
 
 
 )

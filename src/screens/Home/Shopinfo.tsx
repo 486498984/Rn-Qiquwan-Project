@@ -823,7 +823,7 @@ style={{width:px(20),height:px(20)}}></Image>
           <SafeFastImage
             source={item}
             style={{width: px(393),height: px(360),}}
-            resizeMode="stretch"
+            resizeMode="cover"
           />
         )}
       />

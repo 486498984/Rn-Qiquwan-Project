@@ -272,6 +272,7 @@ const formatTime = (seconds) => {
 </LinearGradient>
 </View>
 
+{playinfo?.player?.audios!==""&&
 <TouchableOpacity
  activeOpacity={0.8}
  onPress={handleAudio}
@@ -342,6 +343,8 @@ fontFamily:'MiSans-Medium',
 
 </View>
 </TouchableOpacity>
+}
+
 
 
 
