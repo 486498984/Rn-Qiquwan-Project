@@ -24,7 +24,8 @@ import * as WeChat from 'react-native-wechat-lib';
 import GuideModal from '../../components/My/GuideModal';
 
 
-
+const CONFIG_URL =
+  'https://tourok.com.cn/app-config.json';
 const bages={
   AFTER_SALE: 0,CREATED: 0,WAIT_COMMENT: 0,WAIT_CONFIRM: 0,WAIT_SERVICE: 0,
 }
@@ -45,13 +46,50 @@ export default function My({navigation}) {
   const [visible, setVisible] = useState(false);
   const [showGuide,setShowGuide]=useState(false);
 
+  // 默认全部显示
+  const [config, setConfig] = useState({
+    showInvite: true,
+    showActivity: true,
+    showRecharge: true,
+  });
 
   useFocusEffect(
     useCallback(() => {
      getloginstatus();//获取登陆状态
     }, [])
   );
- 
+   const getRemoteConfig = async () => {
+    try {
+      const response = await fetch(
+        `${CONFIG_URL}?t=${Date.now()}`,
+      );
+
+      // 文件不存在，例如 404
+      if (!response.ok) {
+        console.log(
+          '远程配置不存在，使用默认配置',
+        );
+        return;
+      }
+
+      const data = await response.json();
+
+      setConfig(prev => ({
+        ...prev,
+        ...data,
+      }));
+
+      console.log('远程配置:', data);
+    } catch (error) {
+      console.log(
+        '获取配置失败，使用默认配置:',
+        error,
+      );
+
+      // 不需要处理
+      // 因为 state 默认就是显示
+    }
+  };
   const orderListRefreshKey =
   useAuthStore(
     state => state.orderListRefreshKey
@@ -73,6 +111,7 @@ export default function My({navigation}) {
   useEffect(() => {
    console.log('isLogin:', isLogin);
    getloginstatus();//获取登陆状态
+   getRemoteConfig(); //隐藏显示我的资产
    }, [isLogin,orderListRefreshKey]);
 
    const getloginstatus = async() => {  //获取登陆状态
@@ -629,6 +668,7 @@ onPress={()=>handlegocoupon(5)}>
     </View>
   </View>
 </TouchableOpacity>
+  {config.showInvite && (
 <TouchableOpacity style={{width: px(175),height: px(60),backgroundColor: '#fff',
   borderRadius: px(12),flexDirection: 'row',alignItems: 'center',
   justifyContent: 'flex-start',}} onPress={()=>handlegocoupon(4)}>
@@ -641,6 +681,7 @@ onPress={()=>handlegocoupon(5)}>
     </View>
   </View>
 </TouchableOpacity>
+      )}
 </View>
 <View style={{width: px(361),backgroundColor: '#fff',
   borderRadius: px(12),marginTop: px(10),paddingBottom:px(0)
@@ -667,6 +708,7 @@ width: '25%',
         style={{width:px(33),height:px(33)}}></Image>
        <Text style={styles.moretext}>入驻中心</Text> 
 </TouchableOpacity>
+  {config.showInvite && (
 <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',gap:px(4),
 width: '25%',
 }} onPress={()=>handlegocoupon(2)}>
@@ -674,7 +716,7 @@ width: '25%',
         style={{width:px(33),height:px(33)}}></Image>
        <Text style={styles.moretext}>分享赚钱</Text> 
 </TouchableOpacity>
-
+)}
 <TouchableOpacity style={{flexDirection: 'column',alignItems: 'center',gap:px(4),
 width: '25%',
 }} onPress={()=>openWeb(TOTAL_URL+'policy/index.html')}>

@@ -48,7 +48,10 @@ const PrivacyModal = ({ privacyUrl, termsUrl, onAgree,showPrivacyModal,
       //alert('无法打开链接');
     });
   };
-
+const devicePrivacyText =
+  Platform.OS === 'ios'
+    ? `1、当您点击[同意]按钮之后，在使用本应用或应用在后台运行时，我们可能会收集设备型号、系统版本、IP地址、访问日期和时间、网络日志信息、WIFI网络信息、传感器信息、应用版本等必要信息，用于保障网络访问稳定性、基础数据统计及消息推送。`
+    : `1、当您点击[同意]按钮之后，在使用本应用或应用在后台运行时，我们会收集您的设备信息，包括IMEI、Android ID、MAC地址、OAID、IMSI、ICCID、BSSID、SN号码、MCC+MNC、设备型号、IP地址、访问日期和时间、网络日志信息、WIFI网络信息（SSID）、传感器信息、应用列表、应用包名及版本，用于标识设备、保障网络访问稳定性、基础数据统计及定向推送。`;
   return (
     <Modal statusBarTranslucent  visible={showPrivacyModal} transparent animationType="fade" onRequestClose={() => {}}>
       <View style={styles.overlay}>
@@ -63,7 +66,7 @@ const PrivacyModal = ({ privacyUrl, termsUrl, onAgree,showPrivacyModal,
               感谢您使用柒趣玩APP，为了更好的向您提供服务，请您使用前充分阅读并理解<Text style={styles.link} onPress={() => openLink(termsUrl)}>《用户协议》</Text>和<Text style={styles.link} onPress={() => openLink(privacyUrl)}>《隐私政策》</Text>，其中将明确介绍在使用中我们收集、处理您个人信息的情况。
               需要使用的个人信息说明如下:
               {'\n'}
-1、当您点击[同意]按钮之后，在使用本应用或应用在后台运行时，我们会收集您设备信息(包括IMEI、IDFA(仅iOS端)Android ID(仅安卓端)、MAC地址、OAID、IMSI、ICCID、BSSID、SN号码、MCC+MNC、设备型号)、IP地址、访问日期和时间、网络日志信息、WIFI网络信息（SSID）、传感器信息、应用列表、应用包名及版本用于标识唯一用户、保障网络访问稳定性、数据统计及定向推送。
+ {devicePrivacyText}
 {'\n'}
 2、设备信息:由于需要区分设备、进行消息推送、基础数据统计，我们会获取设备信息，该信息不会用于识别您的个人真实身份或用于与本应用功能无关的用途。
          {'\n'}
